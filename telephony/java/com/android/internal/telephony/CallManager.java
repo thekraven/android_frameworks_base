@@ -295,7 +295,7 @@ public final class CallManager {
      * @return true if register successfully
      */
     public boolean registerPhone(Phone phone) {
-	    return this.registerPhoneInternal(phone, false);
+        return this.registerPhoneInternal(phone, false);
     }
 
     /**
@@ -307,7 +307,7 @@ public final class CallManager {
     public boolean registerPhoneAsDefault(Phone phone) {
         return this.registerPhoneInternal(phone, true);
     }
-	
+
     /**
      * Internal phone registration function used in two phone registering cases
      *
