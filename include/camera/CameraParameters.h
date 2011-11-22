@@ -99,6 +99,8 @@ public:
     void setPictureFormat(const char *format);
     const char *getPictureFormat() const;
 
+    void getMeteringAreaCenter(int * x, int *y) const;
+
     void dump() const;
     status_t dump(int fd, const Vector<String16>& args) const;
 
@@ -530,6 +532,7 @@ public:
     // captured pictures.
     // Example value: "true" or "false". Read only.
     static const char KEY_VIDEO_SNAPSHOT_SUPPORTED[];
+    static const char KEY_FULL_VIDEO_SNAP_SUPPORTED[];
 
     // The state of the video stabilization. If set to true, both the
     // preview stream and the recorded video stream are stabilized by
@@ -545,10 +548,26 @@ public:
     // has no effect on still image capture.
     static const char KEY_VIDEO_STABILIZATION[];
 
+#ifdef QCOM_HARDWARE
+    static const char KEY_MEMORY_COLOR_ENHANCEMENT[];
+    static const char KEY_SUPPORTED_MEM_COLOR_ENHANCE_MODES[];
+
+    static const char KEY_ZSL[];
+    static const char KEY_SUPPORTED_ZSL_MODES[];
+
+    static const char KEY_CAMERA_MODE[];
+
+    static const char KEY_VIDEO_HIGH_FRAME_RATE[];
+    static const char KEY_SUPPORTED_VIDEO_HIGH_FRAME_RATE_MODES[];
+    static const char KEY_HIGH_DYNAMIC_RANGE_IMAGING[];
+    static const char KEY_SUPPORTED_HDR_IMAGING_MODES[];
+#endif
     // Returns true if video stabilization is supported. That is, applications
     // can set KEY_VIDEO_STABILIZATION to true and have a stabilized preview
     // stream and record stabilized videos.
     static const char KEY_VIDEO_STABILIZATION_SUPPORTED[];
+
+    static const char KEY_AE_BRACKET_HDR[];
 
     // Value for KEY_ZOOM_SUPPORTED or KEY_SMOOTH_ZOOM_SUPPORTED.
     static const char TRUE[];
@@ -601,6 +620,7 @@ public:
 
     // Values for scene mode settings.
     static const char SCENE_MODE_AUTO[];
+    static const char SCENE_MODE_ASD[];
     static const char SCENE_MODE_ACTION[];
     static const char SCENE_MODE_PORTRAIT[];
     static const char SCENE_MODE_LANDSCAPE[];
@@ -631,6 +651,11 @@ public:
     // Raw bayer format used for images, which is 10 bit precision samples
     // stored in 16 bit words. The filter pattern is RGGB.
     static const char PIXEL_FORMAT_BAYER_RGGB[];
+#ifdef QCOM_HARDWARE
+    static const char PIXEL_FORMAT_RAW[];
+    static const char PIXEL_FORMAT_YV12[]; // NV21
+    static const char PIXEL_FORMAT_NV12[]; //NV12
+#endif
 
     // Values for focus mode settings.
     // Auto-focus mode. Applications should call
@@ -682,6 +707,101 @@ public:
     // To stop continuous focus, applications should change the focus mode to
     // other modes.
     static const char FOCUS_MODE_CONTINUOUS_PICTURE[];
+
+#ifdef QCOM_HARDWARE
+    // Normal focus mode. Applications should call
+    // CameraHardwareInterface.autoFocus to start the focus in this mode.
+    static const char FOCUS_MODE_NORMAL[];
+    static const char ISO_AUTO[];
+    static const char ISO_HJR[] ;
+    static const char ISO_100[];
+    static const char ISO_200[] ;
+    static const char ISO_400[];
+    static const char ISO_800[];
+    static const char ISO_1600[];
+    // Values for Lens Shading
+    static const char LENSSHADE_ENABLE[] ;
+    static const char LENSSHADE_DISABLE[] ;
+
+    // Values for auto exposure settings.
+    static const char AUTO_EXPOSURE_FRAME_AVG[];
+    static const char AUTO_EXPOSURE_CENTER_WEIGHTED[];
+    static const char AUTO_EXPOSURE_SPOT_METERING[];
+
+    static const char KEY_SHARPNESS[];
+    static const char KEY_MAX_SHARPNESS[];
+    static const char KEY_CONTRAST[];
+    static const char KEY_MAX_CONTRAST[];
+    static const char KEY_SATURATION[];
+    static const char KEY_MAX_SATURATION[];
+
+    static const char KEY_HISTOGRAM[] ;
+    static const char KEY_SUPPORTED_HISTOGRAM_MODES[] ;
+    // Values for HISTOGRAM
+    static const char HISTOGRAM_ENABLE[] ;
+    static const char HISTOGRAM_DISABLE[] ;
+
+    // Values for SKIN TONE ENHANCEMENT
+    static const char SKIN_TONE_ENHANCEMENT_ENABLE[] ;
+    static const char SKIN_TONE_ENHANCEMENT_DISABLE[] ;
+
+    // Values for Denoise
+    static const char DENOISE_OFF[] ;
+    static const char DENOISE_ON[] ;
+
+    // Values for auto exposure settings.
+    static const char SELECTABLE_ZONE_AF_AUTO[];
+    static const char SELECTABLE_ZONE_AF_SPOT_METERING[];
+    static const char SELECTABLE_ZONE_AF_CENTER_WEIGHTED[];
+    static const char SELECTABLE_ZONE_AF_FRAME_AVERAGE[];
+
+    // Values for Face Detection settings.
+    static const char FACE_DETECTION_OFF[];
+    static const char FACE_DETECTION_ON[];
+
+    // Values for MCE settings.
+    static const char MCE_ENABLE[];
+    static const char MCE_DISABLE[];
+
+    // Values for ZSL settings.
+    static const char ZSL_OFF[];
+    static const char ZSL_ON[];
+
+    // Values for HDR Bracketing settings.
+    static const char AE_BRACKET_HDR_OFF[];
+    static const char AE_BRACKET_HDR[];
+    static const char AE_BRACKET[];
+
+    // Values for HFR settings.
+    static const char VIDEO_HFR_OFF[];
+    static const char VIDEO_HFR_2X[];
+    static const char VIDEO_HFR_3X[];
+    static const char VIDEO_HFR_4X[];
+
+    // Values for Redeye Reduction settings.
+    static const char REDEYE_REDUCTION_ENABLE[];
+    static const char REDEYE_REDUCTION_DISABLE[];
+    // Values for HDR settings.
+    static const char HDR_ENABLE[];
+    static const char HDR_DISABLE[];
+
+   // Values for Redeye Reduction settings.
+   // static const char REDEYE_REDUCTION_ENABLE[];
+   // static const char REDEYE_REDUCTION_DISABLE[];
+   // Values for HDR settings.
+   //    static const char HDR_ENABLE[];
+   //    static const char HDR_DISABLE[];
+
+    enum {
+        CAMERA_ORIENTATION_UNKNOWN = 0,
+        CAMERA_ORIENTATION_PORTRAIT = 1,
+        CAMERA_ORIENTATION_LANDSCAPE = 2,
+    };
+    int getOrientation() const;
+    void setOrientation(int orientation);
+    void setPreviewFpsRange(int minFPS,int maxFPS);
+    void getSupportedHfrSizes(Vector<Size> &sizes) const;
+#endif
 
 private:
     DefaultKeyedVector<String8,String8>    mMap;
