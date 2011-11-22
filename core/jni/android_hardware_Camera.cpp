@@ -603,6 +603,7 @@ static void android_hardware_Camera_setHasPreviewCallback(JNIEnv *env, jobject t
 
  static void android_hardware_Camera_sendHistogramData(JNIEnv *env, jobject thiz)
  {
+#ifdef QCOM_HARDWARE
    LOGV("setHistogramMode: mode:" );
    JNICameraContext* context;
    status_t rc;
@@ -614,9 +615,11 @@ static void android_hardware_Camera_setHasPreviewCallback(JNIEnv *env, jobject t
    if (rc != NO_ERROR) {
       jniThrowException(env, "java/lang/RuntimeException", "set histogram mode failed");
      }
+#endif
  }
  static void android_hardware_Camera_setHistogramMode(JNIEnv *env, jobject thiz, jboolean mode)
  {
+#ifdef QCOM_HARDWARE
    LOGV("sendHistogramData: mode:%d", (int)mode);
    JNICameraContext* context;
    status_t rc;
@@ -631,6 +634,7 @@ static void android_hardware_Camera_setHasPreviewCallback(JNIEnv *env, jobject t
    if (rc != NO_ERROR) {
       jniThrowException(env, "java/lang/RuntimeException", "set histogram mode failed");
      }
+#endif
  }
 
 static void android_hardware_Camera_addCallbackBuffer(JNIEnv *env, jobject thiz, jbyteArray bytes, int msgType) {
