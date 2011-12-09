@@ -619,6 +619,7 @@ status_t ACodec::allocateOutputBuffersFromNativeWindow() {
         return err;
     }
 
+#ifdef QCOM_HARDWARE
     err = mNativeWindow.get()->perform(mNativeWindow.get(),
                               NATIVE_WINDOW_SET_BUFFERS_SIZE,
                               def.nBufferSize);
@@ -628,7 +629,7 @@ status_t ACodec::allocateOutputBuffersFromNativeWindow() {
                 -err);
         return err;
     }
-
+#endif
 
     LOGV("[%s] Allocating %lu buffers from a native window of size %lu on "
          "output port",
