@@ -375,7 +375,26 @@ VideoFrame *StagefrightMetadataRetriever::getFrameAtTime(
         LOGV("Software codec is not being used for %s clips for thumbnail ",
             mime);
     } else {
-        frame = extractVideoFrameWithCodecFlags(
+        char value[PROPERTY_VALUE_MAX];
+        if (property_get("debug.thumbnail.disablesw", value, NULL) &&
+            atoi(value)) {
+            LOGE("Dont use sw decoder for thumbnail");
+        }
+        else {
+            frame = extractVideoFrameWithCodecFlags(
+                &mClient, trackMeta, source, OMXCodec::kSoftwareCodecsOnly,
+                timeUs, option);
+            if (frame == NULL){
+                // remake source to ensure its stopped before we start it
+                source.clear();
+                source = mExtractor->getTrack(i);
+                if (source.get() == NULL) {
+                    LOGV("unable to instantiate video track.");
+                    return NULL;
+                }
+            }
+        }
+    }
 #else
     VideoFrame *frame =
         extractVideoFrameWithCodecFlags(
