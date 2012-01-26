@@ -2352,12 +2352,32 @@ public final class Settings {
 
         /**
          * Transparent notification bar
-         * 0 (default)     : normal status bar background image
-         * 1 (custom)      : user defined custom color
+         * 0 (theme)      : theme settings
+         * 1 (default)     : normal status bar background image
+         * 2 (custom)      : user defined custom color
          * 3 (transparent) : fully transparent background image
          * @hide
          */
         public static final String TRANSPARENT_STATUS_BAR = "transparent_status_bar";
+
+        /**
+	 * The color to render the notification dropdown background
+         * hex value including alpha
+         * default: ff000000
+         * @hide
+         */
+        public static final String NOTIFICATION_BACKGROUND_COLOR = "notification_background_color";
+
+        /**
+         * Transparent notification dropdown background
+         * 0 (theme)      : theme settings
+         * 1 (ROM)     : normal notification dropdown background image
+         * 2 (custom)      : user defined custom color
+         * 3 (transparent) : fully transparent background image
+         * 4 (special) : peeping android background image
+         * @hide
+         */
+        public static final String TRANSPARENT_NOTIFICATION_BACKGROUND = "transparent_notification_background";
 
         /**
          * Whether to show the signal text or signal bars.

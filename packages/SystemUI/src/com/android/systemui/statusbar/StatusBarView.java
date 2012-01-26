@@ -206,3 +206,4 @@ public class StatusBarView extends FrameLayout {
         return onInterceptTouchEvent(event, false);
     }
 }
+

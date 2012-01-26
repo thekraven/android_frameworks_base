@@ -97,6 +97,7 @@ public class StatusBarPolicy {
     private final IBatteryStats mBatteryStats;
 
     private int mStatusBarColor;
+    private int mNotificationBackgroundColor;
 
     // headset
     private boolean mHeadsetPlugged = false;
@@ -635,6 +636,9 @@ public class StatusBarPolicy {
 
 	    resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_COLOR), false, this);
+
+	    resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.NOTIFICATION_BACKGROUND_COLOR), false, this);
         }
 
         @Override public void onChange(boolean selfChange) {
@@ -1671,6 +1675,12 @@ public class StatusBarPolicy {
 
         mStatusBarColor = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_COLOR, 1));
+
+	// check for changes to notification background color and update accordingly
+        int mNBColor = mNotificationBackgroundColor;
+
+        mNotificationBackgroundColor = (Settings.System.getInt(resolver,
+                Settings.System.NOTIFICATION_BACKGROUND_COLOR, 1));
 
         int statusBarBattery = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_BATTERY, 0);
