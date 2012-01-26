@@ -20,7 +20,6 @@ package com.android.systemui.statusbar;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
-import java.util.ArrayList;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -45,7 +44,7 @@ import com.android.internal.R;
  * This widget display an analogic clock with two hands for hours and
  * minutes.
  */
-public class Clock extends TextView {
+public class CenterClock extends TextView {
     private boolean mAttached;
     private Calendar mCalendar;
     private String mClockFormatString;
@@ -58,8 +57,8 @@ public class Clock extends TextView {
     private static int AM_PM_STYLE = AM_PM_STYLE_GONE;
 
     private int mAmPmStyle;
-    private boolean mShowClock;
     private boolean mShowCenterClock;
+    private boolean mShowClock;
     private int mClockColor;
 
     Handler mHandler;
@@ -77,6 +76,8 @@ public class Clock extends TextView {
                     Settings.System.STATUS_BAR_CLOCK), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CENTERCLOCK), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCKCOLOR), false, this);
         }
 
         @Override public void onChange(boolean selfChange) {
@@ -84,15 +85,15 @@ public class Clock extends TextView {
         }
     }
 
-    public Clock(Context context) {
+    public CenterClock(Context context) {
         this(context, null);
     }
 
-    public Clock(Context context, AttributeSet attrs) {
+    public CenterClock(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public Clock(Context context, AttributeSet attrs, int defStyle) {
+    public CenterClock(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         mHandler = new Handler();
@@ -125,7 +126,7 @@ public class Clock extends TextView {
         mCalendar = Calendar.getInstance(TimeZone.getDefault());
 
         // Make sure we update to the current time
-        updateClock();
+        updateCenterClock();
     }
 
     @Override
@@ -148,11 +149,11 @@ public class Clock extends TextView {
                     mClockFormat.setTimeZone(mCalendar.getTimeZone());
                 }
             }
-            updateClock();
+            updateCenterClock();
         }
     };
 
-    final void updateClock() {
+    final void updateCenterClock() {
         mCalendar.setTimeInMillis(System.currentTimeMillis());
         setTextColor(mClockColor);
         setText(getSmallTime());
@@ -163,7 +164,7 @@ public class Clock extends TextView {
         boolean b24 = DateFormat.is24HourFormat(context);
         int res;
 
-        if (b24 && AM_PM_STYLE == AM_PM_STYLE_GONE) {
+        if (b24) {
             res = R.string.twenty_four_hour_time_format;
         } else {
             res = R.string.twelve_hour_time_format;
@@ -252,16 +253,16 @@ public class Clock extends TextView {
             mClockFormatString = "";
 
             if (mAttached) {
-                updateClock();
+                updateCenterClock();
             }
         }
 
-        mShowClock = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_CLOCK, 1) == 1);
         mShowCenterClock = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CENTERCLOCK, 1) == 1);
+        mShowClock = (Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CLOCK, 1) == 1);
 
-        if(mShowClock && !mShowCenterClock)
+        if(mShowCenterClock && mShowClock)
             setVisibility(View.VISIBLE);
         else
             setVisibility(View.GONE);

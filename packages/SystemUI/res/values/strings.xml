@@ -72,4 +72,8 @@
     <!-- Checkbox label for USB accessory dialogs.  [CHAR LIMIT=50] -->
     <string name="always_use_accessory">Use by default for this USB accessory</string>
 
+    <!-- Color Picker -->
+    <string name="title_color_picker">Pick a clock color</string>
+    <string name="msg_color_picker">Tap on center color to confirm.\nPress back to cancel</string>
+
 </resources>

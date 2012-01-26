@@ -2312,6 +2312,40 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK = "status_bar_clock";
 
         /**
+	 * Whether to Center the clock in status bar
+         * 0: don't center the clock
+         * 1: center the clock
+         * default: 1
+         * @hide
+         */
+        public static final String STATUS_BAR_CENTERCLOCK = "status_bar_centerclock";
+
+        /**
+         * The color to render the status bar clock
+         * hex value including alpha
+         * default: ffffff00
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCKCOLOR = "status_bar_clockcolor";
+
+        /**
+	 * The color to render the status bar background
+         * hex value including alpha
+         * default: ff000000
+         * @hide
+         */
+        public static final String STATUS_BAR_COLOR = "status_bar_color";
+
+        /**
+         * Transparent notification bar
+         * 0 (default)     : normal status bar background image
+         * 1 (custom)      : user defined custom color
+         * 3 (transparent) : fully transparent background image
+         * @hide
+         */
+        public static final String TRANSPARENT_STATUS_BAR = "transparent_status_bar";
+
+        /**
          * Whether to show the signal text or signal bars.
          * default: 0
          * 0: show signal bars
@@ -2911,6 +2945,12 @@ public final class Settings {
          * @hide
          */
         public static final String OVERSCROLL_WEIGHT = "overscroll_weight";
+
+        /**
+	 * Sets the overscroller color (edge bounce effect on lists)
+         * @hide
+         */
+        public static final String OVERSCROLL_COLOR = "overscroll_color";
 
         /**
          * Whether or not volume button music controls should be enabled to seek media tracks
@@ -3568,6 +3608,11 @@ public final class Settings {
          * Whether ADB is enabled.
          */
         public static final String ADB_ENABLED = "adb_enabled";
+
+        /**
+	 * The TCP/IP port to run ADB on, or -1 for USB
+         */
+        public static final String ADB_PORT = "adb_port";
 
         /**
          * Whether to show ADB notifications.

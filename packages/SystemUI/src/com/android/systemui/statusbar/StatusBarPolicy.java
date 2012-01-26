@@ -96,6 +96,8 @@ public class StatusBarPolicy {
     private final Handler mHandler = new StatusBarHandler();
     private final IBatteryStats mBatteryStats;
 
+    private int mStatusBarColor;
+
     // headset
     private boolean mHeadsetPlugged = false;
 
@@ -630,6 +632,9 @@ public class StatusBarPolicy {
 
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_HEADSET), false, this);
+
+	    resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUS_BAR_COLOR), false, this);
         }
 
         @Override public void onChange(boolean selfChange) {
@@ -1661,6 +1666,12 @@ public class StatusBarPolicy {
     private void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
+    // check for changes to status bar color and update accordingly
+        int mSBColor = mStatusBarColor;
+
+        mStatusBarColor = (Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_COLOR, 1));
+
         int statusBarBattery = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_BATTERY, 0);
         mStatusBarBattery = Integer.valueOf(statusBarBattery);
@@ -1679,5 +1690,6 @@ public class StatusBarPolicy {
         mShowCmSignal = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_CM_SIGNAL_TEXT, 0) != 0;
         mService.setIconVisibility("phone_signal", !mPhoneSignalHidden && !mShowCmSignal);
+
     }
 }
