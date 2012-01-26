@@ -101,6 +101,14 @@ public:
         data.writeInt32(size);
         remote()->transact(SET_GRAPHIC_BUFFER_SIZE, data, &reply);
     }
+
+    virtual void setGraphicBufferSize(int size) {
+        Parcel data, reply;
+        data.writeInterfaceToken(
+                IGraphicBufferAlloc::getInterfaceDescriptor());
+        data.writeInt32(size);
+        remote()->transact(SET_GRAPHIC_BUFFER_SIZE, data, &reply);
+    }
 #endif
 };
 

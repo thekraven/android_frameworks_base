@@ -142,9 +142,6 @@ SurfaceTexture::SurfaceTexture(GLuint tex, bool allowSynchronousMode,
     mUseFenceSync(false),
 #endif
     mTexTarget(texTarget),
-#ifdef QCOM_HARDWARE
-    mS3DFormat(0),
-#endif
     mFrameCounter(0) {
     // Choose a name using the PID and a process-unique ID.
     mName = String8::format("unnamed-%d-%d", getpid(), createProcessUniqueId());
@@ -803,9 +800,9 @@ status_t SurfaceTexture::disconnect(int api) {
 #ifdef QCOM_HARDWARE
 status_t SurfaceTexture::performQcomOperation(int operation, int arg1, int arg2, int arg3)
 {
-    ST_LOGV("SurfaceTexture::performQcomOperation operation=%d", operation);
+     ST_LOGV("SurfaceTexture::performQcomOperation operation=%d", operation);
 
-    switch(operation) {
+     switch(operation) {
         case NATIVE_WINDOW_SET_BUFFERS_SIZE: {
             int size = arg1;
             mGraphicBufferAlloc->setGraphicBufferSize(size);
