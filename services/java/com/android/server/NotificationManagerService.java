@@ -1828,7 +1828,6 @@ public class NotificationManagerService extends INotificationManager.Stub
             if (notificationManager != null) {
                 mAdbNotificationShown = false;
                 notificationManager.cancel(mAdbNotification.icon);
-
             }
         }
     }
