@@ -19,15 +19,36 @@
 */
 -->
 
-<!--    android:background="@drawable/status_bar_closed_default_background" -->
+<!--    android:background="@android:color/transparent" -->
 <com.android.systemui.statusbar.CmStatusBarView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/statusbar_background"
+    android:id="@+id/statusbarBackground"
+    android:background="@android:color/transparent"
     android:focusable="true"
     android:descendantFocusability="afterDescendants"
     >
+
+     <LinearLayout android:id="@+id/centerClock"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.0">
+
+        <com.android.systemui.statusbar.CenterClock
+            android:textAppearance="@*android:style/TextAppearance.StatusBar.Icon"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:singleLine="true"
+	    android:layout_weight="1.0" />
+     </LinearLayout>
 
     <LinearLayout android:id="@+id/icons"
         android:layout_width="match_parent"
@@ -81,7 +102,7 @@
             android:layout_height="match_parent"
             android:singleLine="true"
             android:paddingRight="6dip"
-            android:gravity="center_vertical|left"
+	    android:gravity="center_vertical|left"
             />
 
         <!-- The following are button layouts for tablet style statusbar buttons
@@ -161,9 +182,10 @@
     </LinearLayout>
 
     <LinearLayout android:id="@+id/ticker"
+	android:background="@android:color/transparent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="6dip"
+        android:layout_height="match_parent"        
+	android:paddingLeft="6dip"
         android:animationCache="false"
         android:orientation="horizontal" >
         <ImageSwitcher android:id="@+id/tickerIcon"
@@ -191,13 +213,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                />
+		/>
             <TextView
                 android:textAppearance="@*android:style/TextAppearance.StatusBar.Ticker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                />
+		/>
         </com.android.systemui.statusbar.TickerView>
     </LinearLayout>
 
@@ -209,6 +231,6 @@
         android:gravity="center_vertical|left"
         android:paddingLeft="6px"
         android:paddingRight="6px"
-        android:background="@drawable/statusbar_background"
+        android:background="@android:color/transparent"
         />
 </com.android.systemui.statusbar.CmStatusBarView>

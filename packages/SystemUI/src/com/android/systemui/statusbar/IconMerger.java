@@ -18,6 +18,7 @@ package com.android.systemui.statusbar;
 
 import android.content.Context;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Slog;
 import android.view.View;
@@ -57,6 +58,10 @@ public class IconMerger extends LinearLayout {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
 
+	// check for centered clock and adjust r parameter accordingly to set maxwidth properly
+        if ((Settings.System.getInt(getContext().getContentResolver(), Settings.System.STATUS_BAR_CENTERCLOCK, 1) == 1)) {
+            r = (((LinearLayout) this.getParent()).getRight() / 2) - 15;
+        }
         final int maxWidth = r - l;
         final int N = getChildCount();
         int i;
