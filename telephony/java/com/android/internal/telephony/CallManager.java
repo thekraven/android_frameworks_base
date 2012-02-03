@@ -290,27 +290,6 @@ public final class CallManager {
      * @return true if register successfully
      */
     public boolean registerPhone(Phone phone) {
-	return this.registerPhoneInternal(phone, false);
-    }
-
-    /**
-     * Register phone to CallManager and force it as the default phone
-     *
-     * @param phone to be registered
-     * @return true if register successfully
-     */
-    public boolean registerPhoneAsDefault(Phone phone) {
-        return this.registerPhoneInternal(phone, true);
-    }
-	
-    /**
-     * Internal phone registration function used in two phone registering cases
-     *
-     * @param phone to be registered
-     * @param overrideDefaultPhone is there a need to set this phone to be the default one
-     * @return true if register successfully
-     */
-    private boolean registerPhoneInternal(Phone phone, boolean overrideDefaultPhone) {
         Phone basePhone = getPhoneBase(phone);
 
         if (basePhone != null && !mPhones.contains(basePhone)) {
@@ -320,7 +299,7 @@ public final class CallManager {
                         phone.getPhoneName() + " " + phone + ")");
             }
 
-            if (mPhones.isEmpty() || overrideDefaultPhone) {
+            if (mPhones.isEmpty()) {
                 mDefaultPhone = basePhone;
             }
             mPhones.add(basePhone);

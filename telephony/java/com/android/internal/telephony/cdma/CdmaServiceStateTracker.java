@@ -667,20 +667,6 @@ final class CdmaServiceStateTracker extends ServiceStateTracker {
     }
 
     /**
-     * Multi-mode radio indication facilitator
-     */
-    public boolean isMultiModeRadio() {
-        // If the device you seek to make work here has a multi-mode radio, for example
-        // a "world" CDMA/GSM/UMTS radio, this function is here to facilitate alternate
-        // code paths in some events.
-        if(SystemProperties.get("ro.telephony.ril_class").equalsIgnoreCase("mototegraworld"))
-            return true;
-
-        return false;
-    }
-
-
-    /**
      * Handle the result of one of the pollState()-related requests
      */
 
@@ -737,12 +723,7 @@ final class CdmaServiceStateTracker extends ServiceStateTracker {
                 int defaultRoamingIndicator = 0;  //[12] Is default roaming indicator from PRL
                 int reasonForDenial = 0;       //[13] Denial reason if registrationState = 3
 
-                // in some rare cases, such as a CDMA/GSM/UMTS radio, the states array will
-                // contain 15 arguments, differring from the usual 14 contained in CDMA
-                // states packets.
-                boolean multimoderadio = isMultiModeRadio();
-
-                if (states.length == 14 || (multimoderadio && states.length == 15 )) {
+                if (states.length == 14) {
                     try {
                         if (states[0] != null) {
                             registrationState = Integer.parseInt(states[0]);
