@@ -21,10 +21,6 @@ PRODUCT_COPY_FILES := \
     frameworks/base/data/fonts/Roboto-Bold.ttf:system/fonts/Roboto-Bold.ttf \
     frameworks/base/data/fonts/Roboto-Italic.ttf:system/fonts/Roboto-Italic.ttf \
     frameworks/base/data/fonts/Roboto-BoldItalic.ttf:system/fonts/Roboto-BoldItalic.ttf \
-    frameworks/base/data/fonts/DroidNaskh-Regular.ttf:system/fonts/DroidNaskh-Regular.ttf \
-    frameworks/base/data/fonts/DroidSansHebrew-Regular.ttf:system/fonts/DroidSansHebrew-Regular.ttf \
-    frameworks/base/data/fonts/DroidSansHebrew-Bold.ttf:system/fonts/DroidSansHebrew-Bold.ttf \
-    frameworks/base/data/fonts/DroidSansThai.ttf:system/fonts/DroidSansThai.ttf \
     frameworks/base/data/fonts/DroidSerif-Regular.ttf:system/fonts/DroidSerif-Regular.ttf \
     frameworks/base/data/fonts/DroidSerif-Bold.ttf:system/fonts/DroidSerif-Bold.ttf \
     frameworks/base/data/fonts/DroidSerif-Italic.ttf:system/fonts/DroidSerif-Italic.ttf \
