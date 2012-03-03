@@ -2375,6 +2375,7 @@ public final class Settings {
          * 2 (custom)      : user defined custom color
          * 3 (transparent) : fully transparent background image
          * 4 (special) : peeping android background image
+		 * 5 (custom) : user provided image
          * @hide
          */
         public static final String TRANSPARENT_NOTIFICATION_BACKGROUND = "transparent_notification_background";
