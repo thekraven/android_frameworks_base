@@ -290,7 +290,7 @@ public final class CallManager {
      * @return true if register successfully
      */
     public boolean registerPhone(Phone phone) {
-	return this.registerPhoneInternal(phone, false);
+	    return this.registerPhoneInternal(phone, false);
     }
 
     /**
