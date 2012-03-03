@@ -1821,6 +1821,7 @@ public class NotificationManagerService extends INotificationManager.Stub
                     notificationManager.notify(mAdbNotification.icon, mAdbNotification);
                 }
             }
+
         } else if (mAdbNotificationShown) {
             NotificationManager notificationManager = (NotificationManager) mContext
                     .getSystemService(Context.NOTIFICATION_SERVICE);
