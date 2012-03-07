@@ -436,6 +436,7 @@ public final class CallManager {
             phone.registerForSuppServiceNotification(mHandler, EVENT_SUPP_SERVICE_NOTIFY, null);
         }
 
+
         // for events supported only by GSM and CDMA phone
         if (phone.getPhoneType() == Phone.PHONE_TYPE_GSM ||
                 phone.getPhoneType() == Phone.PHONE_TYPE_CDMA) {

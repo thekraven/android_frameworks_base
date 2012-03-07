@@ -39,7 +39,10 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.BitmapFactory; 
+import android.graphics.Bitmap; 
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -72,6 +75,9 @@ import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.net.Uri; 
+import java.io.File; 
+
 
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
@@ -482,24 +488,31 @@ public class StatusBarService extends Service implements CommandQueue.Callbacks 
         int transNotificationBackground = Settings.System.getInt(getContentResolver(), Settings.System.TRANSPARENT_NOTIFICATION_BACKGROUND, 0);
         int notificationBackgroundColor = Settings.System.getInt(getContentResolver(), Settings.System.NOTIFICATION_BACKGROUND_COLOR, 0);
             switch (transNotificationBackground) {
-              case 0 : // default based on theme, leave alone
+              case 0 : // default based on theme
                   mNotificationBackgroundView.setBackgroundColor(0x00000000);
                   mNotificationBackgroundView.setBackgroundDrawable(getResources().getDrawable(R.drawable.shade_bg));
                   break;
-	      case 1 : // based on ROM
+	          case 1 : // based on ROM, leave alone
                   break;
               case 2 : // user defined argb hex color
                   mNotificationBackgroundView.setBackgroundDrawable(getResources().getDrawable(R.drawable.shade_trans_bg));
                   mNotificationBackgroundView.setBackgroundColor(notificationBackgroundColor);
                   break;
-              case 3 : // semi transparent
+              case 3 : // semi transparent background image
                   mNotificationBackgroundView.setBackgroundColor(0x00000000);
                   mNotificationBackgroundView.setBackgroundDrawable(getResources().getDrawable(R.drawable.shade_trans_bg));
                   break;
-	      case 4 : // peeping android background image
+	          case 4 : // peeping android background image
                   mNotificationBackgroundView.setBackgroundColor(0x00000000);
                   mNotificationBackgroundView.setBackgroundDrawable(getResources().getDrawable(R.drawable.status_bar_special));
-                  break;	
+                  break;
+			  case 5 : // user selected background image 
+                  mNotificationBackgroundView.setBackgroundColor(0x00000000); 
+                  Uri savedImage = Uri.fromFile(new File("/data/data/com.cyanogenmod.cmparts/files/nb_background"));
+                  Bitmap bitmapImage = BitmapFactory.decodeFile(savedImage.getPath()); 
+                  Drawable bgrImage = new BitmapDrawable(bitmapImage); 
+                  mNotificationBackgroundView.setBackgroundDrawable(bgrImage); 
+                  break; 
         }
 
         mContext=context;

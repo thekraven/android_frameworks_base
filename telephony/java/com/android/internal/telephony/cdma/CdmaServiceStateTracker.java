@@ -782,8 +782,8 @@ final class CdmaServiceStateTracker extends ServiceStateTracker {
                     }
                 } else {
                     throw new RuntimeException("Warning! Wrong number of parameters returned from "
-                                         + "RIL_REQUEST_REGISTRATION_STATE: expected 14 got "
-                                         + states.length);
+                                         + "RIL_REQUEST_REGISTRATION_STATE: expected 14 got " 
+										 + states.length); 
                 }
 
                 mRegistrationState = registrationState;

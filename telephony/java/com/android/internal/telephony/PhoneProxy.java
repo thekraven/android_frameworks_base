@@ -89,6 +89,8 @@ public class PhoneProxy extends Handler implements Phone {
             if(mOutgoingPhone.equals("GSM")) {
                 logd("Make a new CDMAPhone and destroy the old GSMPhone.");
 
+		        // Since we already know we're disposing of this
+                CallManager.getInstance().unregisterPhone(mActivePhone);
                 ((GSMPhone)mActivePhone).dispose();
                 Phone oldPhone = mActivePhone;
 

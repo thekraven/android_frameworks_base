@@ -436,6 +436,11 @@ public class NotificationManagerService extends INotificationManager.Stub
                 boolean batteryCharging = status == BatteryManager.BATTERY_STATUS_CHARGING;
                 boolean batteryLow = (level >= 0 && level <= Power.LOW_BATTERY_THRESHOLD);
                 boolean batteryFull = (status == BatteryManager.BATTERY_STATUS_FULL || level >= 90);
+				
+				/* also treat a full battery with connected charger as 'charging' */ 
+                if (batteryFull && intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0) { 
+                    batteryCharging = true; 
+                } 
 
                 /* also treat a full battery with connected charger as 'charging' */
                 if (batteryFull && intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0) {
