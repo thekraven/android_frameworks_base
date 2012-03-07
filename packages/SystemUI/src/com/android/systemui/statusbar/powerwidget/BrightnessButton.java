@@ -92,7 +92,10 @@ public class BrightnessButton extends PowerButton {
         } else if (mCurrentBrightness <= LOW_BACKLIGHT) {
             mIcon = R.drawable.stat_brightness_off;
             mState = STATE_DISABLED;
-        } else if (mCurrentBrightness <= MID_BACKLIGHT) {
+		} else if (mCurrentBrightness <= MID_BACKLIGHT) {
+            mIcon = R.drawable.stat_brightness_mid;
+            mState = STATE_INTERMEDIATE;	
+        } else if (mCurrentBrightness <= LOWMID_BACKLIGHT) {
             mIcon = R.drawable.stat_brightness_mid;
             mState = STATE_INTERMEDIATE;
         } else {
