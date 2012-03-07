@@ -20,6 +20,7 @@ package com.android.systemui.statusbar;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.ArrayList;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -58,6 +59,8 @@ public class Clock extends TextView {
 
     private int mAmPmStyle;
     private boolean mShowClock;
+    private boolean mShowCenterClock;
+    private int mClockColor;
 
     Handler mHandler;
 
@@ -72,6 +75,8 @@ public class Clock extends TextView {
                     Settings.System.STATUS_BAR_AM_PM), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CENTERCLOCK), false, this);
         }
 
         @Override public void onChange(boolean selfChange) {
@@ -149,6 +154,7 @@ public class Clock extends TextView {
 
     final void updateClock() {
         mCalendar.setTimeInMillis(System.currentTimeMillis());
+        setTextColor(mClockColor);
         setText(getSmallTime());
     }
 
@@ -234,10 +240,14 @@ public class Clock extends TextView {
     private void updateSettings(){
         ContentResolver resolver = mContext.getContentResolver();
 
+        int mCColor = mClockColor;
+
         mAmPmStyle = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_AM_PM, 2));
+        mClockColor = (Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CLOCKCOLOR, 1));
 
-        if (mAmPmStyle != AM_PM_STYLE) {
+        if ((mAmPmStyle != AM_PM_STYLE) || (mCColor != mClockColor)) {
             AM_PM_STYLE = mAmPmStyle;
             mClockFormatString = "";
 
@@ -248,8 +258,10 @@ public class Clock extends TextView {
 
         mShowClock = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CLOCK, 1) == 1);
+        mShowCenterClock = (Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CENTERCLOCK, 1) == 1);
 
-        if(mShowClock)
+        if(mShowClock && !mShowCenterClock)
             setVisibility(View.VISIBLE);
         else
             setVisibility(View.GONE);

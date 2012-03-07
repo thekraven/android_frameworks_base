@@ -34,12 +34,13 @@ public class BrightnessButton extends PowerButton {
     private static final int AUTO_BACKLIGHT = -1;
     // Mid-range brightness values + thresholds
     private static final int LOW_BACKLIGHT = (int) (MAX_BACKLIGHT * 0.25f);
+    private static final int LOWMID_BACKLIGHT = (int) (MAX_BACKLIGHT * 0.4f);
     private static final int MID_BACKLIGHT = (int) (MAX_BACKLIGHT * 0.5f);
     private static final int HIGH_BACKLIGHT = (int) (MAX_BACKLIGHT * 0.75f);
 
     // Defaults for now. MIN_BACKLIGHT will be replaced later
     private static final int[] BACKLIGHTS = new int[] {
-            AUTO_BACKLIGHT, MIN_BACKLIGHT, LOW_BACKLIGHT, MID_BACKLIGHT, HIGH_BACKLIGHT,
+            MIN_BACKLIGHT, LOW_BACKLIGHT, LOWMID_BACKLIGHT, MID_BACKLIGHT, HIGH_BACKLIGHT,
             MAX_BACKLIGHT
     };
 

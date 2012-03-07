@@ -18,7 +18,10 @@
 package com.android.systemui.statusbar;
 
 import android.content.Context;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.res.Configuration;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.SystemClock;
 import android.util.AttributeSet;
@@ -27,8 +30,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
+import android.provider.Settings;
+import android.database.ContentObserver;
 
-import android.content.Intent;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.view.IWindowManager;
@@ -48,8 +52,18 @@ public class StatusBarView extends FrameLayout {
     int mStartX, mStartY;
     ViewGroup mNotificationIcons;
     ViewGroup mStatusIcons;
+    ViewGroup mSBBackground;
+    ViewGroup mTickerBackground;
+    View mVNotificationIcons;
+    View mVStatusIcons;
+    View mVSBBackground;
+    View mVTickerBackground;
     View mDate;
     FixedSizeDrawable mBackground;
+    FixedSizeDrawable mStatusBackground;
+
+    private int mSBColor;
+    private int mSBTrans;
 
     public StatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -58,13 +72,33 @@ public class StatusBarView extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+
+	mDate = findViewById(R.id.date);
+        mVSBBackground = findViewById(R.id.statusbarBackground);
+        mVTickerBackground = findViewById(R.id.ticker);
+
         mNotificationIcons = (ViewGroup)findViewById(R.id.notificationIcons);
         mStatusIcons = (ViewGroup)findViewById(R.id.statusIcons);
-        mDate = findViewById(R.id.date);
+	mVStatusIcons = findViewById(R.id.statusIcons);
+        mVNotificationIcons = findViewById(R.id.notificationIcons);
+
+        ContentResolver resolver = mContext.getContentResolver();
+        mSBTrans = (Settings.System.getInt(resolver, 
+                Settings.System.TRANSPARENT_STATUS_BAR, 1)); 
+        if ( mSBTrans == 2) { 
+           mSBColor = (Settings.System.getInt(resolver, 
+                   Settings.System.STATUS_BAR_COLOR, 1)); 
+ 
+           mVSBBackground.setBackgroundColor(mSBColor); 
+        } 
+
+        mVNotificationIcons.setBackgroundColor(0x00000000);
+        mVStatusIcons.setBackgroundColor(0x00000000);
+        mVTickerBackground.setBackgroundColor(0x00000000);        
 
         mBackground = new FixedSizeDrawable(mDate.getBackground());
         mBackground.setFixedBounds(0, 0, 0, 0);
-        mDate.setBackgroundDrawable(mBackground);
+        mDate.setBackgroundColor(0x00000000);
     }
 
     @Override
@@ -172,3 +206,4 @@ public class StatusBarView extends FrameLayout {
         return onInterceptTouchEvent(event, false);
     }
 }
+
