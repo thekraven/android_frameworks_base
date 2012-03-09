@@ -18,11 +18,13 @@ package com.android.systemui.statusbar;
 
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.text.format.DateFormat;
+import android.provider.Settings;
 
 import android.util.AttributeSet;
 import android.util.Slog;
@@ -54,6 +56,9 @@ public final class DateView extends TextView {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        ContentResolver resolver = mContext.getContentResolver(); 
+        setTextColor(Settings.System.getInt(resolver, 
+                Settings.System.STATUS_BAR_CLOCKCOLOR, 1)); 
     }
     
     @Override
