@@ -69,6 +69,9 @@ public class CmBatteryText extends TextView {
 
     public CmBatteryText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+		ContentResolver resolver = mContext.getContentResolver();
+		setTextColor(Settings.System.getInt(resolver,
+		    Settings.System.STATUS_BAR_CLOCKCOLOR, 1)); 
 
         mHandler = new Handler();
         SettingsObserver settingsObserver = new SettingsObserver(mHandler);

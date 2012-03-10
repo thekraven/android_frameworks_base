@@ -93,6 +93,9 @@ public class CmSignalText extends TextView {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+		ContentResolver resolver = mContext.getContentResolver();
+		setTextColor(Settings.System.getInt(resolver,
+    		Settings.System.STATUS_BAR_CLOCKCOLOR, 1)); 
 
         if (!mAttached) {
             mAttached = true;
