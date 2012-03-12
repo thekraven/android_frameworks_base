@@ -581,7 +581,7 @@ class LockScreen extends LinearLayout implements KeyguardScreen, KeyguardUpdateM
                 resCustom = R.drawable.ic_jog_dial_holo_custom;
                 resTarget = R.drawable.jog_tab_target_holo;
                 break;
-	    case Blade:
+            case Blade:
                 resSecNorm = R.drawable.jog_ring_blade_secback_normal;
                 resRingGreen = R.drawable.jog_ring_blade_ring_green;
                 resRingHighlight = R.drawable.jog_ring_blade_ring_pressed_red;
@@ -872,7 +872,7 @@ class LockScreen extends LinearLayout implements KeyguardScreen, KeyguardUpdateM
                     iconId = R.drawable.ic_jog_dial_holo_sound_on;
                 }
                 break;
-	    case Blade:
+            case Blade:
                 ringResource = mSilentMode ? R.drawable.jog_ring_blade_ring_yellow :
                                              R.drawable.jog_ring_blade_ring_gray;
                 break;

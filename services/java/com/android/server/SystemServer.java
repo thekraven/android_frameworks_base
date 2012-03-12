@@ -84,7 +84,7 @@ class ServerThread extends Thread {
             boolean enableAdb = (Settings.Secure.getInt(mContentResolver,
                 Settings.Secure.ADB_ENABLED, 0) > 0);
             // setting this secure property will start or stop adbd
-	    SystemProperties.set("persist.service.adb.enable", enableAdb ? "1" : "0");
+            SystemProperties.set("persist.service.adb.enable", enableAdb ? "1" : "0");
         }
     }
 
@@ -561,14 +561,14 @@ class ServerThread extends Thread {
         }
 
         // make sure the ADB_ENABLED setting value matches the secure property value
-	Settings.Secure.putInt(mContentResolver, Settings.Secure.ADB_PORT,
+        Settings.Secure.putInt(mContentResolver, Settings.Secure.ADB_PORT,
                 Integer.parseInt(SystemProperties.get("service.adb.tcp.port", "-1")));
 
         Settings.Secure.putInt(mContentResolver, Settings.Secure.ADB_ENABLED,
                 "1".equals(SystemProperties.get("persist.service.adb.enable")) ? 1 : 0);
 
         // register observer to listen for settings changes
-	mContentResolver.registerContentObserver(Settings.Secure.getUriFor(Settings.Secure.ADB_PORT),
+        mContentResolver.registerContentObserver(Settings.Secure.getUriFor(Settings.Secure.ADB_PORT),
                 false, new AdbPortObserver());
 
         mContentResolver.registerContentObserver(Settings.Secure.getUriFor(Settings.Secure.ADB_ENABLED),

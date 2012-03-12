@@ -2956,6 +2956,12 @@ public final class Settings {
         */
         public static final String EXPANDED_FLASH_MODE = "expanded_flash_mode";
 
+        /**
+        * Notification Power Widget - Mobile Data Auto 2G/3G Toggle
+        * @hide
+        */
+        public static final String EXPANDED_MOBILEDATANETWORK_MODE = "expanded_mobiledatanetwork_mode";
+
         /** 
         * Enables the Screen-on animation
         * @hide
@@ -3644,7 +3650,8 @@ public final class Settings {
         public static final String ADB_ENABLED = "adb_enabled";
 
         /**
-	 * The TCP/IP port to run ADB on, or -1 for USB
+         * The TCP/IP port to run ADB on, or -1 for USB
+         * @hide
          */
         public static final String ADB_PORT = "adb_port";
 
