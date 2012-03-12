@@ -783,7 +783,7 @@ class LockScreen extends LinearLayout implements KeyguardScreen, KeyguardUpdateM
         layoutParams = (RelativeLayout.LayoutParams) mCarrier.getLayoutParams();
         layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
         mCarrier.setLayoutParams(layoutParams);
-        mCarrier.setGravity(Gravity.LEFT);
+        mCarrier.setGravity(Gravity.RIGHT);
 
         mStatusBox.setGravity(Gravity.LEFT);
 
