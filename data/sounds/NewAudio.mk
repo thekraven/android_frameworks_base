@@ -14,16 +14,8 @@
 # limitations under the License.
 #
 
-<<<<<<< HEAD:data/sounds/AllAudio.mk
-$(call inherit-product, frameworks/base/data/sounds/OriginalAudio.mk)
-#$(call inherit-product, frameworks/base/data/sounds/AudioPackage2.mk)
-#$(call inherit-product, frameworks/base/data/sounds/AudioPackage3.mk)
-#$(call inherit-product, frameworks/base/data/sounds/AudioPackage4.mk)
-#$(call inherit-product, frameworks/base/data/sounds/AudioPackage5.mk)
-#$(call inherit-product, frameworks/base/data/sounds/AudioPackage6.mk)
-#$(call inherit-product, frameworks/base/data/sounds/AudioPackage7.mk)
-=======
+
 $(call inherit-product, frameworks/base/data/sounds/AudioPackageElements.mk)
 $(call inherit-product, frameworks/base/data/sounds/AudioPackageStars.mk)
 
->>>>>>> d6fe8d2... Audio: Organize, include only newer ringtones:data/sounds/NewAudio.mk
+
