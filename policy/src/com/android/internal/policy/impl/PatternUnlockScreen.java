@@ -299,7 +299,7 @@ class PatternUnlockScreen extends LinearLayoutWithDefaultTouchRecepient
             layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
             layoutParams.addRule(RelativeLayout.RIGHT_OF, 0);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
             mCarrier.setLayoutParams(layoutParams);
             mCarrier.setGravity(Gravity.CENTER_HORIZONTAL);
             layoutParams = (RelativeLayout.LayoutParams) mDate.getLayoutParams();
@@ -336,7 +336,7 @@ class PatternUnlockScreen extends LinearLayoutWithDefaultTouchRecepient
             layoutParams.addRule(RelativeLayout.RIGHT_OF, 0);
             layoutParams.addRule(RelativeLayout.LEFT_OF, R.id.time);
             mCarrier.setLayoutParams(layoutParams);
-            mCarrier.setGravity(Gravity.LEFT);
+            mCarrier.setGravity(Gravity.RIGHT);
             layoutParams = (RelativeLayout.LayoutParams) mDate.getLayoutParams();
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 1);
             mDate.setLayoutParams(layoutParams);
