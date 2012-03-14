@@ -68,7 +68,7 @@ LOCAL_C_INCLUDES := \
     external/skia/include/core
 
 ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
-LOCAL_CFLAGS += -DQCOM_HARDWARE
+    LOCAL_CFLAGS += -DQCOM_HARDWARE
 endif
 
 LOCAL_MODULE:= libui
