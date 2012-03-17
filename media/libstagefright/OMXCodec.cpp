@@ -2465,12 +2465,14 @@ status_t OMXCodec::allocateOutputBuffersFromNativeWindow() {
             break;
         }
 
+#ifdef QCOM_CAMERA
 	private_handle_t *handle = (private_handle_t *)buf->handle;
         if(!handle) {
                 LOGE("Native Buffer handle is NULL");
                 break;
         }
         CHECK_EQ(def.nBufferSize, handle->size); //otherwise it might cause memory corruption issues. It may fail because of alignment or extradata.
+#endif
 
         sp<GraphicBuffer> graphicBuffer(new GraphicBuffer(buf, false));
         BufferInfo info;
@@ -4714,10 +4716,12 @@ status_t OMXCodec::stop() {
             if (state != OMX_StateExecuting) {
                 break;
             }
+#ifdef QCOM_HARDWARE
             else {
                 CODEC_LOGV("Component is still in executing state, fall through and move component"
                            " to idle");
             }
+#endif
             // else fall through to the idling code
             isError = true;
         }

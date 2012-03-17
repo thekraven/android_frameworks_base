@@ -242,10 +242,6 @@ public:
     // Example value: "21.0" or "-5". Write only.
     static const char KEY_GPS_ALTITUDE[];
 
-    //mmxtrem 
-    static const char LENSSHADE_DISABLE[]; 
-    static const char KEY_AUTO_EXPOSURE[]; 
-    static const char KEY_SUPPORTED_AUTO_EXPOSURE[]; 
 #ifdef QCOM_HARDWARE
     static const char KEY_SKIN_TONE_ENHANCEMENT[] ;
     static const char KEY_SUPPORTED_SKIN_TONE_ENHANCEMENT_MODES[] ;

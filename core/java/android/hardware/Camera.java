@@ -212,11 +212,13 @@ public class Camera {
 
         /**
          * The facing of the camera is the same as that of the screen.
+         * @hide
          */
         public static final int CAMERA_SUPPORT_MODE_ZSL = 2;
 
         /**
          * The facing of the camera is the same as that of the screen.
+         * @hide
          */
         public static final int CAMERA_SUPPORT_MODE_NONZSL = 3;
 
@@ -1734,12 +1736,17 @@ public class Camera {
         public static final String EFFECT_AQUA = "aqua";
 
         // Values for touch af/aec settings.
+        /** @hide */
         public static final String TOUCH_AF_AEC_OFF = "touch-off";
+        /** @hide */
         public static final String TOUCH_AF_AEC_ON = "touch-on";
 
         // Values for auto exposure settings.
+        /** @hide */
         public static final String AUTO_EXPOSURE_FRAME_AVG = "frame-average";
+        /** @hide */
         public static final String AUTO_EXPOSURE_CENTER_WEIGHTED = "center-weighted";
+        /** @hide */
         public static final String AUTO_EXPOSURE_SPOT_METERING = "spot-metering";
         // Values for antibanding settings.
         public static final String ANTIBANDING_AUTO = "auto";
@@ -1748,44 +1755,69 @@ public class Camera {
         public static final String ANTIBANDING_OFF = "off";
         //Values for ISO settings
 
+        /** @hide */
         public static final String ISO_AUTO = "auto";
+        /** @hide */
         public static final String ISO_HJR = "ISO_HJR";
+        /** @hide */
         public static final String ISO_100 = "ISO100";
+        /** @hide */
         public static final String ISO_200 = "ISO200";
+        /** @hide */
         public static final String ISO_400 = "ISO400";
+        /** @hide */
         public static final String ISO_800 = "ISO800";
+        /** @hide */
         public static final String ISO_1600 = "ISO1600";
 
         //Values for Lens Shading
 
+        /** @hide */
         public static final String LENSSHADE_ENABLE = "enable";
+        /** @hide */
         public static final String LENSSHADE_DISABLE= "disable";
 
+        /** @hide */
         public static final String HISTOGRAM_ENABLE = "enable";
+        /** @hide */
         public static final String HISTOGRAM_DISABLE= "disable";
 
+        /** @hide */
         public static final String SKIN_TONE_ENHANCEMENT_ENABLE = "enable";
+        /** @hide */
         public static final String SKIN_TONE_ENHANCEMENT_DISABLE= "disable";
 
         // Values for MCE settings.
+        /** @hide */
         public static final String MCE_ENABLE = "enable";
+        /** @hide */
         public static final String MCE_DISABLE = "disable";
 
         // Values for ZSL settings.
+        /** @hide */
         public static final String ZSL_ON = "on";
+        /** @hide */
         public static final String ZSL_OFF = "off";
 
         // Values for HDR Bracketing settings.
+        /** @hide */
         public static final String AE_BRACKET_HDR_OFF = "Off";
+        /** @hide */
         public static final String AE_BRACKET_HDR = "HDR";
+        /** @hide */
         public static final String AE_BRACKET = "AE-Bracket";
 
         // Values for HFR settings.
+        /** @hide */
         public static final String VIDEO_HFR_OFF = "off";
+        /** @hide */
         public static final String VIDEO_HFR_2X = "60";
+        /** @hide */
         public static final String VIDEO_HFR_3X = "90";
+        /** @hide */
         public static final String VIDEO_HFR_4X = "120";
 
+        /** @hide */
         public static final String KEY_AE_BRACKET_HDR = "ae-bracket-hdr";
 
         // Values for flash mode settings.
@@ -1819,6 +1851,12 @@ public class Camera {
 
         /**
          * Scene mode is off.
+         * @hide
+         */
+        public static final String SCENE_MODE_ASD = "asd";
+
+        /**
+         * Scene mode is auto ASD.
          */
         public static final String SCENE_MODE_ASD = "asd";
 
@@ -1898,11 +1936,15 @@ public class Camera {
          * Capture the naturally warm color of scenes lit by candles.
          */
         public static final String SCENE_MODE_CANDLELIGHT = "candlelight";
+        /** @hide */
         public static final String SCENE_MODE_BACKLIGHT = "backlight";
+        /** @hide */
         public static final String SCENE_MODE_FLOWERS = "flowers";
 
         // Values for auto scene detection settings.
+        /** @hide */
         public static final String SCENE_DETECT_OFF = "off";
+        /** @hide */
         public static final String SCENE_DETECT_ON = "on";
 
         /**
@@ -1942,6 +1984,7 @@ public class Camera {
          * Normal focus mode. Applications should call
          * {@link #autoFocus(AutoFocusCallback)} to start the focus in this
          * mode.
+         * @hide
          */
         public static final String FOCUS_MODE_NORMAL = "normal";
 
@@ -2045,22 +2088,34 @@ public class Camera {
 
         //Values for Continuous AF
 
+        /** @hide */
         public static final String CONTINUOUS_AF_OFF = "caf-off";
+        /** @hide */
         public static final String CONTINUOUS_AF_ON = "caf-on";
+        /** @hide */
         public static final String DENOISE_OFF = "denoise-off";
+        /** @hide */
         public static final String DENOISE_ON = "denoise-on";
 	// Values for Redeye Reduction settings.
+        /** @hide */
         public static final String REDEYE_REDUCTION_ENABLE = "enable";
+        /** @hide */
         public static final String REDEYE_REDUCTION_DISABLE = "disable";
 
         // Values for selectable zone af settings.
+        /** @hide */
         public static final String SELECTABLE_ZONE_AF_AUTO = "auto";
+        /** @hide */
         public static final String SELECTABLE_ZONE_AF_SPOTMETERING = "spot-metering";
+        /** @hide */
         public static final String SELECTABLE_ZONE_AF_CENTER_WEIGHTED = "center-weighted";
+        /** @hide */
         public static final String SELECTABLE_ZONE_AF_FRAME_AVERAGE = "frame-average";
 
         // Values for Face Detection settings.
+        /** @hide */
         public static final String FACE_DETECTION_OFF = "off";
+        /** @hide */
         public static final String FACE_DETECTION_ON = "on";
 
         private HashMap<String, String> mMap;
@@ -4335,7 +4390,7 @@ public class Camera {
          * changed after setting face detection.
          *
          * @param value FACE_DETECTION_XXX string constants.
-         *
+         * @hide
          */
         public void setFaceDetectionMode(String value) {
             set(KEY_FACE_DETECTION, value);
