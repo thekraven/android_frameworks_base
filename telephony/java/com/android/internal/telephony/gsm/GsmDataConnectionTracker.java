@@ -2467,5 +2467,4 @@ public final class GsmDataConnectionTracker extends DataConnectionTracker {
     protected void loge(String s) {
         Log.e(LOG_TAG, "[GsmDCT] " + s);
     }
-
 }

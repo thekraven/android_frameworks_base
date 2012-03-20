@@ -135,7 +135,7 @@ public:
     // This method will fail if the the SurfaceTexture is not currently
     // connected to the specified client API.
     virtual status_t disconnect(int api);
-
+	
     // updateTexImage sets the image contents of the target texture to that of
     // the most recently queued buffer.
     //
@@ -513,9 +513,6 @@ private:
     uint64_t mFrameCounter;
 
 #ifdef QCOM_HARDWARE
-    // mReqSize is the required buffer size speficied by the client.
-    int mReqSize;
-
     struct BufferInfo {
          int width;
          int height;

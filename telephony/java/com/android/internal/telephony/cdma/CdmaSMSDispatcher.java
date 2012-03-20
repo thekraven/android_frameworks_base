@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/*
+ * KD 9/4 - Modifications cribbed from inferiorhumanorgans' code that runs on
+ * the Optimus.  Thank God for small favors and actual shared repositories!
+ */
+
 package com.android.internal.telephony.cdma;
 
 
@@ -25,6 +30,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.os.AsyncResult;
 import android.os.Message;
 import android.os.SystemProperties;
 import android.preference.PreferenceManager;
@@ -32,6 +38,7 @@ import android.provider.Telephony;
 import android.provider.Telephony.Sms.Intents;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage.MessageClass;
+import android.util.Config;
 import android.util.Log;
 
 import com.android.internal.telephony.CommandsInterface;
@@ -49,14 +56,25 @@ import com.android.internal.util.BitwiseInputStream;
 import com.android.internal.util.HexDump;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import junit.framework.Assert;
 import android.content.res.Resources;
 
 
 final class CdmaSMSDispatcher extends SMSDispatcher {
     private static final String TAG = "CDMA";
+/*
+ * KD 9/4 - See comment at the top for origin
+ */
+        private static final String VIRGIN_MOBILE_MMS_ORIGINATING_ADDRESS = "9999999999";
+        private static final String VIRGIN_DEBUG_TAG = "SMSSMSSMSSMS[VM670]";
+        private static final String SMS_DEBUG_TAG = "SMSSMSSMSSMS";
+// End 
 
     private byte[] mLastDispatchedSmsFingerprint;
     private byte[] mLastAcknowledgedSmsFingerprint;
@@ -132,6 +150,8 @@ final class CdmaSMSDispatcher extends SMSDispatcher {
         int teleService = sms.getTeleService();
         boolean handled = false;
 
+                Log.d(SMS_DEBUG_TAG, "TeleService: " + teleService);
+
         if ((SmsEnvelope.TELESERVICE_VMN == teleService) ||
                 (SmsEnvelope.TELESERVICE_MWI == teleService)) {
             // handling Voicemail
@@ -149,6 +169,8 @@ final class CdmaSMSDispatcher extends SMSDispatcher {
                 (SmsEnvelope.TELESERVICE_WEMT == teleService)) &&
                 sms.isStatusReportMessage()) {
             handleCdmaStatusReport(sms);
+		Log.d(SMS_DEBUG_TAG, "isStausReport = " + sms.isStatusReportMessage());
+
             handled = true;
         } else if ((sms.getUserData() == null)) {
             if (false) {

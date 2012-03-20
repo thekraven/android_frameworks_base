@@ -444,8 +444,8 @@ void Layer::lockPageFlip(bool& recomputeVisibleRegions)
             mFlinger->signalEvent();
         }
 
-        if (mSurfaceTexture->updateTexImage() < NO_ERROR) {
-            // something happened!
+		if (mSurfaceTexture->updateTexImage() < NO_ERROR) { 
+		    // something happened!
             recomputeVisibleRegions = true;
             return;
         }

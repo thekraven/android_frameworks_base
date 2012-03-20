@@ -142,9 +142,6 @@ SurfaceTexture::SurfaceTexture(GLuint tex, bool allowSynchronousMode,
     mUseFenceSync(false),
 #endif
     mTexTarget(texTarget),
-#ifdef QCOM_HARDWARE
-    mReqSize(0),
-#endif
     mFrameCounter(0) {
     // Choose a name using the PID and a process-unique ID.
     mName = String8::format("unnamed-%d-%d", getpid(), createProcessUniqueId());
@@ -524,9 +521,6 @@ status_t SurfaceTexture::dequeueBuffer(int *outBuf, uint32_t w, uint32_t h,
             if (updateFormat) {
                 mPixelFormat = format;
             }
-#ifdef QCOM_HARDWARE
-	    checkBuffer((native_handle_t *)graphicBuffer->handle, mReqSize, usage);
-#endif
             mSlots[buf].mGraphicBuffer = graphicBuffer;
             mSlots[buf].mRequestBufferCalled = false;
             mSlots[buf].mFence = EGL_NO_SYNC_KHR;
@@ -807,14 +801,15 @@ status_t SurfaceTexture::performQcomOperation(int operation, int arg1, int arg2,
      ST_LOGV("SurfaceTexture::performQcomOperation operation=%d", operation);
 
      switch(operation) {
-        case NATIVE_WINDOW_SET_BUFFERS_SIZE:
-            mReqSize = arg1;
-            break;
-        case NATIVE_WINDOW_UPDATE_BUFFERS_GEOMETRY:
+        case NATIVE_WINDOW_SET_BUFFERS_SIZE: {  
+            int size = arg1;  
+            mGraphicBufferAlloc->setGraphicBufferSize(size);  
+        } break;  
+        case NATIVE_WINDOW_UPDATE_BUFFERS_GEOMETRY: {  
             mNextBufferInfo.width = arg1;
             mNextBufferInfo.height = arg2;
             mNextBufferInfo.format = arg3;
-            break;
+        } break;
         default: return BAD_VALUE;
      };
      return OK;
@@ -838,7 +833,7 @@ status_t SurfaceTexture::setScalingMode(int mode) {
     return OK;
 }
 
-status_t SurfaceTexture::updateTexImage() {
+status_t SurfaceTexture::updateTexImage() { 
     ST_LOGV("updateTexImage");
     Mutex::Autolock lock(mMutex);
 
@@ -857,9 +852,9 @@ status_t SurfaceTexture::updateTexImage() {
         EGLImageKHR image = mSlots[buf].mEglImage;
         EGLDisplay dpy = eglGetCurrentDisplay();
 #ifdef QCOM_HARDWARE
-	if (isGPUSupportedFormat(mSlots[buf].mGraphicBuffer->format)) {
-            // Update the GL texture object.
-            EGLImageKHR image = mSlots[buf].mEglImage;
+        if (isGPUSupportedFormat(mSlots[buf].mGraphicBuffer->format)) {   
+            // Update the GL texture object.  
+    		EGLImageKHR image = mSlots[buf].mEglImage;
 #else
         if (image == EGL_NO_IMAGE_KHR) {
             if (mSlots[buf].mGraphicBuffer == 0) {

@@ -165,6 +165,31 @@ const char CameraParameters::FOCUS_MODE_EDOF[] = "edof";
 const char CameraParameters::FOCUS_MODE_CONTINUOUS_VIDEO[] = "continuous-video";
 const char CameraParameters::FOCUS_MODE_CONTINUOUS_PICTURE[] = "continuous-picture";
 
+//mmxtrem 
+const char CameraParameters::AUTO_EXPOSURE_FRAME_AVG[] = "frame-average"; 
+const char CameraParameters::AUTO_EXPOSURE_CENTER_WEIGHTED[] = "center-weighted"; 
+const char CameraParameters::AUTO_EXPOSURE_SPOT_METERING[] = "spot-metering"; 
+const char CameraParameters::ISO_AUTO[] = "auto"; 
+const char CameraParameters::ISO_100[] = "ISO100"; 
+const char CameraParameters::ISO_200[] = "ISO200"; 
+const char CameraParameters::ISO_400[] = "ISO400"; 
+const char CameraParameters::LENSSHADE_DISABLE[] = "disable"; 
+const char CameraParameters::PIXEL_FORMAT_RAW[] = "raw"; 
+const char CameraParameters::KEY_AUTO_EXPOSURE[] = "auto-exposure"; 
+const char CameraParameters::KEY_SUPPORTED_AUTO_EXPOSURE[] = "auto-exposure-values"; 
+const char CameraParameters::KEY_SHARPNESS[] = "sharpness"; 
+const char CameraParameters::KEY_CONTRAST[] = "contrast"; 
+const char CameraParameters::KEY_SATURATION[] = "saturation"; 
+const char CameraParameters::KEY_ISO_MODE[] = "iso"; 
+const char CameraParameters::KEY_LENSSHADE[] = "lensshade"; 
+const char CameraParameters::KEY_SUPPORTED_ISO_MODES[] = "iso-values"; 
+const char CameraParameters::KEY_SUPPORTED_LENSSHADE_MODES[] = "lensshade-values"; 
+const char CameraParameters::KEY_GPS_LATITUDE_REF[] = "gps-latitude-ref"; 
+const char CameraParameters::KEY_GPS_LONGITUDE_REF[] = "gps-longitude-ref"; 
+const char CameraParameters::KEY_GPS_ALTITUDE_REF[] = "gps-altitude-ref"; 
+const char CameraParameters::KEY_GPS_STATUS[] = "gps-status"; 
+const char CameraParameters::KEY_EXIF_DATETIME[] = "exif-datetime"; 
+
 CameraParameters::CameraParameters()
                 : mMap()
 {
