@@ -183,7 +183,7 @@ public:
     /**
      * needsDithering - true if this surface needs dithering
      */
-    virtual bool needsDithering() const { return true; }
+    virtual bool needsDithering() const { return false; }
 
     /**
      * needsLinearFiltering - true if this surface's state requires filtering
