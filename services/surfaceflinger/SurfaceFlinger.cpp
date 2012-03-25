@@ -277,7 +277,7 @@ status_t SurfaceFlinger::readyToRun()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnable(GL_SCISSOR_TEST);
     glShadeModel(GL_FLAT);
-    glDisable(GL_DITHER);
+    glEnable(GL_DITHER);
     glDisable(GL_CULL_FACE);
 
     const uint16_t g0 = pack565(0x0F,0x1F,0x0F);
