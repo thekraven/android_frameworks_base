@@ -2257,10 +2257,7 @@ status_t MPEG4Source::read(
                     mBuffer = NULL;
 
                     if (mStatistics) mNumSamplesReadError++;
-<<<<<<< HEAD
 #ifndef QCOM_HARDWARE
-=======
->>>>>>> 3feb96f... frameworks/base: Add rendering statistics to Stagefright (Adapted)
                     return ERROR_MALFORMED;
 #else
                     srcOffset -= mNALLengthSize;
