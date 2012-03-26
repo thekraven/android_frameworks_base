@@ -241,30 +241,11 @@ public:
     // header.
     // Example value: "21.0" or "-5". Write only.
     static const char KEY_GPS_ALTITUDE[];
+
     //mmxtrem 
-    static const char AUTO_EXPOSURE_FRAME_AVG[]; 
-    static const char AUTO_EXPOSURE_CENTER_WEIGHTED[]; 
-    static const char AUTO_EXPOSURE_SPOT_METERING[]; 
-    static const char ISO_AUTO[]; 
-    static const char ISO_100[]; 
-    static const char ISO_200[]; 
-    static const char ISO_400[]; 
     static const char LENSSHADE_DISABLE[]; 
-    static const char PIXEL_FORMAT_RAW[]; 
     static const char KEY_AUTO_EXPOSURE[]; 
     static const char KEY_SUPPORTED_AUTO_EXPOSURE[]; 
-    static const char KEY_SHARPNESS[]; 
-    static const char KEY_CONTRAST[]; 
-    static const char KEY_SATURATION[]; 
-    static const char KEY_ISO_MODE[]; 
-    static const char KEY_LENSSHADE[]; 
-    static const char KEY_SUPPORTED_ISO_MODES[]; 
-    static const char KEY_SUPPORTED_LENSSHADE_MODES[]; 
-    static const char KEY_GPS_LATITUDE_REF[]; 
-    static const char KEY_GPS_LONGITUDE_REF[]; 
-    static const char KEY_GPS_ALTITUDE_REF[]; 
-    static const char KEY_GPS_STATUS[]; 
-    static const char KEY_EXIF_DATETIME[]; 
 #ifdef QCOM_HARDWARE
     static const char KEY_SKIN_TONE_ENHANCEMENT[] ;
     static const char KEY_SUPPORTED_SKIN_TONE_ENHANCEMENT_MODES[] ;

@@ -351,7 +351,6 @@ void CameraParameters::setOrientation(int orientation)
 }
 #endif
 
-
 //mmxtrem 
 const char CameraParameters::AUTO_EXPOSURE_FRAME_AVG[] = "frame-average"; 
 const char CameraParameters::AUTO_EXPOSURE_CENTER_WEIGHTED[] = "center-weighted"; 
