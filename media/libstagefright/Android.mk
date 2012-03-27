@@ -5,7 +5,6 @@ ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
 ifeq ($(TARGET_BOARD_PLATFORM),msm7x27a)
     LOCAL_CFLAGS += -DUSE_AAC_HW_DEC
 endif
-
 ifeq ($(TARGET_BOARD_PLATFORM),msm7x27)
     LOCAL_CFLAGS += -DTARGET7x27
 endif
