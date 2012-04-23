@@ -796,7 +796,7 @@ final class CdmaServiceStateTracker extends ServiceStateTracker {
                         if (states[13] != null) {
                             reasonForDenial = Integer.parseInt(states[13]);
                         }
-						if(states.length == 15 &&  
+                        if(states.length == 15 &&  
                            multimoderadio) {  
                                 if (states[14] != null) {  
                                    Log.w(LOG_TAG, "Multi-Mode RIL detected - Extraneous value: "  
@@ -809,8 +809,8 @@ final class CdmaServiceStateTracker extends ServiceStateTracker {
                 } else {
                     throw new RuntimeException("Warning! Wrong number of parameters returned from "
                                          + "RIL_REQUEST_REGISTRATION_STATE: expected " 
-										 + (multimoderadio?String.valueOf(15):String.valueOf(14))
-										 + ", got " + states.length); 
+                                         + (multimoderadio?String.valueOf(15):String.valueOf(14))
+                                         + ", got " + states.length); 
                 }
 
                 mRegistrationState = registrationState;

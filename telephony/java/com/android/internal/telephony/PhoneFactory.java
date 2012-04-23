@@ -131,7 +131,7 @@ public class PhoneFactory {
                 } else if ("mototegra".equals(sRILClassname)) {
                     Log.i(LOG_TAG, "Using Motorola Tegra2 RIL");
                     sCommandsInterface = new MotoTegraRIL(context, networkMode, cdmaSubscription);
-		        } else if ("mototegraworld".equals(sRILClassname)) {
+                } else if ("mototegraworld".equals(sRILClassname)) {
                     Log.i(LOG_TAG, "Using Motorola Tegra2 World Edition RIL");
                     sCommandsInterface = new MotoTegraWorldRIL(context, networkMode, cdmaSubscription);
                 } else if ("motow3g".equals(sRILClassname)) {
