@@ -112,7 +112,8 @@ SurfaceFlinger::SurfaceFlinger()
         mCanSkipComposition(false),
 #endif
         mConsoleSignals(0),
-        mSecureFrameBuffer(0)
+        mSecureFrameBuffer(0),
+        mUseDithering(false)
 {
     init();
 }
@@ -132,6 +133,10 @@ void SurfaceFlinger::init()
 
     property_get("debug.sf.ddms", value, "0");
     mDebugDDMS = atoi(value);
+
+    property_get("persist.sys.use_dithering", value, "0");
+    mUseDithering = atoi(value) == 1;
+
     if (mDebugDDMS) {
         DdmConnection::start(getServiceName());
     }
@@ -139,6 +144,7 @@ void SurfaceFlinger::init()
     LOGI_IF(mDebugRegion,       "showupdates enabled");
     LOGI_IF(mDebugBackground,   "showbackground enabled");
     LOGI_IF(mDebugDDMS,         "DDMS debugging enabled");
+    LOGI_IF(mUseDithering,      "use dithering");
 }
 
 SurfaceFlinger::~SurfaceFlinger()
@@ -444,13 +450,6 @@ bool SurfaceFlinger::threadLoop()
         // build the h/w work list
         handleWorkList();
     }
-
-#ifdef QCOM_HARDWARE
-    if (isRotationCompleted() == false) {
-        LOGD("Rotation is not finished. Skip the composition");
-        return true;
-    }
-#endif
 
     const DisplayHardware& hw(graphicPlane(0).displayHardware());
     if (LIKELY(hw.canDraw())) {
@@ -849,21 +848,6 @@ void SurfaceFlinger::unlockPageFlip(const LayerVector& currentLayers)
         layer->unlockPageFlip(planeTransform, mDirtyRegion);
     }
 }
-
-#ifdef QCOM_HARDWARE
-bool SurfaceFlinger::isRotationCompleted()
-{
-    const Vector< sp<LayerBase> >& currentLayers(mVisibleLayersSortedByZ);
-    const size_t count = currentLayers.size();
-
-    for (size_t i=0 ; i<count ; i++) {
-        if (currentLayers[i]->isRotated() == false) {
-            return false;
-        }
-    }
-    return true;
-}
-#endif
 
 void SurfaceFlinger::handleWorkList()
 {

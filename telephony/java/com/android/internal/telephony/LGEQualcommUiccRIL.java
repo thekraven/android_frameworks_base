@@ -34,6 +34,8 @@ import java.util.ArrayList;
  */
 public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterface {
     protected String mAid;
+    protected boolean mUSIM;
+    private int mSetPreferredNetworkType;
     private String mLastDataIface;
     boolean RILJ_LOGV = true;
     boolean RILJ_LOGD = true;
@@ -52,6 +54,7 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
 
         if (RILJ_LOGD) riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
 
+        rr.mp.writeInt(2);
         rr.mp.writeString(pin);
         rr.mp.writeString(mAid);
 
@@ -67,6 +70,7 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
 
         if (RILJ_LOGD) riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
 
+        rr.mp.writeInt(3);
         rr.mp.writeString(puk);
         rr.mp.writeString(newPin);
         rr.mp.writeString(mAid);
@@ -83,6 +87,7 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
 
         if (RILJ_LOGD) riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
 
+        rr.mp.writeInt(2);
         rr.mp.writeString(pin);
         rr.mp.writeString(mAid);
 
@@ -98,6 +103,7 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
 
         if (RILJ_LOGD) riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
 
+        rr.mp.writeInt(3);
         rr.mp.writeString(puk);
         rr.mp.writeString(newPin2);
         rr.mp.writeString(mAid);
@@ -114,6 +120,7 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
 
         if (RILJ_LOGD) riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
 
+        rr.mp.writeInt(3);
         rr.mp.writeString(oldPin);
         rr.mp.writeString(newPin);
         rr.mp.writeString(mAid);
@@ -130,6 +137,7 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
 
         if (RILJ_LOGD) riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
 
+        rr.mp.writeInt(3);
         rr.mp.writeString(oldPin2);
         rr.mp.writeString(newPin2);
         rr.mp.writeString(mAid);
@@ -159,6 +167,19 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
     setupDataCall(String radioTechnology, String profile, String apn,
             String user, String password, String authType, String ipVersion,
             Message result) {
+
+        RILRequest rrSPT = RILRequest.obtain(
+                121, null); //121 - RIL_REQUEST_VSS_SET_PDN_TABLE
+        rrSPT.mp.writeInt(1); // pdnId
+        rrSPT.mp.writeInt(apn.length()); // apnLength
+        rrSPT.mp.writeString(apn); // apn
+        rrSPT.mp.writeInt(0); // ipType
+        rrSPT.mp.writeInt(0); // inactivityTime
+        rrSPT.mp.writeInt(1); // enable
+        send(rrSPT);
+
+
+
         RILRequest rr
                 = RILRequest.obtain(RIL_REQUEST_SETUP_DATA_CALL, result);
 
@@ -188,6 +209,9 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
         //       but this request is also valid for SIM and RUIM
         RILRequest rr
                 = RILRequest.obtain(RIL_REQUEST_SIM_IO, result);
+
+        if (mUSIM)
+            path = path.replaceAll("7F20$","7FFF");
 
         rr.mp.writeInt(command);
         rr.mp.writeInt(fileid);
@@ -304,16 +328,26 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
         if (numApplications > 0) {
             IccCardApplication application = status.getApplication(appIndex);
             mAid = application.aid;
+            mUSIM = application.app_type
+                      == IccCardApplication.AppType.APPTYPE_USIM;
+            mSetPreferredNetworkType = mPreferredNetworkType;
+
             if (TextUtils.isEmpty(mAid))
                mAid = "";
             Log.d(LOG_TAG, "mAid " + mAid);
         }
+
         return status;
     }
 
     @Override
     protected DataCallState getDataCallState(Parcel p, int version) {
         DataCallState dataCall = new DataCallState();
+
+        boolean oldRil = needsOldRilFeature("datacall");
+
+        if (!oldRil)
+           return super.getDataCallState(p, version);
 
         dataCall.version = 4; // was dataCall.version = version;
         dataCall.cid = p.readInt();
@@ -341,6 +375,11 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
     responseSetupDataCall(Parcel p) {
         DataCallState dataCall;
 
+        boolean oldRil = needsOldRilFeature("datacall");
+
+        if (!oldRil)
+           return super.responseSetupDataCall(p);
+
         dataCall = new DataCallState();
         dataCall.version = 4;
         dataCall.cid = 0; // Integer.parseInt(p.readString());
@@ -365,4 +404,65 @@ public class LGEQualcommUiccRIL extends LGEQualcommRIL implements CommandsInterf
 
         return dataCall;
     }
+
+    @Override
+    public void getNeighboringCids(Message response) {
+        if (!getRadioState().isOn())
+            return;
+
+        RILRequest rr = RILRequest.obtain(
+                RILConstants.RIL_REQUEST_GET_NEIGHBORING_CELL_IDS, response);
+
+        if (RILJ_LOGD) riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
+
+        send(rr);
+    }
+
+    @Override
+    public void setCurrentPreferredNetworkType() {
+        if (RILJ_LOGD) riljLog("setCurrentPreferredNetworkType: " + mSetPreferredNetworkType);
+        setPreferredNetworkType(mSetPreferredNetworkType, null);
+    }
+
+    @Override
+    public void setPreferredNetworkType(int networkType , Message response) {
+        /**
+          * If not using a USIM, ignore LTE mode and go to 3G
+          */
+        if (!mUSIM && networkType == RILConstants.NETWORK_MODE_LTE_GSM_WCDMA) {
+            networkType = RILConstants.NETWORK_MODE_WCDMA_PREF;
+        }
+        mSetPreferredNetworkType = networkType;
+        super.setPreferredNetworkType(networkType, response);
+    }
+
+    @Override
+    protected Object
+    responseSignalStrength(Parcel p) {
+        int numInts = 12;
+        int response[];
+
+        boolean oldRil = needsOldRilFeature("signalstrength");
+        boolean noLte = false;
+
+        /* TODO: Add SignalStrength class to match RIL_SignalStrength */
+        response = new int[numInts];
+        for (int i = 0 ; i < numInts ; i++) {
+            if ((oldRil || noLte) && i > 6 && i < 12) {
+                response[i] = -1;
+            } else {
+                response[i] = p.readInt();
+            }
+            if (i == 7 && response[i] == 99) {
+                response[i] = -1;
+                noLte = true;
+            }
+            if (i == 8 && !noLte) {
+                response[i] *= -1;
+            }
+        }
+
+        return response;
+    }
+
 }
