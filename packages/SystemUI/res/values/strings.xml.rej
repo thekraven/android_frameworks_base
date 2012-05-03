@@ -1,0 +1,11 @@
+--- packages/SystemUI/res/values/strings.xml	2012-04-25 11:31:16.000000000 +0900
++++ packages/SystemUI/res/values/strings.xml	2012-04-30 10:53:24.049658000 +0900
+@@ -377,4 +377,8 @@
+ 
+     <!-- Content description of the clear button in the notification panel for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+     <string name="accessibility_clear_all">Clear all notifications.</string>
++
++    <!-- for Sense 4.0 style multitasking mod -->
++    <string name="recent_apps_title">Recent apps</string>
++
+ </resources>

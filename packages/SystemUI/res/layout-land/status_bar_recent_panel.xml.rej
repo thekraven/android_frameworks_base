@@ -1,0 +1,55 @@
+--- packages/SystemUI/res/layout-land/status_bar_recent_panel.xml	2012-04-25 11:31:16.000000000 +0900
++++ packages/SystemUI/res/layout-land/status_bar_recent_panel.xml	2012-04-27 14:05:59.391168000 +0900
+@@ -29,27 +29,33 @@
+         android:background="@drawable/status_bar_recents_background"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+-        android:layout_alignParentBottom="true"
+-        android:clipToPadding="false"
+-        android:clipChildren="false">
+-
+-        <com.android.systemui.recent.RecentsHorizontalScrollView android:id="@+id/recents_container"
+-            android:layout_width="wrap_content"
+-            android:layout_height="match_parent"
+-            android:layout_marginRight="@dimen/status_bar_recents_right_glow_margin"
+-            android:divider="@null"
+-            android:stackFromBottom="true"
+-            android:fadingEdge="horizontal"
+-            android:scrollbars="none"
+-            android:fadingEdgeLength="@dimen/status_bar_recents_fading_edge_length"
+-            android:layout_gravity="bottom|left"
+-            android:orientation="horizontal"
+-            android:clipToPadding="false"
+-            android:clipChildren="false">
++        android:layout_centerVertical="true">
++
++        <ImageView
++ 	    android:gravity="center"
++	    android:layout_width="match_parent"
++ 	    android:layout_height="match_parent"
++	    android:layout_marginTop="0.0dip"
++  	    android:src="@drawable/status_bar_recents_background"
++        />
++
++        <com.android.systemui.recent.RecentsHorizontalScrollView
++	    android:id="@+id/recents_container"
++	    android:layout_gravity="bottom|left|center"
++	    android:scrollbars="none"
++	    android:fadingEdge="none"
++	    android:fadingEdgeLength="0.0dip"
++	    android:clipChildren="false"
++	    android:clipToPadding="false"
++    	    android:layout_width="match_parent"
++	    android:layout_height="wrap_content"
++	    android:layout_marginRight="0.0dip"
++	    android:stackFromBottom="true"
++	    android:divider="@null">
+ 
+             <LinearLayout android:id="@+id/recents_linear_layout"
+-                android:layout_width="wrap_content"
+-                android:layout_height="match_parent"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
+                 android:orientation="horizontal"
+                 android:clipToPadding="false"
+                 android:clipChildren="false">
