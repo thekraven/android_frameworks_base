@@ -23,7 +23,7 @@
     <drawable name="ticker_background_color">#ff1d1d1d</drawable>
     <drawable name="status_bar_background">#ff000000</drawable>
     <drawable name="status_bar_recents_background_solid">#00000000</drawable>
-+    <drawable name="status_bar_recents_app_thumbnail_background">#00000000</drawable>
+    <drawable name="status_bar_recents_app_thumbnail_background">#00000000</drawable>
     <color name="status_bar_recents_app_label_color">#ffffffff</color>
     <drawable name="status_bar_notification_row_background_color">#ff090909</drawable>
     <drawable name="notification_header_bg">#FF000000</drawable>
