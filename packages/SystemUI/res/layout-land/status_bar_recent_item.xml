@@ -26,7 +26,6 @@
     android:paddingLeft="@dimen/status_bar_recents_item_padding">
 
     <RelativeLayout android:id="@+id/recent_item"
-        android:layout_gravity="center_vertical"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:paddingTop="@*android:dimen/status_bar_height"
@@ -41,7 +40,7 @@
             android:visibility="invisible">
             <ImageView android:id="@+id/app_thumbnail_image"
                 android:layout_width="120.0dip"
-                android:layout_height="191.0dip"
+                android:layout_height="150.0dip"
                 android:layout_marginTop="7.0dip"
                 android:layout_marginBottom="7.0dip"
                 android:scaleType="centerInside"
