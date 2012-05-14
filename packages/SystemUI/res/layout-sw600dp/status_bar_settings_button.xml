@@ -4,7 +4,7 @@
     <ImageView
          style="@style/StatusBarPanelSettingsIcon"/>
 
-    <TextView 
+    <TextView
          style="@style/StatusBarPanelSettingsContents"/>
 
     <Switch android:layout_width="wrap_content"
