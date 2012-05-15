@@ -40,9 +40,7 @@
             android:visibility="invisible">
             <ImageView android:id="@+id/app_thumbnail_image"
                 android:layout_width="120.0dip"
-                android:layout_height="150.0dip"
-                android:layout_marginTop="7.0dip"
-                android:layout_marginBottom="7.0dip"
+                android:layout_height="320.0dip"
                 android:scaleType="centerInside"
             />
         </FrameLayout>
@@ -51,8 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:layout_marginTop="32.0dip"
-            android:layout_below="@id/app_thumbnail"
+            android:layout_marginTop="232.0dip"
             android:maxWidth="35dp"
             android:maxHeight="35dp"
             android:scaleType="centerInside"
