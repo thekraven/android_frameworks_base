@@ -1945,6 +1945,42 @@ public final class Settings {
         public static final String NOTIFICATION_LIGHT_PULSE_DEFAULT_LED_OFF = "notification_light_pulse_default_led_off";
 
         /**
+         * What color to use for the missed call notification LED
+         * @hide
+         */
+        public static final String NOTIFICATION_LIGHT_PULSE_CALL_COLOR = "notification_light_pulse_call_color";
+
+        /**
+         * How long to flash the missed call notification LED
+         * @hide
+         */
+        public static final String NOTIFICATION_LIGHT_PULSE_CALL_LED_ON = "notification_light_pulse_call_led_on";
+
+        /**
+         * How long to wait between flashes for the missed call notification LED
+         * @hide
+         */
+        public static final String NOTIFICATION_LIGHT_PULSE_CALL_LED_OFF = "notification_light_pulse_call_led_off";
+
+        /**
+         * What color to use for the voicemail notification LED
+         * @hide
+         */
+        public static final String NOTIFICATION_LIGHT_PULSE_VMAIL_COLOR = "notification_light_pulse_vmail_color";
+
+        /**
+         * How long to flash the voicemail notification LED
+         * @hide
+         */
+        public static final String NOTIFICATION_LIGHT_PULSE_VMAIL_LED_ON = "notification_light_pulse_vmail_led_on";
+
+        /**
+         * How long to wait between flashes for the voicemail notification LED
+         * @hide
+         */
+        public static final String NOTIFICATION_LIGHT_PULSE_VMAIL_LED_OFF = "notification_light_pulse_vmail_led_off";
+
+        /**
          * Whether to use the custom LED values for the notification pulse LED.
          * @hide
          */
@@ -1971,6 +2007,13 @@ public final class Settings {
          * @hide
          */
         public static final String SHOW_TOUCHES = "show_touches";
+
+        /**
+         * The keylayout that will be used by EventHub instead of the default
+         * one.
+	 * @hide
+         */
+        public static final String KEYLAYOUT_OVERRIDES = "keylayout";
 
         /**
          * Log raw orientation data from {@link WindowOrientationListener} for use with the
@@ -2147,6 +2190,13 @@ public final class Settings {
          * @hide
          */
         public static final String WIDGET_BUTTONS = "expanded_widget_buttons";
+
+        /**
+         * Navigation controls to Use
+         *
+         * @hide
+         */
+        public static final String NAV_BUTTONS = "nav_buttons";
 
         /**
         * Notification Power Widget - Custom Brightness Mode
@@ -2410,6 +2460,9 @@ public final class Settings {
             LOCKSCREEN_SOUNDS_ENABLED,
             SHOW_WEB_SUGGESTIONS,
             NOTIFICATION_LIGHT_PULSE,
+            NOTIFICATION_LIGHT_PULSE_DEFAULT_COLOR,
+            NOTIFICATION_LIGHT_PULSE_DEFAULT_LED_ON,
+            NOTIFICATION_LIGHT_PULSE_DEFAULT_LED_OFF,
             SIP_CALL_OPTIONS,
             SIP_RECEIVE_CALLS,
             POINTER_SPEED,
@@ -2419,6 +2472,7 @@ public final class Settings {
             QUIET_HOURS_MUTE,
             QUIET_HOURS_STILL,
             QUIET_HOURS_DIM,
+            KEYLAYOUT_OVERRIDES,
         };
 
         // Settings moved to Settings.Secure
