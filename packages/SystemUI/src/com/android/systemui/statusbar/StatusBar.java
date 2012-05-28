@@ -25,6 +25,7 @@ import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.provider.Settings;
 import android.util.Slog;
 import android.util.Log;
 import android.view.Display;
@@ -85,11 +86,16 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
         }
     }
 
+    private boolean mShowNotificationCounts;
+
     public void start() {
         // First set up our views and stuff.
         mStatusBar = makeStatusBarView();
 
 	mStatusBarContainer.addView(mStatusBar);
+
+        mShowNotificationCounts = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NOTIF_COUNT, 0) == 1;
 
         // Connect in to the status bar manager service
         StatusBarIconList iconList = new StatusBarIconList();
