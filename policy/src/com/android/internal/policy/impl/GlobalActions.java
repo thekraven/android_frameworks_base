@@ -217,7 +217,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         mItems.add(
             new SinglePressAction(com.android.internal.R.drawable.ic_lock_reboot, R.string.global_action_reboot) {
                 public void onPress() {
-                    ShutdownThread.reboot(getUiContext(), "null", true);
+                    ShutdownThread.reboot(mContext, "null", true);
                 }
 
                 public boolean showDuringKeyguard() {
@@ -250,6 +250,22 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             new SinglePressAction(com.android.internal.R.drawable.ic_lock_screenshot, R.string.global_action_screenshot) {
                 public void onPress() {
                     takeScreenshot();
+                }
+
+                public boolean showDuringKeyguard() {
+                    return true;
+                }
+
+                public boolean showBeforeProvisioning() {
+                    return true;
+                }
+            });
+
+        // next: statusbar toggle
+	mItems.add(
+            new SinglePressAction(com.android.internal.R.drawable.ic_lock_statusbar, R.string.global_actions_statusbar_status) {
+                public void onPress() {
+                    Settings.System.putInt(mContext.getContentResolver(), Settings.System.STATUSBAR_STATE, Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_STATE, 1) == 1 ? 0 : 1);
                 }
 
                 public boolean showDuringKeyguard() {

@@ -17,7 +17,16 @@
 package android.util;
 
 import android.os.SystemProperties;
+import android.util.Log;
 
+import java.io.IOException;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+
+import java.io.*;
 
 /**
  * A structure describing general information about a display, such as its
@@ -27,6 +36,7 @@ import android.os.SystemProperties;
  * getWindowManager().getDefaultDisplay().getMetrics(metrics);</pre>
  */
 public class DisplayMetrics {
+   
     /**
      * Standard quantized DPI for low-density screens.
      */
@@ -154,12 +164,23 @@ public class DisplayMetrics {
     public DisplayMetrics() {
     }
     
+    public int mAppDensityDpi = 0;
+    public float mAppDensity = 0;
+    public float mAppScaledDensity = 0; 
+    public int mAppLayout = 0;
+    public int mScreenWidthDp = 0;
+    public int mScreenHeightDp = 0;
+    public int mScreenLayout = 0;
+
     public void setTo(DisplayMetrics o) {
         widthPixels = o.widthPixels;
         heightPixels = o.heightPixels;
-        density = o.density;
-        densityDpi = o.densityDpi;
-        scaledDensity = o.scaledDensity;
+
+	// PARANOID: PAD HOOK
+	density = mAppDensity == 0 ? o.density : mAppDensity;
+       	scaledDensity = mAppScaledDensity == 0 ? o.scaledDensity : mAppScaledDensity;
+       	densityDpi = mAppDensityDpi == 0 ? o.densityDpi : mAppDensityDpi;
+
         xdpi = o.xdpi;
         ydpi = o.ydpi;
         noncompatWidthPixels = o.noncompatWidthPixels;
@@ -186,7 +207,8 @@ public class DisplayMetrics {
     public String toString() {
         return "DisplayMetrics{density=" + density + ", width=" + widthPixels +
             ", height=" + heightPixels + ", scaledDensity=" + scaledDensity +
-            ", xdpi=" + xdpi + ", ydpi=" + ydpi + "}";
+            ", xdpi=" + xdpi + ", ydpi=" + ydpi + ", AppDpi=" + mAppDensityDpi + ", AppDen=" + mAppDensity + ", AppSDen=" + mAppScaledDensity + 
+			", AppLayout=" + mAppLayout + ", AppSW=" + mScreenWidthDp + ", AppSH=" + mScreenHeightDp + ", AppSL=" + mScreenLayout + "}";
     }
 
     private static int getDeviceDensity() {

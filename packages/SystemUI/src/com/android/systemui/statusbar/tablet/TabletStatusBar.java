@@ -16,6 +16,9 @@
 
 package com.android.systemui.statusbar.tablet;
 
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -495,7 +498,7 @@ public class TabletStatusBar extends StatusBar implements
             reloadAllNotificationIcons();
         }
     }
-
+	boolean mthing= true;
     protected View makeStatusBarView() {
         final Context context = mContext;
 
@@ -588,9 +591,33 @@ public class TabletStatusBar extends StatusBar implements
         mBackButton = (ImageView)sb.findViewById(R.id.back);
         mNavigationArea = (ViewGroup) sb.findViewById(R.id.navigationArea);
         mHomeButton = mNavigationArea.findViewById(R.id.home);
-        mMenuButton = mNavigationArea.findViewById(R.id.menu);
+        
+		mMenuButton = mNavigationArea.findViewById(R.id.menu);
+
         mRecentButton = mNavigationArea.findViewById(R.id.recent_apps);
-        mRecentButton.setOnClickListener(mOnClickListener);
+
+       
+               //PARANOID
+               mRecentButton.setOnLongClickListener(new OnLongClickListener() {
+                       public boolean onLongClick(View v) {
+                               try { Runtime.getRuntime().exec("input keyevent 82"); } catch (Exception ex) { }
+                               mthing = false;                        
+                               return true;        
+                        } } );
+
+       mRecentButton.setOnClickListener(new OnClickListener() {
+                       public void onClick(View v) {
+                               if (DEBUG) Slog.d(TAG, "clicked recent apps; disabled=" + mDisabled);
+                               if(mthing){
+                               if ((mDisabled & StatusBarManager.DISABLE_EXPAND) == 0) {
+                                   int msg = (mRecentsPanel.getVisibility() == View.VISIBLE)
+                                       ? MSG_CLOSE_RECENTS_PANEL : MSG_OPEN_RECENTS_PANEL;
+                                   mHandler.removeMessages(msg);
+                                   mHandler.sendEmptyMessage(msg);
+                               }
+                               } else
+                                       mthing = true;
+                       } } );
 
         LayoutTransition lt = new LayoutTransition();
         lt.setDuration(250);
@@ -1219,7 +1246,10 @@ public class TabletStatusBar extends StatusBar implements
         if (DEBUG) {
             Slog.d(TAG, (showMenu?"showing":"hiding") + " the MENU button");
         }
-        mMenuButton.setVisibility(showMenu ? View.VISIBLE : View.GONE);
+        
+		//PARANOID
+		mMenuButton.setVisibility(showMenu ? View.VISIBLE : View.GONE);
+		//mMenuButton.setVisibility( View.GONE);				
 
         // See above re: lights-out policy for legacy apps.
         if (showMenu) setLightsOn(true);
@@ -1363,25 +1393,13 @@ public class TabletStatusBar extends StatusBar implements
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            if (v == mRecentButton) {
-                onClickRecentButton();
-            } else if (v == mInputMethodSwitchButton) {
+            if (v == mInputMethodSwitchButton) {
                 onClickInputMethodSwitchButton();
             } else if (v == mCompatModeButton) {
                 onClickCompatModeButton();
             }
         }
     };
-
-    public void onClickRecentButton() {
-        if (DEBUG) Slog.d(TAG, "clicked recent apps; disabled=" + mDisabled);
-        if ((mDisabled & StatusBarManager.DISABLE_EXPAND) == 0) {
-            int msg = (mRecentsPanel.getVisibility() == View.VISIBLE)
-                ? MSG_CLOSE_RECENTS_PANEL : MSG_OPEN_RECENTS_PANEL;
-            mHandler.removeMessages(msg);
-            mHandler.sendEmptyMessage(msg);
-        }
-    }
 
     public void onClickInputMethodSwitchButton() {
         if (DEBUG) Slog.d(TAG, "clicked input methods panel; disabled=" + mDisabled);

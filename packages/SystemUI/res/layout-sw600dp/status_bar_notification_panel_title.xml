@@ -35,7 +35,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:shrinkColumns="2,4"
-        android:stretchColumns="8"
+        android:stretchColumns="7"
         >
         <TableRow>
 
@@ -222,14 +222,14 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:singleLine="true"
-            android:textSize="92sp"
+            android:textSize="72sp"
             android:textColor="#ffffff" />
         <TextView android:id="@+id/time_fg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:singleLine="true"
-            android:textSize="92sp"
+            android:textSize="72sp"
             android:textColor="#ffffff" />
     </com.android.systemui.statusbar.tablet.HoloClock>
 

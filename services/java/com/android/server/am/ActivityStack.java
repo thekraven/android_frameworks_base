@@ -842,9 +842,10 @@ final class ActivityStack {
             mThumbnailHeight = h =
                 res.getDimensionPixelSize(com.android.internal.R.dimen.thumbnail_height);
         }
-
         if (w > 0) {
-            return mService.mWindowManager.screenshotApplications(who.appToken, w, h);
+			try{		
+			        return mService.mWindowManager.screenshotApplications(who.appToken, w, h);
+			} catch(Exception e) {}
         }
         return null;
     }

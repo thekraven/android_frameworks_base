@@ -29,6 +29,7 @@ import android.graphics.drawable.Drawable.ConstantState;
 import android.graphics.PorterDuff.Mode;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -201,9 +202,22 @@ public class Resources {
     public Resources(AssetManager assets, DisplayMetrics metrics,
             Configuration config, CompatibilityInfo compInfo) {
         mAssets = assets;
+
+	//PARANOID: FORWARD HOOK
+	try{
+		mMetrics.mAppDensityDpi = metrics.mAppDensityDpi;
+		mMetrics.mAppDensity = metrics.mAppDensity;
+		mMetrics.mAppScaledDensity = metrics.mAppScaledDensity; 
+		mMetrics.mAppLayout = metrics.mAppLayout;
+		mMetrics.mScreenWidthDp = metrics.mScreenWidthDp; 
+		mMetrics.mScreenHeightDp = metrics.mScreenHeightDp;
+		mMetrics.mScreenLayout = metrics.mScreenLayout;
+	} catch(Exception e){}
+
         mMetrics.setToDefaults();
         mCompatibilityInfo = compInfo;
-        updateConfiguration(config, metrics);
+        if(updateStringCache(null))
+        	updateConfiguration(config, metrics);
         assets.ensureStringBlocks();
     }
 
@@ -1453,7 +1467,20 @@ public class Resources {
                 mCompatibilityInfo = compat;
             }
             if (metrics != null) {
-                mMetrics.setTo(metrics);
+
+	    //PARANOID: FORWARD HOOK
+	    try{						
+		mMetrics.mAppDensityDpi = metrics.mAppDensityDpi;
+		mMetrics.mAppDensity = metrics.mAppDensity;
+		mMetrics.mAppScaledDensity = metrics.mAppScaledDensity; 
+		mMetrics.mAppLayout = metrics.mAppLayout;
+		mMetrics.mScreenWidthDp = metrics.mScreenWidthDp; 
+		mMetrics.mScreenHeightDp = metrics.mScreenHeightDp;
+		mMetrics.mScreenLayout = metrics.mScreenLayout;
+	    } catch(Exception e){}
+
+            mMetrics.setTo(metrics);
+
             }
             // NOTE: We should re-arrange this code to create a Display
             // with the CompatibilityInfo that is used everywhere we deal
@@ -1515,10 +1542,24 @@ public class Resources {
                             == Configuration.HARDKEYBOARDHIDDEN_YES) {
                 keyboardHidden = Configuration.KEYBOARDHIDDEN_SOFT;
             }
+	
+	   // PARANOID: PAL HOOK
+	   try {
+		   // SET NEW LAYOUT
+		   if (mMetrics.mAppLayout != 0) {										
+		      mConfiguration.screenWidthDp = mMetrics.mScreenWidthDp == 0 ? mConfiguration.screenWidthDp : mMetrics.mScreenWidthDp;
+		      mConfiguration.screenHeightDp = mMetrics.mScreenHeightDp == 0 ? mConfiguration.screenHeightDp : mMetrics.mScreenHeightDp;
+		      mConfiguration.screenLayout = mMetrics.mScreenLayout == 0 ? mConfiguration.screenLayout : mMetrics.mScreenLayout;
+		      mConfiguration.smallestScreenWidthDp = Math.min(mMetrics.mScreenWidthDp, mMetrics.mScreenHeightDp);
+		   } 
+           } catch (Exception e){ 
+		e.printStackTrace();
+	   }	
+
             mAssets.setConfiguration(mConfiguration.mcc, mConfiguration.mnc,
                     locale, mConfiguration.orientation,
                     mConfiguration.touchscreen,
-                    (int)(mMetrics.density*160), mConfiguration.keyboard,
+                    (int)(mMetrics.density * 160), mConfiguration.keyboard,
                     keyboardHidden, mConfiguration.navigation, width, height,
                     mConfiguration.smallestScreenWidthDp,
                     mConfiguration.screenWidthDp, mConfiguration.screenHeightDp,
@@ -1918,6 +1959,13 @@ public class Resources {
         synchronized (mTmpValue) {
             mAssets.recreateStringBlocks();
         }
+    }
+
+    /**
+     * @hide
+     */
+    public boolean updateStringCache(String parameters){
+	return SystemProperties.get(Configuration.SCREENLAYOUT_ID).hashCode() == Configuration.SCREENLAYOUT_CONFIG;
     }
  
     /*package*/ Drawable loadDrawable(TypedValue value, int id)

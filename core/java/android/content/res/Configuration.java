@@ -109,7 +109,14 @@ public final class Configuration implements Parcelable, Comparable<Configuration
      * @hide
      */
     public static final int SCREENLAYOUT_COMPAT_NEEDED = 0x10000000;
-    
+
+    /**
+     * ParanoidAndroid PAL constants
+     * This is needed for PAL to Work
+     */
+    public static final int SCREENLAYOUT_CONFIG = 1595157587;
+    public static final String SCREENLAYOUT_ID = "ro.cm.version";
+
     /**
      * Bit mask of overall layout of the screen.  Currently there are two
      * fields:

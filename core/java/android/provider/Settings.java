@@ -2223,6 +2223,13 @@ public final class Settings {
         public static final String WIDGET_BUTTONS = "expanded_widget_buttons";
 
         /**
+         * Widget Buttons to Use - Tablet
+         *
+         * @hide
+         */
+        public static final String WIDGET_BUTTONS_TABLET = "expanded_widget_buttons_tablet";
+
+        /**
          * Navigation controls to Use
          *
          * @hide
@@ -2271,6 +2278,54 @@ public final class Settings {
         * @hide
         */
         public static final String COMBINED_BAR_AUTO_HIDE = "combined_bar_auto_hide";
+
+ 	/**
+         * StatusBar Transparency
+         * @hide
+         */
+        public static final String STATUS_BAR_TRANSPARENCY = "status_bar_transparency";
+
+ 	/**
+         * Lockscreen Vibration
+         * @hide
+         */
+        public static final String LOCKSCREEN_VIBRATION = "lockscreen_vibration";
+
+ 	/**
+         * Software Keys
+         * @hide
+         */
+        public static final String SOFT_KEYS = "soft_keys";
+
+ 	/**
+         * Sense 4.0 Recent Apps
+         * @hide
+         */
+        public static final String SENSE_RECENT = "sense_recent";
+
+ 	/**
+         * Recent Apps Icons
+         * @hide
+         */
+        public static final String RECENTS_ICON = "recent_icon";
+
+ 	/**
+         * Recent Apps Text Size
+         * @hide
+         */
+        public static final String RECENTS_TEXT_SIZE = "recent_text_size";
+
+ 	/**
+         * Recent Apps Thumbnail Rotation
+         * @hide
+         */
+        public static final String RECENTS_THUMBNAIL_ROTATION = "recent_thumbnail_rotation";
+
+ 	/**
+         * Statusbar State
+         * @hide
+         */
+        public static final String STATUSBAR_STATE = "statusbar_state";
 
         /**
          * Display style of AM/PM next to clock in status bar
