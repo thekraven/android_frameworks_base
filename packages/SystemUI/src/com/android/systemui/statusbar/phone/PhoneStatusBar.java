@@ -126,6 +126,7 @@ public class PhoneStatusBar extends StatusBar {
     private static final boolean CLOSE_PANEL_WHEN_EMPTIED = true;
 
     private boolean mShowClock;
+    private boolean mSenseRecent;
     private boolean mBrightnessControl;
     private boolean mAutoBrightness;
 
@@ -261,6 +262,8 @@ public class PhoneStatusBar extends StatusBar {
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SCREEN_BRIGHTNESS_MODE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SENSE_RECENT), false, this);
             update();
         }
 
@@ -276,6 +279,35 @@ public class PhoneStatusBar extends StatusBar {
             mAutoBrightness = Settings.System.getInt(resolver,
                     Settings.System.SCREEN_BRIGHTNESS_MODE, 0) ==
                     Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
+            mSenseRecent = Settings.System.getInt(resolver, Settings.System.SENSE_RECENT, 0) == 1;
+            updateRecentsPanel();
+        }
+    }
+
+    class mSoftKeysObserver extends ContentObserver {
+        mSoftKeysObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+	    resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SOFT_KEYS), false, this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+		if(Settings.System.getInt(mContext.getContentResolver(), Settings.System.SOFT_KEYS, mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0) == 1){
+		    if(mNavigationBarView != null){
+			mNavigationBarView.unregisterReceivers();
+			WindowManagerImpl.getDefault().removeView(mNavigationBarView);
+		    }
+		    mNavigationBarView = (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar, null);
+	            mNavigationBarView.setDisabledFlags(mDisabled);
+		    addNavigationBar();
+		}
+		repositionNavigationBar();
+		
         }
     }
 
@@ -319,6 +351,8 @@ public class PhoneStatusBar extends StatusBar {
 
         SettingsObserver observer = new SettingsObserver(mHandler);
         observer.observe();
+        mSoftKeysObserver softkeys = new mSoftKeysObserver(mHandler);
+	softkeys.observe();
 
         // Lastly, call to the icon policy to install/update all the icons.
         mIconPolicy = new PhoneStatusBarPolicy(mContext);
@@ -445,6 +479,7 @@ public class PhoneStatusBar extends StatusBar {
 //        if (wimaxRSSI != null) {
 //            mNetworkController.addWimaxIconView(wimaxRSSI);
 //        }
+
         // Recents Panel
         mRecentTasksLoader = new RecentTasksLoader(context);
         updateRecentsPanel();
@@ -497,8 +532,7 @@ public class PhoneStatusBar extends StatusBar {
 
         // Provide RecentsPanelView with a temporary parent to allow layout params to work.
         LinearLayout tmpRoot = new LinearLayout(mContext);
-        mRecentsPanel = (RecentsPanelView) LayoutInflater.from(mContext).inflate(
-                R.layout.status_bar_recent_panel, tmpRoot, false);
+        mRecentsPanel = (RecentsPanelView) LayoutInflater.from(mContext).inflate(mSenseRecent ? R.layout.status_bar_recent_panel_sense : R.layout.status_bar_recent_panel, tmpRoot, false);
         mRecentsPanel.setRecentTasksLoader(mRecentTasksLoader);
         mRecentTasksLoader.setRecentsPanel(mRecentsPanel);
         mRecentsPanel.setOnTouchListener(new TouchOutsideListener(MSG_CLOSE_RECENTS_PANEL,
@@ -2541,4 +2575,3 @@ public class PhoneStatusBar extends StatusBar {
         }
     }
 }
-

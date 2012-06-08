@@ -52,7 +52,7 @@ public class LocationController extends BroadcastReceiver implements CompoundBut
     private boolean mGps;
 
     public LocationController(Context context, CompoundButton checkbox) {
-	this(context);
+        this(context);
         mContext = context;
         mGps = getGps();
         mCheckBox = checkbox;
@@ -61,7 +61,7 @@ public class LocationController extends BroadcastReceiver implements CompoundBut
     }
 
     public void onCheckedChanged(CompoundButton view, boolean checked) {
-	Settings.Secure.setLocationProviderEnabled(mContext.getContentResolver(), LocationManager.GPS_PROVIDER, checked);
+        Settings.Secure.setLocationProviderEnabled(mContext.getContentResolver(), LocationManager.GPS_PROVIDER, checked);
     }
 
     public LocationController(Context context) {

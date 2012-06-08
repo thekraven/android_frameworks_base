@@ -58,6 +58,7 @@ import android.os.SystemProperties;
 import android.os.UEventObserver;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.util.ExtendedPropertiesUtils;
 
 import com.android.internal.R;
 import com.android.internal.app.ShutdownThread;
@@ -187,17 +188,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     static final int LONG_PRESS_HOME_RECENT_DIALOG = 1;
     static final int LONG_PRESS_HOME_RECENT_SYSTEM_UI = 2;
 
-    static final int LONG_PRESS_MENU_NOTHING = 0;
-    static final int LONG_PRESS_MENU_SEARCH = 1;
-
-    // Masks for checking presence of hardware keys.
-    // Must match values in core/res/res/values/config.xml
-    private static final int KEY_MASK_HOME = 0x01;
-    private static final int KEY_MASK_BACK = 0x02;
-    private static final int KEY_MASK_MENU = 0x04;
-    private static final int KEY_MASK_SEARCH = 0x08;
-    private static final int KEY_MASK_APP_SWITCH = 0x10;
-
     // wallpaper is at the bottom, though the window manager may move it.
     static final int WALLPAPER_LAYER = 2;
     static final int APPLICATION_LAYER = 2;
@@ -317,7 +307,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     int mStatusBarHeight;
     final ArrayList<WindowState> mStatusBarPanels = new ArrayList<WindowState>();
     WindowState mNavigationBar = null;
-    boolean mHasNavigationBar = false;
+    boolean mHasNavigationBar;
     int mNavigationBarWidth = 0, mNavigationBarHeight = 0;
 
     WindowState mKeyguard = null;
@@ -477,9 +467,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // What we do when the user long presses on home
     private int mLongPressOnHomeBehavior = -1;
 
-    // What we do when the user long presses on menu
-    private int mLongPressOnMenuBehavior = -1;
-
     // Screenshot trigger states
     // Time to volume and power must be pressed within this interval of each other.
     private static final long ACTION_CHORD_DEBOUNCE_DELAY_MILLIS = 150;
@@ -535,6 +522,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     "fancy_rotation_anim"), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.ACCELEROMETER_ROTATION_ANGLES), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SOFT_KEYS), false, this);
             updateSettings();
         }
 
@@ -869,37 +858,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
     }
 
-    private void handleLongPressOnMenu() {
-        if (mLongPressOnMenuBehavior < 0) {
-            if ((mContext.getResources().getInteger(
-                    R.integer.config_deviceHardwareKeys) & KEY_MASK_SEARCH) == 0) {
-                // Hardware search key not present
-                mLongPressOnMenuBehavior = LONG_PRESS_MENU_SEARCH;
-            } else {
-                mLongPressOnMenuBehavior = LONG_PRESS_MENU_NOTHING;
-            }
-        }
-
-        if (mLongPressOnMenuBehavior == LONG_PRESS_MENU_SEARCH) {
-            performHapticFeedbackLw(null, HapticFeedbackConstants.LONG_PRESS, false);
-            triggerVirtualKeypress(KeyEvent.KEYCODE_SEARCH);
-        }
-    }
-
-    private void triggerVirtualKeypress(final int keyCode) {
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    mWindowManager.injectKeyEvent(
-                            new KeyEvent(KeyEvent.ACTION_DOWN, keyCode), true);
-                    mWindowManager.injectKeyEvent(
-                            new KeyEvent(KeyEvent.ACTION_UP, keyCode), true);
-                } catch(RemoteException e) {
-                }
-            }
-        }).start();
-    }
-
     /**
      * Create (if necessary) and show or dismiss the recent apps dialog according
      * according to the requested behavior.
@@ -1094,25 +1052,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 ? com.android.internal.R.dimen.status_bar_height
                 : com.android.internal.R.dimen.system_bar_height);
 
-        mHasNavigationBar = mContext.getResources().getBoolean(
-                com.android.internal.R.bool.config_showNavigationBar);
-        // Allow a system property to override this. Used by the emulator.
-        // See also hasNavigationBar().
-        String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
-        if (! "".equals(navBarOverride)) {
-            if      (navBarOverride.equals("1")) mHasNavigationBar = false;
-            else if (navBarOverride.equals("0")) mHasNavigationBar = true;
-        }
-
-        mNavigationBarHeight = mHasNavigationBar
-                ? mContext.getResources().getDimensionPixelSize(
-                    com.android.internal.R.dimen.navigation_bar_height)
-                : 0;
-        mNavigationBarWidth = mHasNavigationBar
-                ? mContext.getResources().getDimensionPixelSize(
-                    com.android.internal.R.dimen.navigation_bar_width)
-                : 0;
-
         if ("portrait".equals(SystemProperties.get("persist.demo.hdmirotation"))) {
             mHdmiRotation = mPortraitRotation;
         } else {
@@ -1136,6 +1075,19 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.VOLUME_WAKE_SCREEN, 0) == 1);
             mVolBtnMusicControls = (Settings.System.getInt(resolver,
                     Settings.System.VOLBTN_MUSIC_CONTROLS, 1) == 1);
+            
+            int mDefaultDensity = Integer.parseInt(ExtendedPropertiesUtils.getProperty("rom_phone_base"));
+	    mHasNavigationBar = Settings.System.getInt(mContext.getContentResolver(), Settings.System.SOFT_KEYS, mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0) == 1 && SystemProperties.getInt("ro.sf.lcd_density", mDefaultDensity) > Integer.parseInt(ExtendedPropertiesUtils.getProperty("rom_tablet_base", String.valueOf(mDefaultDensity)));
+
+            mNavigationBarHeight = mHasNavigationBar
+                ? mContext.getResources().getDimensionPixelSize(
+                    com.android.internal.R.dimen.navigation_bar_height)
+                : 0;
+            mNavigationBarWidth = mHasNavigationBar
+                ? mContext.getResources().getDimensionPixelSize(
+                    com.android.internal.R.dimen.navigation_bar_width)
+                : 0;
+
             int accelerometerDefault = Settings.System.getInt(resolver,
                     Settings.System.ACCELEROMETER_ROTATION, DEFAULT_ACCELEROMETER_ROTATION);
             
@@ -1827,36 +1779,26 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             // Hijack modified menu keys for debugging features
             final int chordBug = KeyEvent.META_SHIFT_ON;
 
-            if (down) {
-                if (repeatCount == 0) {
-                    if (mEnableShiftMenuBugReports && (metaState & chordBug) == chordBug) {
-                        Intent intent = new Intent(Intent.ACTION_BUG_REPORT);
-                        mContext.sendOrderedBroadcast(intent, null);
-                        return -1;
-                    } else if (SHOW_PROCESSES_ON_ALT_MENU &&
-                            (metaState & KeyEvent.META_ALT_ON) == KeyEvent.META_ALT_ON) {
-                        Intent service = new Intent();
-                        service.setClassName(mContext, "com.android.server.LoadAverageService");
-                        ContentResolver res = mContext.getContentResolver();
-                        boolean shown = Settings.System.getInt(
-                                res, Settings.System.SHOW_PROCESSES, 0) != 0;
-                        if (!shown) {
-                            mContext.startService(service);
-                        } else {
-                            mContext.stopService(service);
-                        }
-                        Settings.System.putInt(
-                                res, Settings.System.SHOW_PROCESSES, shown ? 0 : 1);
-                        return -1;
+            if (down && repeatCount == 0) {
+                if (mEnableShiftMenuBugReports && (metaState & chordBug) == chordBug) {
+                    Intent intent = new Intent(Intent.ACTION_BUG_REPORT);
+                    mContext.sendOrderedBroadcast(intent, null);
+                    return -1;
+                } else if (SHOW_PROCESSES_ON_ALT_MENU &&
+                        (metaState & KeyEvent.META_ALT_ON) == KeyEvent.META_ALT_ON) {
+                    Intent service = new Intent();
+                    service.setClassName(mContext, "com.android.server.LoadAverageService");
+                    ContentResolver res = mContext.getContentResolver();
+                    boolean shown = Settings.System.getInt(
+                            res, Settings.System.SHOW_PROCESSES, 0) != 0;
+                    if (!shown) {
+                        mContext.startService(service);
+                    } else {
+                        mContext.stopService(service);
                     }
-                } else if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
-                    if (!keyguardOn) {
-                        handleLongPressOnMenu();
-                        if (mLongPressOnMenuBehavior != LONG_PRESS_MENU_NOTHING) {
-                            // Do not open menu when key is released
-                            return -1;
-                        }
-                    }
+                    Settings.System.putInt(
+                            res, Settings.System.SHOW_PROCESSES, shown ? 0 : 1);
+                    return -1;
                 }
             }
         } else if (keyCode == KeyEvent.KEYCODE_SEARCH) {

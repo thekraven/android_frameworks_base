@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2012 ParanoidAndroid Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.android.systemui.statusbar.policy;
 
 import android.content.BroadcastReceiver;
@@ -20,7 +36,7 @@ public class SoundController extends BroadcastReceiver  implements CompoundButto
     private boolean mSoundMode;
 
     public SoundController(Context context, CompoundButton checkbox) {
-	this(context);
+        this(context);
         mContext = context;
         mSoundMode = getSoundMode();
         mCheckBox = checkbox;
@@ -41,7 +57,7 @@ public class SoundController extends BroadcastReceiver  implements CompoundButto
     }
 
     public void onCheckedChanged(CompoundButton view, boolean checked) {
-	AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         am.setRingerMode(checked ? AudioManager.RINGER_MODE_NORMAL : AudioManager.RINGER_MODE_SILENT);
     }
 
@@ -54,13 +70,12 @@ public class SoundController extends BroadcastReceiver  implements CompoundButto
 
     private boolean getSoundMode() {
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-
-	switch (am.getRingerMode()) {
-	    case AudioManager.RINGER_MODE_SILENT:
-		return false;
-	    case AudioManager.RINGER_MODE_NORMAL:
-		return true;
-	}
+        switch (am.getRingerMode()) {
+            case AudioManager.RINGER_MODE_SILENT:
+                return false;
+            case AudioManager.RINGER_MODE_NORMAL:
+                return true;
+        }
         return false;
     }
 

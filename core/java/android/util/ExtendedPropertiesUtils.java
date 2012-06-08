@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012 ParanoidAndroid Team
  */
+
 package android.util;
 
 import android.os.SystemProperties;
@@ -23,10 +24,16 @@ public class ExtendedPropertiesUtils {
         try {
             String[] props = readFile(PARANOID_PROPIERTIES).split("\n");
             for(int i=0; i<props.length; i++)
-				if(props[i].contains("=") && props[i].substring(0, props[i].lastIndexOf("=")).equals(prop) )
-					return props[i].replace(prop+"=", "").trim();	
-		} catch (Exception e) { e.printStackTrace(); }
+			if(props[i].contains("=") && props[i].substring(0, props[i].lastIndexOf("=")).equals(prop))
+				return props[i].replace(prop+"=", "").trim();	
+		} catch (Exception e) {
+                     e.printStackTrace(); 
+                }
         return orElse.trim();
+    }
+
+    public static String getProperty(String prop){
+        return getProperty(prop, null);
     }
 
     public static String getProperty(String prop, String orElse) {
@@ -36,16 +43,27 @@ public class ExtendedPropertiesUtils {
 		if(props[i].contains("=")){
 			if(props[i].substring(0, props[i].lastIndexOf("=")).equals(prop)){
 				String result = props[i].replace(prop+"=", "").trim();	
-				if (result.contains("rom_tablet_base") || result.contains("rom_phone_base"))
-					result = getProperty(result, orElse);
-				else if (result.contains("rom_current_base"))
+				if (result.contains("rom_current_base"))
 					result = SystemProperties.get("ro.sf.lcd_density", orElse);
+                                else if (!isParsableToInt(result))
+					result = getProperty(result, orElse);
 				return result;	
 			}
 		}
-	}
-        } catch (Exception e) { e.printStackTrace(); }
+	    }
+        } catch (Exception e) {
+              e.printStackTrace();
+        }
         return orElse.trim();
+    }
+
+    public static boolean isParsableToInt(String toParse){
+        try {
+            Integer.parseInt(toParse);
+            return true;
+        } catch(Exception e){
+            return false;
+        }
     }
 
     public static void fillArray(){

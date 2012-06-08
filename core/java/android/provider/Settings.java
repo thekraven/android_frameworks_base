@@ -1937,6 +1937,11 @@ public final class Settings {
          */
         public static final String NOTIFICATION_LIGHT_PULSE = "notification_light_pulse";
 
+        /** Sprint MWI Quirk: Show message wait indicator notifications
+         * @hide
+         */
+        public static final String ENABLE_MWI_NOTIFICATION = "enable_mwi_notification";
+
         /**
          * Whether the battery LED should repeatedly flash when the battery is low
          * on charge. The value is boolean (1 or 0).
@@ -2009,11 +2014,6 @@ public final class Settings {
          * @hide
          */
         public static final String NOTIFICATION_LIGHT_PULSE_CUSTOM_VALUES = "notification_light_pulse_custom_values";
-
-        /** Sprint MWI Quirk: Show message wait indicator notifications
-         * @hide
-         */
-        public static final String ENABLE_MWI_NOTIFICATION = "enable_mwi_notification";
 
         /**
          * Show pointer location on screen?
@@ -2279,54 +2279,6 @@ public final class Settings {
         */
         public static final String COMBINED_BAR_AUTO_HIDE = "combined_bar_auto_hide";
 
- 	/**
-         * StatusBar Transparency
-         * @hide
-         */
-        public static final String STATUS_BAR_TRANSPARENCY = "status_bar_transparency";
-
- 	/**
-         * Lockscreen Vibration
-         * @hide
-         */
-        public static final String LOCKSCREEN_VIBRATION = "lockscreen_vibration";
-
- 	/**
-         * Software Keys
-         * @hide
-         */
-        public static final String SOFT_KEYS = "soft_keys";
-
- 	/**
-         * Sense 4.0 Recent Apps
-         * @hide
-         */
-        public static final String SENSE_RECENT = "sense_recent";
-
- 	/**
-         * Recent Apps Icons
-         * @hide
-         */
-        public static final String RECENTS_ICON = "recent_icon";
-
- 	/**
-         * Recent Apps Text Size
-         * @hide
-         */
-        public static final String RECENTS_TEXT_SIZE = "recent_text_size";
-
- 	/**
-         * Recent Apps Thumbnail Rotation
-         * @hide
-         */
-        public static final String RECENTS_THUMBNAIL_ROTATION = "recent_thumbnail_rotation";
-
- 	/**
-         * Statusbar State
-         * @hide
-         */
-        public static final String STATUSBAR_STATE = "statusbar_state";
-
         /**
          * Display style of AM/PM next to clock in status bar
          * 0: Normal display (Eclair stock)
@@ -2379,6 +2331,48 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_IME_SWITCHER = "status_bar_ime_switcher";
+
+ 	/**
+         * StatusBar Transparency
+         * @hide
+         */
+        public static final String STATUS_BAR_TRANSPARENCY = "status_bar_transparency";
+
+ 	/**
+         * Lockscreen Vibration
+         * @hide
+         */
+        public static final String LOCKSCREEN_VIBRATION = "lockscreen_vibration";
+
+ 	/**
+         * Software Keys
+         * @hide
+         */
+        public static final String SOFT_KEYS = "soft_keys";
+
+ 	/**
+         * Sense 4.0 Recent Apps
+         * @hide
+         */
+        public static final String SENSE_RECENT = "sense_recent";
+
+ 	/**
+         * Recent Apps Icons
+         * @hide
+         */
+        public static final String RECENTS_ICON = "recent_icon";
+
+ 	/**
+         * Recent Apps Text Size
+         * @hide
+         */
+        public static final String RECENTS_TEXT_SIZE = "recent_text_size";
+
+ 	/**
+         * Statusbar State
+         * @hide
+         */
+        public static final String STATUSBAR_STATE = "statusbar_state";
 
         /**
          * Whether to use a separate delay for "slide to unlock" and security
@@ -2485,6 +2479,12 @@ public final class Settings {
          * @hide
          */
         public static final String QUIET_HOURS_DIM = "quiet_hours_dim";
+
+        /**
+         * Sets the lockscreen background style
+         * @hide
+         */
+        public static final String LOCKSCREEN_BACKGROUND = "lockscreen_background";
 
         /**
          * Show the weather on the lock screen

@@ -312,8 +312,8 @@
     <!-- label for item that screenshots in phone options dialog -->
     <string name="global_action_screenshot">Screenshot</string>
 
-   <!-- label for statusbar toggle in options dialog -->
-   <string name="global_actions_statusbar_status">Toggle StatusBar</string>
+    <!-- label for statusbar toggle in options dialog -->
+    <string name="global_actions_statusbar_status">Toggle Statusbar</string>
 
     <!-- Button to reboot the phone, within the Reboot Options dialog -->
     <string name="reboot_reboot">Reboot</string>

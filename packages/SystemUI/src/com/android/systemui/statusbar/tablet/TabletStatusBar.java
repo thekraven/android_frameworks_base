@@ -16,9 +16,6 @@
 
 package com.android.systemui.statusbar.tablet;
 
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -30,6 +27,7 @@ import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.StatusBarManager;
+import android.database.ContentObserver;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -216,11 +214,33 @@ public class TabletStatusBar extends StatusBar implements
     // to some other configuration change).
     CustomTheme mCurrentTheme;
     private boolean mRecreating = false;
+    private boolean mUseTabletSoftKeys = false;
+    private Handler mConfigHandler;
 
+
+    private final class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SOFT_KEYS), false, this);
+        }
+
+        @Override public void onChange(boolean selfChange) {
+            recreateStatusBar();
+        }
+    }
 
     protected void addPanelWindows() {
         final Context context = mContext;
         final Resources res = mContext.getResources();
+
+	mConfigHandler = new Handler();
+        SettingsObserver settingsObserver = new SettingsObserver(mConfigHandler);
+        settingsObserver.observe();
 
         // Notification Panel
         mNotificationPanel = (NotificationPanel)View.inflate(context,
@@ -237,8 +257,6 @@ public class TabletStatusBar extends StatusBar implements
 
         if (mHasDockBattery) {
             mDockBatteryController.addIconView((ImageView)mNotificationPanel.findViewById(R.id.dock_battery));
-            mDockBatteryController.addLabelView(
-                    (TextView)mNotificationPanel.findViewById(R.id.dock_battery_text));
         }
         // Bt
         mBluetoothController.addIconView(
@@ -335,33 +353,31 @@ public class TabletStatusBar extends StatusBar implements
 
         // Recents Panel
         mRecentTasksLoader = new RecentTasksLoader(context);
-        mRecentsPanel = (RecentsPanelView) View.inflate(context,
-                R.layout.status_bar_recent_panel, null);
-        mRecentsPanel.setVisibility(View.GONE);
+        mRecentsPanel = (RecentsPanelView) View.inflate(context, R.layout.status_bar_recent_panel, null);
         mRecentsPanel.setSystemUiVisibility(View.STATUS_BAR_DISABLE_BACK);
         mRecentsPanel.setOnTouchListener(new TouchOutsideListener(MSG_CLOSE_RECENTS_PANEL,
                 mRecentsPanel));
         mRecentsPanel.setRecentTasksLoader(mRecentTasksLoader);
         mRecentTasksLoader.setRecentsPanel(mRecentsPanel);
         mStatusBarView.setIgnoreChildren(2, mRecentButton, mRecentsPanel);
-
-        lp = new WindowManager.LayoutParams(
-                (int) res.getDimension(R.dimen.status_bar_recents_width),
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL,
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                    | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
-                    | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
-                    | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                PixelFormat.TRANSLUCENT);
-        lp.gravity = Gravity.BOTTOM | Gravity.LEFT;
-        lp.setTitle("RecentsPanel");
-        lp.windowAnimations = R.style.Animation_RecentPanel;
-        lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
-                | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
+	lp = new WindowManager.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                        | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+                        | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
+                        | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                    PixelFormat.TRANSLUCENT);
+            lp.gravity = Gravity.BOTTOM | Gravity.LEFT;
+            lp.setTitle("RecentsPanel");
+            lp.windowAnimations = R.style.Animation_RecentPanel;
+            lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
+                    | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
 
         WindowManagerImpl.getDefault().addView(mRecentsPanel, lp);
         mRecentsPanel.setBar(this);
+	mRecentsPanel.show(false, false);
 
         // Input methods Panel
         mInputMethodsPanel = (InputMethodsPanel) View.inflate(context,
@@ -498,7 +514,7 @@ public class TabletStatusBar extends StatusBar implements
             reloadAllNotificationIcons();
         }
     }
-	boolean mthing= true;
+
     protected View makeStatusBarView() {
         final Context context = mContext;
 
@@ -575,8 +591,6 @@ public class TabletStatusBar extends StatusBar implements
         if (mHasDockBattery) {
             mDockBatteryController = new DockBatteryController(mContext);
             mDockBatteryController.addIconView((ImageView)sb.findViewById(R.id.dock_battery));
-            mDockBatteryController.addLabelView(
-                    (TextView)sb.findViewById(R.id.dock_battery_text));
         }
 
         mBluetoothController = new BluetoothController(mContext);
@@ -591,33 +605,13 @@ public class TabletStatusBar extends StatusBar implements
         mBackButton = (ImageView)sb.findViewById(R.id.back);
         mNavigationArea = (ViewGroup) sb.findViewById(R.id.navigationArea);
         mHomeButton = mNavigationArea.findViewById(R.id.home);
-        
-		mMenuButton = mNavigationArea.findViewById(R.id.menu);
-
+        mMenuButton = mNavigationArea.findViewById(R.id.menu);
         mRecentButton = mNavigationArea.findViewById(R.id.recent_apps);
+        mRecentButton.setOnClickListener(mOnClickListener);
 
-       
-               //PARANOID
-               mRecentButton.setOnLongClickListener(new OnLongClickListener() {
-                       public boolean onLongClick(View v) {
-                               try { Runtime.getRuntime().exec("input keyevent 82"); } catch (Exception ex) { }
-                               mthing = false;                        
-                               return true;        
-                        } } );
+	mUseTabletSoftKeys = Settings.System.getInt(mContext.getContentResolver(), Settings.System.SOFT_KEYS, mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0) == 1;
+	mNavigationArea.setVisibility(mUseTabletSoftKeys ? View.VISIBLE : View.GONE);
 
-       mRecentButton.setOnClickListener(new OnClickListener() {
-                       public void onClick(View v) {
-                               if (DEBUG) Slog.d(TAG, "clicked recent apps; disabled=" + mDisabled);
-                               if(mthing){
-                               if ((mDisabled & StatusBarManager.DISABLE_EXPAND) == 0) {
-                                   int msg = (mRecentsPanel.getVisibility() == View.VISIBLE)
-                                       ? MSG_CLOSE_RECENTS_PANEL : MSG_OPEN_RECENTS_PANEL;
-                                   mHandler.removeMessages(msg);
-                                   mHandler.sendEmptyMessage(msg);
-                               }
-                               } else
-                                       mthing = true;
-                       } } );
 
         LayoutTransition lt = new LayoutTransition();
         lt.setDuration(250);
@@ -1058,6 +1052,7 @@ public class TabletStatusBar extends StatusBar implements
         }
     }
 
+
     public void disable(int state) {
         int old = mDisabled;
         int diff = state ^ old;
@@ -1246,10 +1241,7 @@ public class TabletStatusBar extends StatusBar implements
         if (DEBUG) {
             Slog.d(TAG, (showMenu?"showing":"hiding") + " the MENU button");
         }
-        
-		//PARANOID
-		mMenuButton.setVisibility(showMenu ? View.VISIBLE : View.GONE);
-		//mMenuButton.setVisibility( View.GONE);				
+        mMenuButton.setVisibility(showMenu ? View.VISIBLE : View.GONE);
 
         // See above re: lights-out policy for legacy apps.
         if (showMenu) setLightsOn(true);
@@ -1383,23 +1375,27 @@ public class TabletStatusBar extends StatusBar implements
         }
     }
 
-    private void sendKey(KeyEvent key) {
-        try {
-            if (DEBUG) Slog.d(TAG, "injecting key event: " + key);
-            mWindowManager.injectInputEventNoWait(key);
-        } catch (RemoteException ex) {
-        }
-    }
-
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            if (v == mInputMethodSwitchButton) {
+            if (v == mRecentButton) {
+                onClickRecentButton();
+            } else if (v == mInputMethodSwitchButton) {
                 onClickInputMethodSwitchButton();
             } else if (v == mCompatModeButton) {
                 onClickCompatModeButton();
             }
         }
     };
+
+    public void onClickRecentButton() {
+        if (DEBUG) Slog.d(TAG, "clicked recent apps; disabled=" + mDisabled);
+        if ((mDisabled & StatusBarManager.DISABLE_EXPAND) == 0) {
+            int msg = (mRecentsPanel.getVisibility() == View.VISIBLE)
+                ? MSG_CLOSE_RECENTS_PANEL : MSG_OPEN_RECENTS_PANEL;
+            mHandler.removeMessages(msg);
+            mHandler.sendEmptyMessage(msg);
+        }
+    }
 
     public void onClickInputMethodSwitchButton() {
         if (DEBUG) Slog.d(TAG, "clicked input methods panel; disabled=" + mDisabled);
@@ -1993,7 +1989,7 @@ public class TabletStatusBar extends StatusBar implements
         }
     };
 
-    public class TouchOutsideListener implements View.OnTouchListener {
+    public class TouchOutsideListener implements View.OnTouchListener{
         private int mMsg;
         private StatusBarPanel mPanel;
 
