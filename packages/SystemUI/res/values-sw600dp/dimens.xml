@@ -33,9 +33,9 @@
     <!-- How far the thumbnail for a recent app appears from left edge -->
     <dimen name="status_bar_recents_thumbnail_left_margin">28dp</dimen>
     <!-- Upper width limit for application icon -->
-    <dimen name="status_bar_recents_app_icon_max_width">84dp</dimen>
+    <dimen name="status_bar_recents_app_icon_max_width">64dp</dimen>
     <!-- Upper height limit for application icon -->
-    <dimen name="status_bar_recents_app_icon_max_height">84dp</dimen>
+    <dimen name="status_bar_recents_app_icon_max_height">64dp</dimen>
 
     <!-- Size of application icon -->
     <dimen name="status_bar_recents_thumbnail_width">300dp</dimen>
