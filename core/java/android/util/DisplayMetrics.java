@@ -17,16 +17,7 @@
 package android.util;
 
 import android.os.SystemProperties;
-import android.util.Log;
 
-import java.io.IOException;
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-
-import java.io.*;
 
 /**
  * A structure describing general information about a display, such as its
@@ -35,8 +26,7 @@ import java.io.*;
  * <pre> DisplayMetrics metrics = new DisplayMetrics();
  * getWindowManager().getDefaultDisplay().getMetrics(metrics);</pre>
  */
-public class DisplayMetrics {
-   
+public class DisplayMetrics extends ExtendedPropertiesUtils {
     /**
      * Standard quantized DPI for low-density screens.
      */
@@ -161,26 +151,46 @@ public class DisplayMetrics {
      */
     public float noncompatYdpi;
 
+    // LOCAL PROPERTIES
+    public void paranoidHook(String Message) {
+        if ( paranoidGetActive() ) {
+            density = paranoidGetDensity() == 0 ? density : paranoidGetDensity();
+            scaledDensity = paranoidGetScaledDensity() == 0 ? scaledDensity : paranoidGetScaledDensity();
+            densityDpi = paranoidGetDpi() == 0 ? densityDpi : paranoidGetDpi();
+            //noncompatDensity = paranoidGetDensity() == 0 ? noncompatDensity : paranoidGetDensity();
+            //noncompatScaledDensity = paranoidGetScaledDensity() == 0 ? noncompatScaledDensity : paranoidGetScaledDensity();
+            //xdpi = paranoidGetDpi() == 0 ? xdpi : (float)paranoidGetDpi();
+            //ydpi = paranoidGetDpi() == 0 ? ydpi : (float)paranoidGetDpi();
+            Log.i("PARANOID:" + Message, "App=" + paranoidGetName() + " <<PAD.Hooked:" + 
+                paranoidGetDpi() + "dpi" );    
+        }
+
+        Log.i("PARANOID:" + Message, 
+            "Report... App=" + paranoidGetName() +
+            " density=" + density +
+            " densityDpi=" + densityDpi +
+            " scaledDensity=" + scaledDensity +
+            " widthPixels=" + widthPixels + 
+            " heightPixels=" + heightPixels +
+            " xdpi=" + xdpi +
+            " ydpi=" + ydpi +
+            " noncompatWidthPixels=" + noncompatWidthPixels +
+            " noncompatHeightPixels=" + noncompatHeightPixels +
+            " noncompatDensity=" + noncompatDensity +
+            " noncompatScaledDensity=" + noncompatScaledDensity +
+            " noncompatXdpi=" + noncompatXdpi +
+            " noncompatYdpi=" + noncompatYdpi );
+    }
+
     public DisplayMetrics() {
     }
     
-    public int mAppDensityDpi = 0;
-    public float mAppDensity = 0;
-    public float mAppScaledDensity = 0; 
-    public int mAppLayout = 0;
-    public int mScreenWidthDp = 0;
-    public int mScreenHeightDp = 0;
-    public int mScreenLayout = 0;
-
     public void setTo(DisplayMetrics o) {
         widthPixels = o.widthPixels;
         heightPixels = o.heightPixels;
-
-	// PARANOID: PAD HOOK
-	density = mAppDensity == 0 ? o.density : mAppDensity;
-       	scaledDensity = mAppScaledDensity == 0 ? o.scaledDensity : mAppScaledDensity;
-       	densityDpi = mAppDensityDpi == 0 ? o.densityDpi : mAppDensityDpi;
-
+        density = o.density;
+        densityDpi = o.densityDpi;
+        scaledDensity = o.scaledDensity;
         xdpi = o.xdpi;
         ydpi = o.ydpi;
         noncompatWidthPixels = o.noncompatWidthPixels;
@@ -189,6 +199,7 @@ public class DisplayMetrics {
         noncompatScaledDensity = o.noncompatScaledDensity;
         noncompatXdpi = o.noncompatXdpi;
         noncompatYdpi = o.noncompatYdpi;
+        paranoidHook("Display.setTo()");
     }
     
     public void setToDefaults() {
@@ -201,14 +212,14 @@ public class DisplayMetrics {
         ydpi = DENSITY_DEVICE;
         noncompatWidthPixels = 0;
         noncompatHeightPixels = 0;
+        paranoidHook("Display.setToDefaults()");
     }
 
     @Override
     public String toString() {
         return "DisplayMetrics{density=" + density + ", width=" + widthPixels +
             ", height=" + heightPixels + ", scaledDensity=" + scaledDensity +
-            ", xdpi=" + xdpi + ", ydpi=" + ydpi + ", AppDpi=" + mAppDensityDpi + ", AppDen=" + mAppDensity + ", AppSDen=" + mAppScaledDensity + 
-			", AppLayout=" + mAppLayout + ", AppSW=" + mScreenWidthDp + ", AppSH=" + mScreenHeightDp + ", AppSL=" + mScreenLayout + "}";
+            ", xdpi=" + xdpi + ", ydpi=" + ydpi + "}";
     }
 
     private static int getDeviceDensity() {

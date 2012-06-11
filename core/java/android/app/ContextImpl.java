@@ -142,7 +142,7 @@ class ReceiverRestrictedContext extends ContextWrapper {
  * Common implementation of Context API, which provides the base
  * context object for Activity and other application components.
  */
-class ContextImpl extends Context {
+public class ContextImpl extends Context {
     private final static String TAG = "ApplicationContext";
     private final static boolean DEBUG = false;
 
@@ -1487,7 +1487,7 @@ class ContextImpl extends Context {
         return file;
     }
 
-    static ContextImpl createSystemContext(ActivityThread mainThread) {
+    public static ContextImpl createSystemContext(ActivityThread mainThread) {
         ContextImpl context = new ContextImpl();
         context.init(Resources.getSystem(), mainThread);
         return context;
@@ -1512,14 +1512,16 @@ class ContextImpl extends Context {
         mOuterContext = this;
     }
 
-    final void init(LoadedApk packageInfo,
+    public final void init(LoadedApk packageInfo,
             IBinder activityToken, ActivityThread mainThread) {
         init(packageInfo, activityToken, mainThread, null, null);
     }
 
-    final void init(LoadedApk packageInfo,
+    public final void init(LoadedApk packageInfo,
                 IBinder activityToken, ActivityThread mainThread,
                 Resources container, String basePackageName) {
+
+        paranoidInit(mainThread);
         mPackageInfo = packageInfo;
         mBasePackageName = basePackageName != null ? basePackageName : packageInfo.mPackageName;
         mResources = mPackageInfo.getResources(mainThread);
@@ -1536,11 +1538,11 @@ class ContextImpl extends Context {
         }
         mMainThread = mainThread;
         mContentResolver = new ApplicationContentResolver(this, mainThread);
-
         setActivityToken(activityToken);
     }
 
-    final void init(Resources resources, ActivityThread mainThread) {
+    public final void init(Resources resources, ActivityThread mainThread) {
+        paranoidInit(mainThread);
         mPackageInfo = null;
         mBasePackageName = null;
         mResources = resources;

@@ -16,6 +16,7 @@
 
 package android.content.res;
 
+import android.util.ExtendedPropertiesUtils;
 import com.android.internal.util.XmlUtils;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -29,7 +30,6 @@ import android.graphics.drawable.Drawable.ConstantState;
 import android.graphics.PorterDuff.Mode;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -70,7 +70,7 @@ import libcore.icu.NativePluralRules;
  * <p>For more information about using resources, see the documentation about <a
  * href="{@docRoot}guide/topics/resources/index.html">Application Resources</a>.</p>
  */
-public class Resources {
+public class Resources extends ExtendedPropertiesUtils {
     static final String TAG = "Resources";
     private static final boolean DEBUG_LOAD = false;
     private static final boolean DEBUG_CONFIG = false;
@@ -199,25 +199,30 @@ public class Resources {
      *  info when it's null.
      * @hide
      */
+
+    public void paranoidHook() {
+        mConfiguration.active = true;        
+        mConfiguration.paranoidOverride(this);
+        mConfiguration.paranoidHook("Res().mConfiguration");
+
+        mTmpConfig.active = true;        
+        mTmpConfig.paranoidOverride(this);
+        mTmpConfig.paranoidHook("Res().mTmpConfig");
+
+        mMetrics.paranoidOverride(this);
+        mMetrics.paranoidHook("Res().mMetrics");
+    }
+
     public Resources(AssetManager assets, DisplayMetrics metrics,
             Configuration config, CompatibilityInfo compInfo) {
         mAssets = assets;
-
-	//PARANOID: FORWARD HOOK
-	try{
-		mMetrics.mAppDensityDpi = metrics.mAppDensityDpi;
-		mMetrics.mAppDensity = metrics.mAppDensity;
-		mMetrics.mAppScaledDensity = metrics.mAppScaledDensity; 
-		mMetrics.mAppLayout = metrics.mAppLayout;
-		mMetrics.mScreenWidthDp = metrics.mScreenWidthDp; 
-		mMetrics.mScreenHeightDp = metrics.mScreenHeightDp;
-		mMetrics.mScreenLayout = metrics.mScreenLayout;
-	} catch(Exception e){}
-
         mMetrics.setToDefaults();
+
+        paranoidOverride( assets );
+        paranoidHook();
+
         mCompatibilityInfo = compInfo;
-        if(updateStringCache(null))
-        	updateConfiguration(config, metrics);
+        updateConfiguration(config, metrics);
         assets.ensureStringBlocks();
     }
 
@@ -234,7 +239,6 @@ public class Resources {
                 ret = new Resources();
                 mSystem = ret;
             }
-
             return ret;
         }
     }
@@ -1466,21 +1470,8 @@ public class Resources {
             if (compat != null) {
                 mCompatibilityInfo = compat;
             }
-            if (metrics != null) {
-
-	    //PARANOID: FORWARD HOOK
-	    try{						
-		mMetrics.mAppDensityDpi = metrics.mAppDensityDpi;
-		mMetrics.mAppDensity = metrics.mAppDensity;
-		mMetrics.mAppScaledDensity = metrics.mAppScaledDensity; 
-		mMetrics.mAppLayout = metrics.mAppLayout;
-		mMetrics.mScreenWidthDp = metrics.mScreenWidthDp; 
-		mMetrics.mScreenHeightDp = metrics.mScreenHeightDp;
-		mMetrics.mScreenLayout = metrics.mScreenLayout;
-	    } catch(Exception e){}
-
-            mMetrics.setTo(metrics);
-
+            if (metrics != null) {   
+                mMetrics.setTo(metrics);
             }
             // NOTE: We should re-arrange this code to create a Display
             // with the CompatibilityInfo that is used everywhere we deal
@@ -1542,19 +1533,12 @@ public class Resources {
                             == Configuration.HARDKEYBOARDHIDDEN_YES) {
                 keyboardHidden = Configuration.KEYBOARDHIDDEN_SOFT;
             }
-	
-	   // PARANOID: PAL HOOK
-	   try {
-		   // SET NEW LAYOUT
-		   if (mMetrics.mAppLayout != 0) {										
-		      mConfiguration.screenWidthDp = mMetrics.mScreenWidthDp == 0 ? mConfiguration.screenWidthDp : mMetrics.mScreenWidthDp;
-		      mConfiguration.screenHeightDp = mMetrics.mScreenHeightDp == 0 ? mConfiguration.screenHeightDp : mMetrics.mScreenHeightDp;
-		      mConfiguration.screenLayout = mMetrics.mScreenLayout == 0 ? mConfiguration.screenLayout : mMetrics.mScreenLayout;
-		      mConfiguration.smallestScreenWidthDp = Math.min(mMetrics.mScreenWidthDp, mMetrics.mScreenHeightDp);
-		   } 
-           } catch (Exception e){ 
-		e.printStackTrace();
-	   }	
+
+             Log.i("PARANOID:Res.Assets", 
+                    "App=" + mConfiguration.paranoidGetName() +
+                    " scwidth=" + mConfiguration.paranoidGetScreenWidthDp() +
+                    " scheight=" + mConfiguration.paranoidGetScreenHeightDp() +
+                    " scLay=" + mConfiguration.paranoidGetScreenLayout() );
 
             mAssets.setConfiguration(mConfiguration.mcc, mConfiguration.mnc,
                     locale, mConfiguration.orientation,
@@ -1959,13 +1943,6 @@ public class Resources {
         synchronized (mTmpValue) {
             mAssets.recreateStringBlocks();
         }
-    }
-
-    /**
-     * @hide
-     */
-    public boolean updateStringCache(String parameters){
-	return SystemProperties.get(Configuration.SCREENLAYOUT_ID).hashCode() == Configuration.SCREENLAYOUT_CONFIG;
     }
  
     /*package*/ Drawable loadDrawable(TypedValue value, int id)

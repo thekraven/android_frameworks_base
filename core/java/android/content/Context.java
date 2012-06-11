@@ -16,6 +16,7 @@
 
 package android.content;
 
+import android.util.ExtendedPropertiesUtils;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
@@ -48,7 +49,7 @@ import java.io.InputStream;
  * up-calls for application-level operations such as launching activities,
  * broadcasting and receiving intents, etc.
  */
-public abstract class Context {
+public abstract class Context extends ExtendedPropertiesUtils {
     /**
      * File creation mode: the default mode, where the created file can only
      * be accessed by the calling application (or all applications sharing the

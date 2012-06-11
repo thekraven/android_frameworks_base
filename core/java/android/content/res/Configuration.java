@@ -17,6 +17,7 @@
 
 package android.content.res;
 
+import android.util.ExtendedPropertiesUtils;
 import android.content.pm.ActivityInfo;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -37,7 +38,7 @@ import java.util.Locale;
  * with {@link android.app.Activity#getResources}:</p>
  * <pre>Configuration config = getResources().getConfiguration();</pre>
  */
-public final class Configuration implements Parcelable, Comparable<Configuration> {
+public final class Configuration extends ExtendedPropertiesUtils implements Parcelable, Comparable<Configuration> {
     /**
      * Current user preference for the scaling factor for fonts, relative
      * to the base density scaling.
@@ -109,14 +110,7 @@ public final class Configuration implements Parcelable, Comparable<Configuration
      * @hide
      */
     public static final int SCREENLAYOUT_COMPAT_NEEDED = 0x10000000;
-
-    /**
-     * ParanoidAndroid PAL constants
-     * This is needed for PAL to Work
-     */
-    public static final int SCREENLAYOUT_CONFIG = 1595157587;
-    public static final String SCREENLAYOUT_ID = "ro.cm.version";
-
+    
     /**
      * Bit mask of overall layout of the screen.  Currently there are two
      * fields:
@@ -318,19 +312,60 @@ public final class Configuration implements Parcelable, Comparable<Configuration
      */
     public int seq;
     
+    public boolean active = false;
+
+    // LOCAL PROPERTIES
+    public void paranoidHook(String Message) {        
+        if ( active ) {            
+            if ( paranoidGetMode() == 1 ) {
+                    smallestScreenWidthDp = 360;
+                    screenWidthDp = 360;
+                    screenHeightDp = 567;                    
+                    screenLayout = 268435474;
+                Log.i("PARANOID:" + Message, "App=" + paranoidGetName() + " <<PAL.Hooked:Mobile-UI" ); 
+            } else if ( paranoidGetMode() == 2 ) {
+                    smallestScreenWidthDp = 600;
+                    screenWidthDp = 600;
+                    screenHeightDp = 1018;
+                    screenLayout = 268435491;
+                Log.i("PARANOID:" + Message, "App=" + paranoidGetName() + " <<PAL.Hooked:Tablet-UI" ); 
+            }
+        }
+
+        /*
+        Log.i("PARANOID:" + Message, 
+            "Report... App=" + paranoidGetName() +
+            " mcc=" + mcc + 
+            " mnc=" + mnc +
+            " orient=" + orientation +
+            " touch=" + touchscreen +
+            " key=" + keyboard +
+            " nav=" + navigation +
+            " smallestwidth=" + smallestScreenWidthDp +
+            " scwidth=" + screenWidthDp +
+            " scheight=" + screenHeightDp +
+            " scLay=" + screenLayout + 
+            " uiMode=" + uiMode );
+        */
+    }
+
     /**
      * Construct an invalid Configuration.  You must call {@link #setToDefaults}
      * for this object to be valid.  {@more}
      */
     public Configuration() {
         setToDefaults();
+        paranoidHook("Config()");
     }
 
     /**
      * Makes a deep copy suitable for modification.
      */
     public Configuration(Configuration o) {
+        //active = o.active;
+        //paranoidOverride( o );
         setTo(o);
+        paranoidHook("Config(o)");
     }
 
     public void setTo(Configuration o) {
@@ -358,6 +393,8 @@ public final class Configuration implements Parcelable, Comparable<Configuration
         compatScreenHeightDp = o.compatScreenHeightDp;
         compatSmallestScreenWidthDp = o.compatSmallestScreenWidthDp;
         seq = o.seq;
+        paranoidHook("Config.setTo()");
+
         if (o.customTheme != null) {
             customTheme = (CustomTheme) o.customTheme.clone();
         }
@@ -507,11 +544,13 @@ public final class Configuration implements Parcelable, Comparable<Configuration
         textLayoutDirection = LocaleUtil.TEXT_LAYOUT_DIRECTION_LTR_DO_NOT_USE;
         seq = 0;
         customTheme = null;
+        paranoidHook("Config.setToDefaults()");
     }
 
     /** {@hide} */
     @Deprecated public void makeDefault() {
         setToDefaults();
+        paranoidHook("Config.makeDefaults()");
     }
     
     /**
@@ -633,6 +672,7 @@ public final class Configuration implements Parcelable, Comparable<Configuration
             customTheme = (CustomTheme)delta.customTheme.clone();
         }
 
+        paranoidHook("Config.updateFrom()");
         return changed;
     }
 
@@ -859,6 +899,8 @@ public final class Configuration implements Parcelable, Comparable<Configuration
         compatSmallestScreenWidthDp = source.readInt();
         textLayoutDirection = source.readInt();
         seq = source.readInt();
+
+        paranoidHook("Config.readFromParcel()");
 
         if (source.readInt() != 0) {
             String themeId = source.readString();

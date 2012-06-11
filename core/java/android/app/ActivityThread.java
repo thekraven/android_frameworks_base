@@ -17,6 +17,8 @@
 
 package android.app;
 
+import android.util.ExtendedPropertiesUtils;
+
 import com.android.internal.app.IAssetRedirectionManager;
 import com.android.internal.os.BinderInternal;
 import com.android.internal.os.RuntimeInit;
@@ -80,7 +82,6 @@ import android.util.EventLog;
 import android.util.Log;
 import android.util.LogPrinter;
 import android.util.Slog;
-import android.util.ExtendedPropertiesUtils;
 import android.view.Display;
 import android.view.HardwareRenderer;
 import android.view.InflateException;
@@ -146,7 +147,6 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
     private static final int SQLITE_MEM_RELEASED_EVENT_LOG_TAG = 75003;
     private static final int LOG_ON_PAUSE_CALLED = 30021;
     private static final int LOG_ON_RESUME_CALLED = 30022;
-    private List<PackageInfo> mPackageList;
 
     static ContextImpl mSystemContext = null;
 
@@ -217,7 +217,7 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
 
     final GcIdler mGcIdler = new GcIdler();
     boolean mGcIdlerScheduled = false;
-	
+
     static Handler sMainThreadHandler;  // set once in main()
 
     Bundle mCoreSettings = null;
@@ -372,7 +372,7 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         }
     }
 
-    static final class AppBindData {
+    static final class AppBindData extends ExtendedPropertiesUtils {
         LoadedApk info;
         String processName;
         ApplicationInfo appInfo;
@@ -385,9 +385,6 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         boolean persistent;
         Configuration config;
         CompatibilityInfo compatInfo;
-
-	//PARANOID: FLAG TO SIGNAL USED ONCE
-	boolean mInUse = false;
 
         /** Initial values for {@link Profiler}. */
         String initProfileFile;
@@ -1159,7 +1156,6 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
 
                     r.packageInfo = getPackageInfoNoCheck(
                             r.activityInfo.applicationInfo, r.compatInfo);
-
                     handleLaunchActivity(r, null);
                 } break;
                 case RELAUNCH_ACTIVITY: {
@@ -1437,8 +1433,8 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
     }
 
     DisplayMetrics getDisplayMetricsLocked(CompatibilityInfo ci, boolean forceUpdate) {
-        DisplayMetrics dm = mDisplayMetrics.get(ci);
-        if (dm != null && !forceUpdate) {
+        DisplayMetrics dm = mDisplayMetrics.get(ci);  
+        if (dm != null && !forceUpdate) {  
             return dm;
         }
         if (dm == null) {
@@ -1477,83 +1473,6 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         return config;
     }
 
-    // PARANOID: HOOK DISPLAYMETRICS
-    private void UpdateBoundApplication(DisplayMetrics metrics, String resDir) {
-	try{
-		boolean mAppForce = false;			
-		ApplicationInfo mFinalAppInfo = mBoundApplication != null ? mBoundApplication.appInfo : null;
-		
-		// RETRIEVE PACKAGENAME FROM APK
-		for(int i=0; mPackageList != null && i<mPackageList.size(); i++) {
-			PackageInfo p = mPackageList.get(i);
-			if (p.applicationInfo != null && p.applicationInfo.sourceDir.equals(resDir)) {
-				mAppForce = isExcluded(p.applicationInfo.packageName);
-				if (mAppForce)
-					mFinalAppInfo = p.applicationInfo;
-				break;
-			}
-		}
-
-		// IF ALL CONDITIONS ARE MET WE ALLOW PAD & PAL
-		if (mAppForce || (mBoundApplication != null && !mBoundApplication.mInUse)) {
-			// RUN ONCE
-			if (mPackageList == null) {
-				// FETCH ALL INSTALLED PACKAGES INTO AN ARRAY
-				Context context = getSystemContext();
-				PackageManager pm = context.getPackageManager();
-				mPackageList = pm.getInstalledPackages(0);
-
-				// PREPARE A VIP LIST FOR APPS THAT CAN PENETRATE THEIR HOSTS
-				fillArray();
-			}
-
-			// IF HYBRID MODE IS ENABLED FETCH CONFIGURATION DATA
-			if (Integer.parseInt(getProperty("hybrid_mode", "0")) == 1) {				
-
-				// GET PACKAGE NAME & PATH
-				String mAppName = mFinalAppInfo.packageName;
-				String mAppPath = mFinalAppInfo.sourceDir.substring(0, mFinalAppInfo.sourceDir.lastIndexOf("/")); 
-
-				// CONFIGURE LAYOUT
-				metrics.mAppLayout = Integer.parseInt(getProperty(mAppName + ".mode", "0"));
-				switch (metrics.mAppLayout) {
-					case 1:  
-						metrics.mScreenWidthDp = Integer.parseInt(getProperty("screen_default_width", "0"));
-						metrics.mScreenHeightDp = Integer.parseInt(getProperty("screen_default_height", "0"));
-						metrics.mScreenLayout = Integer.parseInt(getProperty("screen_default_layout", "0"));
-					break;
-					case 2: 
-						metrics.mScreenWidthDp = Integer.parseInt(getProperty("screen_opposite_width", "0"));
-						metrics.mScreenHeightDp = Integer.parseInt(getProperty("screen_opposite_height", "0"));
-						metrics.mScreenLayout = Integer.parseInt(getProperty("screen_opposite_layout", "0"));
-						break;
-				}
-
-				// CONFIGURE DPI
-				int DefaultDpi = Integer.parseInt(getProperty(mAppPath.equals("/system/app") ? "system_default_dpi" : "user_default_dpi", "0"));
-				metrics.mAppDensityDpi = Integer.parseInt(getProperty(mAppName + ".dpi", String.valueOf(DefaultDpi)));
-
-				// CONFIGURE DENSITIES
-				metrics.mAppDensity = Float.parseFloat(getProperty(mAppName + ".den", "0"));
-						metrics.mAppScaledDensity = Float.parseFloat(getProperty(mAppName + ".sden", "0"));
-
-				// CALCULATE RELATIONS, IF NEEDED
-				if (metrics.mAppDensityDpi != 0) {			
-					metrics.mAppDensity = metrics.mAppDensity == 0 ? metrics.mAppDensityDpi / (float) 160 : metrics.mAppDensity;
-					metrics.mAppScaledDensity = metrics.mAppScaledDensity == 0 ? metrics.mAppDensityDpi / (float) 160 : metrics.mAppScaledDensity;
-				}
-
-				// SIGNAL IN_USE FLAG TO PREVENT FURTHER PROCESSING
-				// IMPORTANT!!! .force APPS NEED TO RESET THE INUSE FLAG OR EVERYTHING THAT COMES AFTERWARDS WILL BE SCALED ALIKE
-				mBoundApplication.mInUse = !mAppForce;
-			}
-		}
-	} catch (Exception e){ 
-		Log.i("PARANOID:hook", "WTF, CRASH?! " + mBoundApplication);
-		Log.i("PARANOID:hook", e.getLocalizedMessage());
-	}
-    }
-
     /**
      * Creates the top level Resources for applications with the given compatibility info.
      *
@@ -1565,6 +1484,9 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         ResourcesKey key = new ResourcesKey(resDir, compInfo.applicationScale, compInfo.isThemeable);
         Resources r;
         synchronized (mPackages) {
+
+            paranoidLog( "----------TopLevelRes=" + resDir );
+            
             // Resources is app scale dependent.
             if (false) {
                 Slog.w(TAG, "getTopLevelResources: " + resDir + " / "
@@ -1588,6 +1510,9 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         //}
 
         AssetManager assets = new AssetManager();
+        if ( !paranoidGetActive() && resDir != null )
+            assets.paranoidOverride( resDir );
+
         assets.setThemeSupport(compInfo.isThemeable);
         if (assets.addAssetPath(resDir) == 0) {
             return null;
@@ -1606,11 +1531,11 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         }
 
         //Slog.i(TAG, "Resource: key=" + key + ", display metrics=" + metrics);
-
         DisplayMetrics metrics = getDisplayMetricsLocked(null, false);
-	UpdateBoundApplication(metrics, resDir);
+        metrics.paranoidOverride( assets );
 
         r = new Resources(assets, metrics, getConfiguration(), compInfo);
+        r.paranoidOverride( assets );
         if (false) {
             Slog.i(TAG, "Created app resources " + resDir + " " + r + ": "
                     + r.getConfiguration() + " appScale="
@@ -1631,16 +1556,6 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
             mActiveResources.put(key, new WeakReference<Resources>(r));
             return r;
         }
-    }
-
-    private static boolean isExcluded(String resName){
-        if(mExcludedList.size() > 0){
-		for(int i=0; i<mExcludedList.size(); i++){
-			if(mExcludedList.get(i).equals(resName))
-				return true;
-		}
-	}
-	return false;
     }
 
     private void detachThemeAssets(AssetManager assets) {
@@ -1893,7 +1808,8 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
                 context.getResources().updateConfiguration(
                         getConfiguration(), getDisplayMetricsLocked(
                                 CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO, false));
-                mSystemContext = context;
+                mSystemContext = context;  
+                
                 //Slog.i(TAG, "Created system resources " + context.getResources()
                 //        + ": " + context.getResources().getConfiguration());
             }
@@ -3709,7 +3625,6 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         }
         int changes = mResConfiguration.updateFrom(config);
         DisplayMetrics dm = getDisplayMetricsLocked(null, true);
-	UpdateBoundApplication(dm, null);
 
         if (compat != null && (mResCompatibilityInfo == null ||
                 !mResCompatibilityInfo.equals(compat))) {
@@ -3822,7 +3737,7 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
                 // We removed the old resources object from the mActiveResources
                 // cache, now we need to trigger an update for each application.
                 if ((diff & ActivityInfo.CONFIG_THEME_RESOURCE) != 0) {
-                    if (cb instanceof Activity || cb instanceof Application) {
+                    if (cb instanceof ContextWrapper) {
                         Context context = ((ContextWrapper)cb).getBaseContext();
                         if (context instanceof ContextImpl) {
                             ((ContextImpl)context).refreshResourcesIfNecessary();
@@ -3980,14 +3895,19 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         } catch (RemoteException e) {
             // Ignore
         }
-    }
-
+    }    
+    
     private void handleBindApplication(AppBindData data) {
+
         mBoundApplication = data;
+
+        //mBoundApplication.paranoidOverride( mBoundApplication.appInfo );
+        //Log.i("PARANOID:----handleBindApplication.init", "App=" + mBoundApplication.mParanoidLocalHook.Name + " Dpi=" +
+        //    mBoundApplication.mParanoidLocalHook.Dpi + " Mode=" + mBoundApplication.mParanoidLocalHook.Mode );
+        //data.config.active = data.config.paranoidOverride(mBoundApplication);
 
         mConfiguration = new Configuration(data.config);
         mCompatConfiguration = new Configuration(data.config);
-
         mProfiler = new Profiler();
         mProfiler.profileFile = data.initProfileFile;
         mProfiler.profileFd = data.initProfileFd;
@@ -4664,6 +4584,7 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
 
         ActivityThread thread = new ActivityThread();
         thread.attach(false);
+        paranoidInit(thread);
 
         if (false) {
             Looper.myLooper().setMessageLogging(new
