@@ -130,7 +130,7 @@ final class RemoteServiceException extends AndroidRuntimeException {
  *
  * {@hide}
  */
-public final class ActivityThread extends ExtendedPropertiesUtils {
+public final class ActivityThread {
     /** @hide */
     public static final String TAG = "ActivityThread";
     private static final android.graphics.Bitmap.Config THUMBNAIL_FORMAT = Bitmap.Config.RGB_565;
@@ -1506,7 +1506,7 @@ public final class ActivityThread extends ExtendedPropertiesUtils {
         //}
 
         AssetManager assets = new AssetManager();
-        if (!paranoidGetActive() && resDir != null)
+        if (!ExtendedPropertiesUtils.paranoidGetActive() && resDir != null)
             assets.paranoidOverride(resDir);
         assets.setThemeSupport(compInfo.isThemeable);
         if (assets.addAssetPath(resDir) == 0) {
@@ -4571,7 +4571,7 @@ public final class ActivityThread extends ExtendedPropertiesUtils {
 
         ActivityThread thread = new ActivityThread();
         thread.attach(false);
-        paranoidInit(thread);
+        ExtendedPropertiesUtils.paranoidInit(thread);
 
         if (false) {
             Looper.myLooper().setMessageLogging(new

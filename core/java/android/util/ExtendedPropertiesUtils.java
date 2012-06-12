@@ -49,7 +49,7 @@ public class ExtendedPropertiesUtils {
     public static ArrayList<String> mExcludedList = new ArrayList <String>();
 
     public static ParanoidAppInfo mParanoidGlobalHook = new ParanoidAppInfo();
-    public ParanoidAppInfo mParanoidLocalHook  = new ParanoidAppInfo();
+    public static ParanoidAppInfo mParanoidLocalHook  = new ParanoidAppInfo();
 
     public static String paranoidStatus() {
         return " T:" + (mParanoidMainThread != null) + " CXT:" + (mParanoidContext != null) + " PM:" + (mParanoidPackageManager != null);
@@ -186,43 +186,55 @@ public class ExtendedPropertiesUtils {
             return false;
     }
 
-    public boolean paranoidGetActive(){ 
+    public static  boolean paranoidGetActive(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.Active : mParanoidGlobalHook.Active; 
     }
-    public int paranoidGetPid(){ 
+
+    public static int paranoidGetPid(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.Pid : mParanoidGlobalHook.Pid; 
     }
-    public ApplicationInfo paranoidGetInfo(){ 
+
+    public static ApplicationInfo paranoidGetInfo(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.Info : mParanoidGlobalHook.Info; 
     }
-    public String paranoidGetName(){ 
+
+    public static String paranoidGetName(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.Name : mParanoidGlobalHook.Name; 
     }
-    public String paranoidGetPath(){ 
+
+    public static String paranoidGetPath(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.Path : mParanoidGlobalHook.Path; 
     }
-    public int paranoidGetMode(){ 
+
+    public static int paranoidGetMode(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.Mode : mParanoidGlobalHook.Mode; 
     }
-    public int paranoidGetScreenWidthDp(){ 
+
+    public static int paranoidGetScreenWidthDp(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.ScreenWidthDp : mParanoidGlobalHook.ScreenWidthDp; 
     }
-    public int paranoidGetScreenHeightDp(){ 
+
+    public static int paranoidGetScreenHeightDp(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.ScreenHeightDp : mParanoidGlobalHook.ScreenHeightDp; 
     }
-    public int paranoidGetScreenLayout(){ 
+
+    public static int paranoidGetScreenLayout(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.ScreenLayout : mParanoidGlobalHook.ScreenLayout; 
     }
-    public int paranoidGetDpi(){ 
+
+    public static int paranoidGetDpi(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.Dpi : mParanoidGlobalHook.Dpi; 
     }
-    public float paranoidGetScaledDensity(){ 
+
+    public static float paranoidGetScaledDensity(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.ScaledDensity : mParanoidGlobalHook.ScaledDensity; 
     }
-    public float paranoidGetDensity(){ 
+
+    public static float paranoidGetDensity(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.Density : mParanoidGlobalHook.Density; 
     }
-    public boolean paranoidGetForce(){ 
+
+    public static boolean paranoidGetForce(){ 
      return mParanoidLocalHook.Active ? mParanoidLocalHook.Force : mParanoidGlobalHook.Force; 
     }
 
