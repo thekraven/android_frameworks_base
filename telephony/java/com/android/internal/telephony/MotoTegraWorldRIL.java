@@ -40,7 +40,7 @@ public class MotoTegraWorldRIL extends MotoTegraRIL {
         super(context, RILConstants.NETWORK_MODE_GLOBAL, cdmaSubscription);
 
         Log.i("TegraWorld", "Network mode is this at creation of object: "
-              + String.valueOf(networkMode) + ", but has been forced to Global");
+              + networkMode + ", but has been forced to Global");
 
         // BUG: On CDMA Only, networkmode still is 0. That forces GSM_Phone,
         // since it's WCDMA-Preferred... by default.
