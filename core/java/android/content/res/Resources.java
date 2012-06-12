@@ -172,6 +172,19 @@ public class Resources extends ExtendedPropertiesUtils {
         }
     }
 
+    public void paranoidHook() {
+        mConfiguration.active = true;        
+        mConfiguration.paranoidOverride(this);
+        mConfiguration.paranoidHook();
+
+        mTmpConfig.active = true;        
+        mTmpConfig.paranoidOverride(this);
+        mTmpConfig.paranoidHook();
+
+        mMetrics.paranoidOverride(this);
+        mMetrics.paranoidHook();
+    }
+
     /**
      * Create a new Resources object on top of an existing set of assets in an
      * AssetManager.
@@ -199,20 +212,6 @@ public class Resources extends ExtendedPropertiesUtils {
      *  info when it's null.
      * @hide
      */
-
-    public void paranoidHook() {
-        mConfiguration.active = true;        
-        mConfiguration.paranoidOverride(this);
-        mConfiguration.paranoidHook("Res().mConfiguration");
-
-        mTmpConfig.active = true;        
-        mTmpConfig.paranoidOverride(this);
-        mTmpConfig.paranoidHook("Res().mTmpConfig");
-
-        mMetrics.paranoidOverride(this);
-        mMetrics.paranoidHook("Res().mMetrics");
-    }
-
     public Resources(AssetManager assets, DisplayMetrics metrics,
             Configuration config, CompatibilityInfo compInfo) {
         mAssets = assets;
@@ -239,6 +238,7 @@ public class Resources extends ExtendedPropertiesUtils {
                 ret = new Resources();
                 mSystem = ret;
             }
+
             return ret;
         }
     }
@@ -1470,7 +1470,7 @@ public class Resources extends ExtendedPropertiesUtils {
             if (compat != null) {
                 mCompatibilityInfo = compat;
             }
-            if (metrics != null) {   
+            if (metrics != null) {
                 mMetrics.setTo(metrics);
             }
             // NOTE: We should re-arrange this code to create a Display
@@ -1533,17 +1533,10 @@ public class Resources extends ExtendedPropertiesUtils {
                             == Configuration.HARDKEYBOARDHIDDEN_YES) {
                 keyboardHidden = Configuration.KEYBOARDHIDDEN_SOFT;
             }
-
-             Log.i("PARANOID:Res.Assets", 
-                    "App=" + mConfiguration.paranoidGetName() +
-                    " scwidth=" + mConfiguration.paranoidGetScreenWidthDp() +
-                    " scheight=" + mConfiguration.paranoidGetScreenHeightDp() +
-                    " scLay=" + mConfiguration.paranoidGetScreenLayout() );
-
             mAssets.setConfiguration(mConfiguration.mcc, mConfiguration.mnc,
                     locale, mConfiguration.orientation,
                     mConfiguration.touchscreen,
-                    (int)(mMetrics.density * 160), mConfiguration.keyboard,
+                    (int)(mMetrics.density*160), mConfiguration.keyboard,
                     keyboardHidden, mConfiguration.navigation, width, height,
                     mConfiguration.smallestScreenWidthDp,
                     mConfiguration.screenWidthDp, mConfiguration.screenHeightDp,
@@ -2293,3 +2286,4 @@ public class Resources extends ExtendedPropertiesUtils {
         mCompatibilityInfo = CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO;
     }
 }
+

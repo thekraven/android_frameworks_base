@@ -18,7 +18,6 @@
 package android.app;
 
 import android.util.ExtendedPropertiesUtils;
-
 import com.android.internal.app.IAssetRedirectionManager;
 import com.android.internal.os.BinderInternal;
 import com.android.internal.os.RuntimeInit;
@@ -131,7 +130,7 @@ final class RemoteServiceException extends AndroidRuntimeException {
  *
  * {@hide}
  */
-public final class ActivityThread extends ExtendedPropertiesUtils{
+public final class ActivityThread extends ExtendedPropertiesUtils {
     /** @hide */
     public static final String TAG = "ActivityThread";
     private static final android.graphics.Bitmap.Config THUMBNAIL_FORMAT = Bitmap.Config.RGB_565;
@@ -372,7 +371,7 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         }
     }
 
-    static final class AppBindData extends ExtendedPropertiesUtils {
+    static final class AppBindData {
         LoadedApk info;
         String processName;
         ApplicationInfo appInfo;
@@ -1433,8 +1432,8 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
     }
 
     DisplayMetrics getDisplayMetricsLocked(CompatibilityInfo ci, boolean forceUpdate) {
-        DisplayMetrics dm = mDisplayMetrics.get(ci);  
-        if (dm != null && !forceUpdate) {  
+        DisplayMetrics dm = mDisplayMetrics.get(ci);
+        if (dm != null && !forceUpdate) {
             return dm;
         }
         if (dm == null) {
@@ -1484,9 +1483,6 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         ResourcesKey key = new ResourcesKey(resDir, compInfo.applicationScale, compInfo.isThemeable);
         Resources r;
         synchronized (mPackages) {
-
-            paranoidLog( "----------TopLevelRes=" + resDir );
-            
             // Resources is app scale dependent.
             if (false) {
                 Slog.w(TAG, "getTopLevelResources: " + resDir + " / "
@@ -1512,7 +1508,6 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         AssetManager assets = new AssetManager();
         if ( !paranoidGetActive() && resDir != null )
             assets.paranoidOverride( resDir );
-
         assets.setThemeSupport(compInfo.isThemeable);
         if (assets.addAssetPath(resDir) == 0) {
             return null;
@@ -1533,7 +1528,6 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         //Slog.i(TAG, "Resource: key=" + key + ", display metrics=" + metrics);
         DisplayMetrics metrics = getDisplayMetricsLocked(null, false);
         metrics.paranoidOverride( assets );
-
         r = new Resources(assets, metrics, getConfiguration(), compInfo);
         r.paranoidOverride( assets );
         if (false) {
@@ -1808,8 +1802,7 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
                 context.getResources().updateConfiguration(
                         getConfiguration(), getDisplayMetricsLocked(
                                 CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO, false));
-                mSystemContext = context;  
-                
+                mSystemContext = context;
                 //Slog.i(TAG, "Created system resources " + context.getResources()
                 //        + ": " + context.getResources().getConfiguration());
             }
@@ -3898,16 +3891,10 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
     }    
     
     private void handleBindApplication(AppBindData data) {
-
         mBoundApplication = data;
-
-        //mBoundApplication.paranoidOverride( mBoundApplication.appInfo );
-        //Log.i("PARANOID:----handleBindApplication.init", "App=" + mBoundApplication.mParanoidLocalHook.Name + " Dpi=" +
-        //    mBoundApplication.mParanoidLocalHook.Dpi + " Mode=" + mBoundApplication.mParanoidLocalHook.Mode );
-        //data.config.active = data.config.paranoidOverride(mBoundApplication);
-
         mConfiguration = new Configuration(data.config);
         mCompatConfiguration = new Configuration(data.config);
+
         mProfiler = new Profiler();
         mProfiler.profileFile = data.initProfileFile;
         mProfiler.profileFd = data.initProfileFd;
@@ -4596,3 +4583,4 @@ public final class ActivityThread extends ExtendedPropertiesUtils{
         throw new RuntimeException("Main thread loop unexpectedly exited");
     }
 }
+

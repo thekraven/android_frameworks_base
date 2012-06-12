@@ -1520,7 +1520,6 @@ public class ContextImpl extends Context {
     public final void init(LoadedApk packageInfo,
                 IBinder activityToken, ActivityThread mainThread,
                 Resources container, String basePackageName) {
-
         paranoidInit(mainThread);
         mPackageInfo = packageInfo;
         mBasePackageName = basePackageName != null ? basePackageName : packageInfo.mPackageName;
@@ -1538,6 +1537,7 @@ public class ContextImpl extends Context {
         }
         mMainThread = mainThread;
         mContentResolver = new ApplicationContentResolver(this, mainThread);
+
         setActivityToken(activityToken);
     }
 
@@ -1659,3 +1659,4 @@ public class ContextImpl extends Context {
         private final ActivityThread mMainThread;
     }
 }
+

@@ -311,61 +311,31 @@ public final class Configuration extends ExtendedPropertiesUtils implements Parc
      * @hide Internal book-keeping.
      */
     public int seq;
-    
-    public boolean active = false;
 
     // LOCAL PROPERTIES
-    public void paranoidHook(String Message) {        
-        if ( active ) {            
-            if ( paranoidGetMode() == 1 ) {
-                    smallestScreenWidthDp = 360;
-                    screenWidthDp = 360;
-                    screenHeightDp = 567;                    
-                    screenLayout = 268435474;
-                Log.i("PARANOID:" + Message, "App=" + paranoidGetName() + " <<PAL.Hooked:Mobile-UI" ); 
-            } else if ( paranoidGetMode() == 2 ) {
-                    smallestScreenWidthDp = 600;
-                    screenWidthDp = 600;
-                    screenHeightDp = 1018;
-                    screenLayout = 268435491;
-                Log.i("PARANOID:" + Message, "App=" + paranoidGetName() + " <<PAL.Hooked:Tablet-UI" ); 
-            }
+    public boolean active = false;
+    public void paranoidHook() {        
+        if ( active && paranoidGetMode() != 0 ) {            
+            screenWidthDp = paranoidGetScreenWidthDp();
+            screenHeightDp = paranoidGetScreenHeightDp();                    
+            screenLayout = paranoidGetScreenLayout();
+            smallestScreenWidthDp = Math.min(screenWidthDp, screenHeightDp);
         }
-
-        /*
-        Log.i("PARANOID:" + Message, 
-            "Report... App=" + paranoidGetName() +
-            " mcc=" + mcc + 
-            " mnc=" + mnc +
-            " orient=" + orientation +
-            " touch=" + touchscreen +
-            " key=" + keyboard +
-            " nav=" + navigation +
-            " smallestwidth=" + smallestScreenWidthDp +
-            " scwidth=" + screenWidthDp +
-            " scheight=" + screenHeightDp +
-            " scLay=" + screenLayout + 
-            " uiMode=" + uiMode );
-        */
     }
-
+    
     /**
      * Construct an invalid Configuration.  You must call {@link #setToDefaults}
      * for this object to be valid.  {@more}
      */
     public Configuration() {
         setToDefaults();
-        paranoidHook("Config()");
     }
 
     /**
      * Makes a deep copy suitable for modification.
      */
     public Configuration(Configuration o) {
-        //active = o.active;
-        //paranoidOverride( o );
         setTo(o);
-        paranoidHook("Config(o)");
     }
 
     public void setTo(Configuration o) {
@@ -393,8 +363,7 @@ public final class Configuration extends ExtendedPropertiesUtils implements Parc
         compatScreenHeightDp = o.compatScreenHeightDp;
         compatSmallestScreenWidthDp = o.compatSmallestScreenWidthDp;
         seq = o.seq;
-        paranoidHook("Config.setTo()");
-
+        paranoidHook();
         if (o.customTheme != null) {
             customTheme = (CustomTheme) o.customTheme.clone();
         }
@@ -544,13 +513,11 @@ public final class Configuration extends ExtendedPropertiesUtils implements Parc
         textLayoutDirection = LocaleUtil.TEXT_LAYOUT_DIRECTION_LTR_DO_NOT_USE;
         seq = 0;
         customTheme = null;
-        paranoidHook("Config.setToDefaults()");
     }
 
     /** {@hide} */
     @Deprecated public void makeDefault() {
         setToDefaults();
-        paranoidHook("Config.makeDefaults()");
     }
     
     /**
@@ -672,7 +639,6 @@ public final class Configuration extends ExtendedPropertiesUtils implements Parc
             customTheme = (CustomTheme)delta.customTheme.clone();
         }
 
-        paranoidHook("Config.updateFrom()");
         return changed;
     }
 
@@ -900,8 +866,6 @@ public final class Configuration extends ExtendedPropertiesUtils implements Parc
         textLayoutDirection = source.readInt();
         seq = source.readInt();
 
-        paranoidHook("Config.readFromParcel()");
-
         if (source.readInt() != 0) {
             String themeId = source.readString();
             String themePackage = source.readString();
@@ -1024,3 +988,4 @@ public final class Configuration extends ExtendedPropertiesUtils implements Parc
         return result;
     }
 }
+

@@ -26,7 +26,7 @@ import android.os.SystemProperties;
  * <pre> DisplayMetrics metrics = new DisplayMetrics();
  * getWindowManager().getDefaultDisplay().getMetrics(metrics);</pre>
  */
-public class DisplayMetrics extends ExtendedPropertiesUtils {
+public class DisplayMetrics extends ExtendedPropertiesUtils  {
     /**
      * Standard quantized DPI for low-density screens.
      */
@@ -152,34 +152,12 @@ public class DisplayMetrics extends ExtendedPropertiesUtils {
     public float noncompatYdpi;
 
     // LOCAL PROPERTIES
-    public void paranoidHook(String Message) {
+    public void paranoidHook() {
         if ( paranoidGetActive() ) {
             density = paranoidGetDensity() == 0 ? density : paranoidGetDensity();
             scaledDensity = paranoidGetScaledDensity() == 0 ? scaledDensity : paranoidGetScaledDensity();
             densityDpi = paranoidGetDpi() == 0 ? densityDpi : paranoidGetDpi();
-            //noncompatDensity = paranoidGetDensity() == 0 ? noncompatDensity : paranoidGetDensity();
-            //noncompatScaledDensity = paranoidGetScaledDensity() == 0 ? noncompatScaledDensity : paranoidGetScaledDensity();
-            //xdpi = paranoidGetDpi() == 0 ? xdpi : (float)paranoidGetDpi();
-            //ydpi = paranoidGetDpi() == 0 ? ydpi : (float)paranoidGetDpi();
-            Log.i("PARANOID:" + Message, "App=" + paranoidGetName() + " <<PAD.Hooked:" + 
-                paranoidGetDpi() + "dpi" );    
         }
-
-        Log.i("PARANOID:" + Message, 
-            "Report... App=" + paranoidGetName() +
-            " density=" + density +
-            " densityDpi=" + densityDpi +
-            " scaledDensity=" + scaledDensity +
-            " widthPixels=" + widthPixels + 
-            " heightPixels=" + heightPixels +
-            " xdpi=" + xdpi +
-            " ydpi=" + ydpi +
-            " noncompatWidthPixels=" + noncompatWidthPixels +
-            " noncompatHeightPixels=" + noncompatHeightPixels +
-            " noncompatDensity=" + noncompatDensity +
-            " noncompatScaledDensity=" + noncompatScaledDensity +
-            " noncompatXdpi=" + noncompatXdpi +
-            " noncompatYdpi=" + noncompatYdpi );
     }
 
     public DisplayMetrics() {
@@ -199,7 +177,7 @@ public class DisplayMetrics extends ExtendedPropertiesUtils {
         noncompatScaledDensity = o.noncompatScaledDensity;
         noncompatXdpi = o.noncompatXdpi;
         noncompatYdpi = o.noncompatYdpi;
-        paranoidHook("Display.setTo()");
+        paranoidHook();
     }
     
     public void setToDefaults() {
@@ -212,7 +190,6 @@ public class DisplayMetrics extends ExtendedPropertiesUtils {
         ydpi = DENSITY_DEVICE;
         noncompatWidthPixels = 0;
         noncompatHeightPixels = 0;
-        paranoidHook("Display.setToDefaults()");
     }
 
     @Override
@@ -231,3 +208,4 @@ public class DisplayMetrics extends ExtendedPropertiesUtils {
                 SystemProperties.getInt("ro.sf.lcd_density", DENSITY_DEFAULT));
     }
 }
+
