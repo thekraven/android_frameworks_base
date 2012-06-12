@@ -52,7 +52,6 @@ public class ExtendedPropertiesUtils{
         public float ScaledDensity = 0;
         public float Density = 0;
         public boolean Force = false;
-    
     }
 
     // STATIC PROPERTIES
@@ -115,7 +114,7 @@ public class ExtendedPropertiesUtils{
     public static final class ParanoidBuilder extends ContextImpl{
         
         public ParanoidBuilder(){
-            Log.i("PARANOID:mt", "Main thread started");
+            Log.i("PARANOID:builder", "Initialized builder");
         }
 
         public void init(ActivityThread thread){

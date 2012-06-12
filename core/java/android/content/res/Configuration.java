@@ -315,9 +315,9 @@ public final class Configuration extends ExtendedPropertiesUtils implements Parc
     // LOCAL PROPERTIES
     public boolean active = false;
     public void paranoidHook() {        
-        if ( active && paranoidGetMode() != 0 ) {            
+        if (active && paranoidGetMode() != 0) {
             screenWidthDp = paranoidGetScreenWidthDp();
-            screenHeightDp = paranoidGetScreenHeightDp();                    
+            screenHeightDp = paranoidGetScreenHeightDp();
             screenLayout = paranoidGetScreenLayout();
             smallestScreenWidthDp = Math.min(screenWidthDp, screenHeightDp);
         }

@@ -26,7 +26,7 @@ import android.os.SystemProperties;
  * <pre> DisplayMetrics metrics = new DisplayMetrics();
  * getWindowManager().getDefaultDisplay().getMetrics(metrics);</pre>
  */
-public class DisplayMetrics extends ExtendedPropertiesUtils  {
+public class DisplayMetrics extends ExtendedPropertiesUtils {
     /**
      * Standard quantized DPI for low-density screens.
      */
@@ -151,16 +151,16 @@ public class DisplayMetrics extends ExtendedPropertiesUtils  {
      */
     public float noncompatYdpi;
 
+    public DisplayMetrics() {
+    }
+
     // LOCAL PROPERTIES
     public void paranoidHook() {
-        if ( paranoidGetActive() ) {
+        if (paranoidGetActive()) {
             density = paranoidGetDensity() == 0 ? density : paranoidGetDensity();
             scaledDensity = paranoidGetScaledDensity() == 0 ? scaledDensity : paranoidGetScaledDensity();
             densityDpi = paranoidGetDpi() == 0 ? densityDpi : paranoidGetDpi();
         }
-    }
-
-    public DisplayMetrics() {
     }
     
     public void setTo(DisplayMetrics o) {
