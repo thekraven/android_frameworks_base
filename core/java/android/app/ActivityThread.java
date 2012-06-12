@@ -17,7 +17,6 @@
 
 package android.app;
 
-import android.util.ExtendedPropertiesUtils;
 import com.android.internal.app.IAssetRedirectionManager;
 import com.android.internal.os.BinderInternal;
 import com.android.internal.os.RuntimeInit;
@@ -78,6 +77,7 @@ import android.text.TextUtils;
 import android.util.AndroidRuntimeException;
 import android.util.DisplayMetrics;
 import android.util.EventLog;
+import android.util.ExtendedPropertiesUtils;
 import android.util.Log;
 import android.util.LogPrinter;
 import android.util.Slog;
@@ -1506,8 +1506,8 @@ public final class ActivityThread extends ExtendedPropertiesUtils {
         //}
 
         AssetManager assets = new AssetManager();
-        if ( !paranoidGetActive() && resDir != null )
-            assets.paranoidOverride( resDir );
+        if (!paranoidGetActive() && resDir != null)
+            assets.paranoidOverride(resDir);
         assets.setThemeSupport(compInfo.isThemeable);
         if (assets.addAssetPath(resDir) == 0) {
             return null;
@@ -1527,9 +1527,9 @@ public final class ActivityThread extends ExtendedPropertiesUtils {
 
         //Slog.i(TAG, "Resource: key=" + key + ", display metrics=" + metrics);
         DisplayMetrics metrics = getDisplayMetricsLocked(null, false);
-        metrics.paranoidOverride( assets );
+        metrics.paranoidOverride(assets);
         r = new Resources(assets, metrics, getConfiguration(), compInfo);
-        r.paranoidOverride( assets );
+        r.paranoidOverride(assets);
         if (false) {
             Slog.i(TAG, "Created app resources " + resDir + " " + r + ": "
                     + r.getConfiguration() + " appScale="

@@ -217,7 +217,7 @@ public class Resources extends ExtendedPropertiesUtils {
         mAssets = assets;
         mMetrics.setToDefaults();
 
-        paranoidOverride( assets );
+        paranoidOverride(assets);
         paranoidHook();
 
         mCompatibilityInfo = compInfo;
