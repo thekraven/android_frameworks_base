@@ -88,6 +88,7 @@ import android.telephony.TelephonyManager;
 import android.content.ClipboardManager;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
+import android.util.ExtendedPropertiesUtils;
 import android.view.ContextThemeWrapper;
 import android.view.WindowManagerImpl;
 import android.view.accessibility.AccessibilityManager;
@@ -1493,7 +1494,7 @@ public class ContextImpl extends Context {
         return context;
     }
 
-    ContextImpl() {
+    public ContextImpl() {
         mOuterContext = this;
     }
 
@@ -1520,7 +1521,7 @@ public class ContextImpl extends Context {
     public final void init(LoadedApk packageInfo,
                 IBinder activityToken, ActivityThread mainThread,
                 Resources container, String basePackageName) {
-        paranoidInit(mainThread);
+        ExtendedPropertiesUtils.paranoidInit(mainThread);
         mPackageInfo = packageInfo;
         mBasePackageName = basePackageName != null ? basePackageName : packageInfo.mPackageName;
         mResources = mPackageInfo.getResources(mainThread);
@@ -1542,7 +1543,7 @@ public class ContextImpl extends Context {
     }
 
     public final void init(Resources resources, ActivityThread mainThread) {
-        paranoidInit(mainThread);
+        ExtendedPropertiesUtils.paranoidInit(mainThread);
         mPackageInfo = null;
         mBasePackageName = null;
         mResources = resources;

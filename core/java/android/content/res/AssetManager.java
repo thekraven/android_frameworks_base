@@ -17,8 +17,8 @@
 
 package android.content.res;
 
-import android.util.ExtendedPropertiesUtils;
 import android.os.ParcelFileDescriptor;
+import android.util.ExtendedPropertiesUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;

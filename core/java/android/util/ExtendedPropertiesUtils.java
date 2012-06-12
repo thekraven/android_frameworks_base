@@ -16,24 +16,27 @@
 
 package android.util;
 
-import android.app.*;
 import android.app.ActivityManager;
+import android.app.ActivityThread;
+import android.app.ContextImpl;
+import android.app.LoadedApk;
 import android.content.Context;
-import android.content.pm.*;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.content.res.CompatibilityInfo;
 import android.os.SystemProperties;
 import android.util.Log;
 
 import java.io.*;
-import java.util.*;
 import java.lang.Math;
 import java.lang.NumberFormatException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
+import java.util.*;
 
-public class ExtendedPropertiesUtils {
+public class ExtendedPropertiesUtils{
  
     public static class ParanoidAppInfo {
         public boolean Active = false;
@@ -62,6 +65,8 @@ public class ExtendedPropertiesUtils {
 
     public static ParanoidAppInfo mParanoidGlobalHook = new ParanoidAppInfo();
     public static ParanoidAppInfo mParanoidLocalHook  = new ParanoidAppInfo();
+
+    public static ParanoidBuilder mParanoidBuilder = new ParanoidBuilder();
 
     public static String paranoidStatus() {
         return " T:" + (mParanoidMainThread != null) + " CXT:" + (mParanoidContext != null) + " PM:" + (mParanoidPackageManager != null);
@@ -107,41 +112,50 @@ public class ExtendedPropertiesUtils {
     
     }
 
-    // INITIALIZE HOOK BY CATCHING A RUNNING THREAD, THIS ALSO FILLS THE GLOBAL-PROCESS HOOK
-    public static void paranoidInit(ActivityThread Thread) {
-        // INIT PARANOID HYBRID
-        // something should be done here to prevent the system from overriding
-        if (mParanoidMainThread == null) {  
-            try {                
-                mParanoidMainThread = Thread;
-                ContextImpl context = ContextImpl.createSystemContext(mParanoidMainThread);
-                LoadedApk info = new LoadedApk(mParanoidMainThread, "android", context, null,
-                    CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO);
-                context.init(info, null, mParanoidMainThread);
-                mParanoidContext = context;
-                mParanoidPackageManager = mParanoidContext.getPackageManager();
-                mParanoidPackageList = mParanoidPackageManager.getInstalledPackages(0);	
-                mParanoidGlobalHook.Pid = android.os.Process.myPid();
-                mParanoidGlobalHook.Info = getAppInfoFromPID(mParanoidGlobalHook.Pid);
-                if (mParanoidGlobalHook.Info != null) {
-                    mParanoidGlobalHook.Name = mParanoidGlobalHook.Info.packageName;
-                    mParanoidGlobalHook.Path = 
-                        mParanoidGlobalHook.Info.sourceDir.substring(0, mParanoidGlobalHook.Info.sourceDir.lastIndexOf("/")); 
+    public static final class ParanoidBuilder extends ContextImpl{
+        
+        public ParanoidBuilder(){
+            Log.i("PARANOID:mt", "Main thread started");
+        }
+
+        public void init(ActivityThread thread){
+            // INIT PARANOID HYBRID
+            // something should be done here to prevent the system from overriding
+            if (mParanoidMainThread == null) {  
+                try {                
+                    mParanoidMainThread = thread;
+                    ContextImpl context = createSystemContext(mParanoidMainThread);
+                    LoadedApk info = new LoadedApk(mParanoidMainThread, "android", context, null, CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO);
+                    context.init(info, null, mParanoidMainThread);
+                    mParanoidContext = context;
+                    mParanoidPackageManager = mParanoidContext.getPackageManager();
+                    mParanoidPackageList = mParanoidPackageManager.getInstalledPackages(0);	
+                    mParanoidGlobalHook.Pid = android.os.Process.myPid();
+                    mParanoidGlobalHook.Info = getAppInfoFromPID(mParanoidGlobalHook.Pid);
+                    if (mParanoidGlobalHook.Info != null) {
+                    mParanoidGlobalHook.Name = mParanoidGlobalHook.Info.packageName;    
+                    mParanoidGlobalHook.Path = mParanoidGlobalHook.Info.sourceDir.substring(0, mParanoidGlobalHook.Info.sourceDir.lastIndexOf("/")); 
                     paranoidConfigure(mParanoidGlobalHook);
                     //Log.i("PARANOID:init", "App=" + mParanoidGlobalHook.Name + " Dpi=" + mParanoidGlobalHook.Dpi + 
                     //    " Mode=" + mParanoidGlobalHook.Mode);
                 }    
-           } catch (Exception e) { 
-                Log.i("PARANOID:init", "ERR: init crashed! Status=" + paranoidStatus()); 
-                mParanoidMainThread = null;
-           } 
-       }
+               } catch (Exception e) { 
+                    Log.i("PARANOID:init", "ERR: init crashed! Status=" + paranoidStatus()); 
+                    mParanoidMainThread = null;
+               } 
+           }
+        }
     }
 
-    public boolean paranoidOverride(ApplicationInfo Info) {
-        if (Info != null) {
+    // INITIALIZE HOOK BY CATCHING A RUNNING THREAD, THIS ALSO FILLS THE GLOBAL-PROCESS HOOK
+    public static void paranoidInit(ActivityThread thread) {
+        mParanoidBuilder.init(thread);
+    }
+
+    public boolean paranoidOverride(ApplicationInfo info) {
+        if (info != null) {
             mParanoidLocalHook.Pid  = android.os.Process.myPid();
-            mParanoidLocalHook.Info = Info;
+            mParanoidLocalHook.Info = info;
             if (mParanoidLocalHook.Info != null) {
                 mParanoidLocalHook.Name = mParanoidLocalHook.Info.packageName;
                 mParanoidLocalHook.Path = 
@@ -158,10 +172,10 @@ public class ExtendedPropertiesUtils {
     }
 
     // COMPONENTS CAN OVERRIDE THEIR PROCESS-HOOK
-    public boolean paranoidOverride(String Fullname) {
-        if (Fullname != null) {
+    public boolean paranoidOverride(String fullName) {
+        if (fullName != null) {
             mParanoidLocalHook.Pid  = android.os.Process.myPid();
-            mParanoidLocalHook.Info = getAppInfoFromPath(Fullname);
+            mParanoidLocalHook.Info = getAppInfoFromPath(fullName);
             if (mParanoidLocalHook.Info != null) {
                 mParanoidLocalHook.Name = mParanoidLocalHook.Info.packageName;
                 mParanoidLocalHook.Path = 
@@ -250,19 +264,19 @@ public class ExtendedPropertiesUtils {
      return mParanoidLocalHook.Active ? mParanoidLocalHook.Force : mParanoidGlobalHook.Force; 
     }
 
-    public static ApplicationInfo getAppInfoFromPath(String Path) {
+    public static ApplicationInfo getAppInfoFromPath(String path) {
 	for(int i=0; mParanoidPackageList != null && i<mParanoidPackageList.size(); i++) {
 		PackageInfo p = mParanoidPackageList.get(i);
-		if (p.applicationInfo != null && p.applicationInfo.sourceDir.equals(Path))		
+		if (p.applicationInfo != null && p.applicationInfo.sourceDir.equals(path))		
 			return p.applicationInfo;
 	}
 	return null;
     }
 
-    public static ApplicationInfo getAppInfoFromPackageName(String PackageName) {
+    public static ApplicationInfo getAppInfoFromPackageName(String packageName) {
 	for(int i=0; mParanoidPackageList != null && i<mParanoidPackageList.size(); i++) {
 		PackageInfo p = mParanoidPackageList.get(i);
-		if (p.applicationInfo != null && p.applicationInfo.packageName.equals(PackageName))		
+		if (p.applicationInfo != null && p.applicationInfo.packageName.equals(packageName))		
 			return p.applicationInfo;
 	}
 	return null;
@@ -281,16 +295,15 @@ public class ExtendedPropertiesUtils {
 		return null;
     }
 
-    public void paranoidLog(String Message) {
-        Log.i("PARANOID:" + Message, "Init=" + (mParanoidMainThread != null && mParanoidContext != null && mParanoidPackageManager != null) + 
-            " App=" + paranoidGetName() + " Dpi=" + paranoidGetDpi() + " Mode=" + paranoidGetMode());
+    public void paranoidLog(String msg) {
+        Log.i("PARANOID:" + msg, "Init=" + (mParanoidMainThread != null && mParanoidContext != null && mParanoidPackageManager != null) + " App=" + paranoidGetName() + " Dpi=" + paranoidGetDpi() + " Mode=" + paranoidGetMode());
     }
 
-    public void paranoidTrace(String Message) {
+    public void paranoidTrace(String msg) {
         StringWriter sw = new StringWriter();
         new Throwable("").printStackTrace(new PrintWriter(sw));
         String stackTrace = sw.toString();
-        Log.i("PARANOID:" + Message, "Trace=" + stackTrace); 
+        Log.i("PARANOID:" + msg, "Trace=" + stackTrace); 
     }
 
    public static String getFixedProperty(String prop, String orElse) {
