@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
- * This code has been modified. Portions copyright (C) 2012 ParanoidAndroid Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +16,6 @@
 
 package android.content.res;
 
-import android.util.ExtendedPropertiesUtils;
 import com.android.internal.util.XmlUtils;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -71,7 +69,7 @@ import libcore.icu.NativePluralRules;
  * <p>For more information about using resources, see the documentation about <a
  * href="{@docRoot}guide/topics/resources/index.html">Application Resources</a>.</p>
  */
-public class Resources extends ExtendedPropertiesUtils {
+public class Resources {
     static final String TAG = "Resources";
     private static final boolean DEBUG_LOAD = false;
     private static final boolean DEBUG_CONFIG = false;
@@ -173,19 +171,6 @@ public class Resources extends ExtendedPropertiesUtils {
         }
     }
 
-    public void paranoidHook() {
-        mConfiguration.active = true;        
-        mConfiguration.paranoidOverride(this);
-        mConfiguration.paranoidHook();
-
-        mTmpConfig.active = true;        
-        mTmpConfig.paranoidOverride(this);
-        mTmpConfig.paranoidHook();
-
-        mMetrics.paranoidOverride(this);
-        mMetrics.paranoidHook();
-    }
-
     /**
      * Create a new Resources object on top of an existing set of assets in an
      * AssetManager.
@@ -217,10 +202,6 @@ public class Resources extends ExtendedPropertiesUtils {
             Configuration config, CompatibilityInfo compInfo) {
         mAssets = assets;
         mMetrics.setToDefaults();
-
-        paranoidOverride(assets);
-        paranoidHook();
-
         mCompatibilityInfo = compInfo;
         updateConfiguration(config, metrics);
         assets.ensureStringBlocks();

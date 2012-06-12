@@ -88,7 +88,6 @@ import android.telephony.TelephonyManager;
 import android.content.ClipboardManager;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
-import android.util.ExtendedPropertiesUtils;
 import android.view.ContextThemeWrapper;
 import android.view.WindowManagerImpl;
 import android.view.accessibility.AccessibilityManager;
@@ -143,7 +142,7 @@ class ReceiverRestrictedContext extends ContextWrapper {
  * Common implementation of Context API, which provides the base
  * context object for Activity and other application components.
  */
-public class ContextImpl extends Context {
+class ContextImpl extends Context {
     private final static String TAG = "ApplicationContext";
     private final static boolean DEBUG = false;
 
@@ -1488,13 +1487,13 @@ public class ContextImpl extends Context {
         return file;
     }
 
-    public static ContextImpl createSystemContext(ActivityThread mainThread) {
+    static ContextImpl createSystemContext(ActivityThread mainThread) {
         ContextImpl context = new ContextImpl();
         context.init(Resources.getSystem(), mainThread);
         return context;
     }
 
-    public ContextImpl() {
+    ContextImpl() {
         mOuterContext = this;
     }
 
@@ -1513,15 +1512,14 @@ public class ContextImpl extends Context {
         mOuterContext = this;
     }
 
-    public final void init(LoadedApk packageInfo,
+    final void init(LoadedApk packageInfo,
             IBinder activityToken, ActivityThread mainThread) {
         init(packageInfo, activityToken, mainThread, null, null);
     }
 
-    public final void init(LoadedApk packageInfo,
+    final void init(LoadedApk packageInfo,
                 IBinder activityToken, ActivityThread mainThread,
                 Resources container, String basePackageName) {
-        ExtendedPropertiesUtils.paranoidInit(mainThread);
         mPackageInfo = packageInfo;
         mBasePackageName = basePackageName != null ? basePackageName : packageInfo.mPackageName;
         mResources = mPackageInfo.getResources(mainThread);
@@ -1542,8 +1540,7 @@ public class ContextImpl extends Context {
         setActivityToken(activityToken);
     }
 
-    public final void init(Resources resources, ActivityThread mainThread) {
-        ExtendedPropertiesUtils.paranoidInit(mainThread);
+    final void init(Resources resources, ActivityThread mainThread) {
         mPackageInfo = null;
         mBasePackageName = null;
         mResources = resources;
