@@ -45,6 +45,11 @@
     <dimen name="status_bar_recents_thumbnail_width_sense4">157.0dip</dimen> 
     <dimen name="status_bar_recents_thumbnail_height_sense4">242.0dip</dimen> 
 
+    <!-- Diameter of outer shape drawable shown in navbar search. Should be 1/2 of above value. -->
+    <dimen name="navbar_search_outerring_radius">215dip</dimen>
+
+    <!-- Height of search panel including navigation bar height -->
+    <dimen name="navbar_search_panel_height">280dip</dimen>
 
     <!-- Width of recents panel -->
     <dimen name="status_bar_recents_width">600dp</dimen>

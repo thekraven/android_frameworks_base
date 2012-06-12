@@ -499,19 +499,14 @@ public class TabletStatusBar extends StatusBar implements
 
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
-        // detect theme change.
-        CustomTheme newTheme = mContext.getResources().getConfiguration().customTheme;
-        if (newTheme != null &&
-                (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
-            mCurrentTheme = (CustomTheme)newTheme.clone();
-            recreateStatusBar();
-        }
-            mHeightReceiver.updateHeight(); // display size may have changed
-            loadDimens();
-            mNotificationPanelParams.height = getNotificationPanelHeight();
-            WindowManagerImpl.getDefault().updateViewLayout(mNotificationPanel,
-                    mNotificationPanelParams);
-            mRecentsPanel.updateValuesFromResources();
+        loadDimens();
+        mNotificationPanelParams.height = getNotificationPanelHeight();
+        WindowManagerImpl.getDefault().updateViewLayout(mNotificationPanel,
+                mNotificationPanelParams);
+        mRecentsPanel.updateValuesFromResources();
+        mShowSearchHoldoff = mContext.getResources().getInteger(
+                R.integer.config_show_search_delay);
+        updateSearchPanel();
     }
 
     protected void loadDimens() {

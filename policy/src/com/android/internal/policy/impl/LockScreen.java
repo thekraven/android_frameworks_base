@@ -91,6 +91,7 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
     private static final int WAIT_FOR_ANIMATION_TIMEOUT_ALT = 500;
     private static final int STAY_ON_WHILE_GRABBED_TIMEOUT = 30000;
 
+    private static final int COLOR_WHITE = 0xFFFFFFFF;
     private LockPatternUtils mLockPatternUtils;
     private KeyguardUpdateMonitor mUpdateMonitor;
     private KeyguardScreenCallback mCallback;
@@ -118,7 +119,7 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
     // Get the style from settings
     private int mLockscreenStyle = Settings.System.getInt(mContext.getContentResolver(),
             Settings.System.LOCKSCREEN_STYLE, LOCK_STYLE_JB);
-    private int mLockscreenStyle = LOCK_STYLE_GB;
+//    private int mLockscreenStyle = LOCK_STYLE_GB;
     
     private static final int LOCK_STYLE_JB = 0;    
     private static final int LOCK_STYLE_ICS = 1;
@@ -450,36 +451,14 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
 
     class GlowPadViewMethods implements GlowPadView.OnTriggerListener,
             UnlockWidgetCommonMethods {
-//        private final GlowPadView mGlowPadView;
-        private final MultiWaveView mMultiWaveView;
-        private boolean mCameraDisabled;
-        private String[] mStoredTargets;
-        private int mTargetOffset;
-        private boolean mIsScreenLarge;
+        private final GlowPadView mGlowPadView;
 
-        MultiWaveViewMethods(MultiWaveView multiWaveView) {
-            mMultiWaveView = multiWaveView;
-            final boolean cameraDisabled = mLockPatternUtils.getDevicePolicyManager()
-                    .getCameraDisabled(null);
-            if (cameraDisabled) {
-                Log.v(TAG, "Camera disabled by Device Policy");
-                mCameraDisabled = true;
-            } else {
-                // Camera is enabled if resource is initially defined for MultiWaveView
-                // in the lockscreen layout file
-               mCameraDisabled = mMultiWaveView.getTargetResourceId()
-                        != R.array.lockscreen_targets_with_camera;
-            }
-//        GlowPadViewMethods(GlowPadView glowPadView) {
-//            mGlowPadView = glowPadView;
+        GlowPadViewMethods(GlowPadView glowPadView) {
+            mGlowPadView = glowPadView;
         }
 
-        public boolean isScreenLarge() {
-            final int screenSize = Resources.getSystem().getConfiguration().screenLayout &
-                    Configuration.SCREENLAYOUT_SIZE_MASK;
-            boolean isScreenLarge = screenSize == Configuration.SCREENLAYOUT_SIZE_LARGE ||
-                    screenSize == Configuration.SCREENLAYOUT_SIZE_XLARGE;
-            return isScreenLarge;
+        public boolean isTargetPresent(int resId) {
+            return mGlowPadView.getTargetPosition(resId) != -1;
         }
 
         private StateListDrawable getLayeredDrawable(Drawable back, Drawable front, int inset, boolean frontBlank) {
@@ -506,132 +485,28 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
             return mGlowPadView.getTargetPosition(resId) != -1;
         }
         public void updateResources() {
-            String storedVal = Settings.System.getString(mContext.getContentResolver(),
-                    Settings.System.LOCKSCREEN_TARGETS);
-            if (storedVal == null) {
-                int resId;
-                mStoredTargets = null;
-                if (mCameraDisabled) {
-                    // Fall back to showing ring/silence if camera is disabled by DPM...
-                    resId = mSilentMode ? R.array.lockscreen_targets_when_silent
-                            : R.array.lockscreen_targets_when_soundon;
-                } else {
-                    resId = R.array.lockscreen_targets_with_camera;
-                }
-                if (mGlowPadView.getTargetResourceId() != resId) {
-                    mGlowPadView.setTargetResources(resId);
-                }
-                // Update the search icon with drawable from the search .apk
-                if (!mSearchDisabled) {
-                    Intent intent = SearchManager.getAssistIntent(mContext);
-                    if (intent != null) {
-                        // XXX Hack. We need to substitute the icon here but haven't formalized
-                        // the public API. The "_google" metadata will be going away, so
-                        // DON'T USE IT!
-                        ComponentName component = intent.getComponent();
-                        boolean replaced = mGlowPadView.replaceTargetDrawablesIfPresent(component,
-                                ASSIST_ICON_METADATA_NAME + "_google",
-                                com.android.internal.R.drawable.ic_action_assist_generic);
-
-                        if (!replaced && !mGlowPadView.replaceTargetDrawablesIfPresent(component,
-                                    ASSIST_ICON_METADATA_NAME,
-                                    com.android.internal.R.drawable.ic_action_assist_generic)) {
-                                Slog.w(TAG, "Couldn't grab icon from package " + component);
-                        }
-                    }
-                }
-                setEnabled(com.android.internal.R.drawable.ic_lockscreen_camera, !mCameraDisabled);
-                setEnabled(com.android.internal.R.drawable.ic_action_assist_generic, !mSearchDisabled);
- 
-                mMultiWaveView.setTargetResources(resId);
+            int resId;
+            if (mCameraDisabled && mEnableRingSilenceFallback) {
+                // Fall back to showing ring/silence if camera is disabled...
+                resId = mSilentMode ? R.array.lockscreen_targets_when_silent
+                    : R.array.lockscreen_targets_when_soundon;
             } else {
-                mStoredTargets = storedVal.split("\\|");
-                mIsScreenLarge = isScreenLarge();
-                ArrayList<TargetDrawable> storedDraw = new ArrayList<TargetDrawable>();
-                final Resources res = getResources();
-                final int targetInset = res.getDimensionPixelSize(com.android.internal.R.dimen.lockscreen_target_inset);
-                final PackageManager packMan = mContext.getPackageManager();
-                final boolean isLandscape = mCreationOrientation == Configuration.ORIENTATION_LANDSCAPE;
-                final Drawable blankActiveDrawable = res.getDrawable(R.drawable.ic_lockscreen_target_activated);
-                final InsetDrawable activeBack = new InsetDrawable(blankActiveDrawable, 0, 0, 0, 0);
-                // Shift targets for landscape lockscreen on phones
-                mTargetOffset = isLandscape && !mIsScreenLarge ? 2 : 0;
-                if (mTargetOffset == 2) {
-                    storedDraw.add(new TargetDrawable(res, null));
-                    storedDraw.add(new TargetDrawable(res, null));
-                }
-                // Add unlock target
-                storedDraw.add(new TargetDrawable(res, res.getDrawable(R.drawable.ic_lockscreen_unlock)));
-                for (int i = 0; i < 8 - mTargetOffset - 1; i++) {
-                    int tmpInset = targetInset;
-                    if (i < mStoredTargets.length) {
-                        String uri = mStoredTargets[i];
-                        if (!uri.equals(GlowPadView.EMPTY_TARGET)) {
-                            try {
-                                Intent in = Intent.parseUri(uri,0);
-                                Drawable front = null;
-                                Drawable back = activeBack;
-                                boolean frontBlank = false;
-                                if (in.hasExtra(GlowPadView.ICON_FILE)) {
-                                    String fSource = in.getStringExtra(GlowPadView.ICON_FILE);
-                                     if (fSource != null) {
-                                        File fPath = new File(fSource);
-                                        if (fPath.exists()) {
-                                            front = new BitmapDrawable(res, BitmapFactory.decodeFile(fSource));
-                                        }
-                                    }
-                                } else if (in.hasExtra(GlowPadView.ICON_RESOURCE)) {
-                                    String rSource = in.getStringExtra(GlowPadView.ICON_RESOURCE);
-                                    String rPackage = in.getStringExtra(GlowPadView.ICON_PACKAGE);
-                                    if (rSource != null) {
-                                        if (rPackage != null) {
-                                            try {
-                                                Context rContext = mContext.createPackageContext(rPackage, 0);
-                                                int id = rContext.getResources().getIdentifier(rSource, "drawable", rPackage);
-                                                front = rContext.getResources().getDrawable(id);
-                                                id = rContext.getResources().getIdentifier(rSource.replaceAll("_normal", "_activated"),
-                                                        "drawable", rPackage);
-                                                back = rContext.getResources().getDrawable(id);
-                                                tmpInset = 0;
-                                                frontBlank = true;
-                                            } catch (NameNotFoundException e) {
-                                                e.printStackTrace();
-                                            } catch (NotFoundException e) {
-                                                e.printStackTrace();
-                                            }
-                                        } else {
-                                            front = res.getDrawable(res.getIdentifier(rSource, "drawable", "android"));
-                                            back = res.getDrawable(res.getIdentifier(
-                                                    rSource.replaceAll("_normal", "_activated"), "drawable", "android"));
-                                            tmpInset = 0;
-                                            frontBlank = true;
-                                        }
-                                    }
-                                }
-                                if (front == null || back == null) {
-                                    ActivityInfo aInfo = in.resolveActivityInfo(packMan, PackageManager.GET_ACTIVITIES);
-                                    if (aInfo != null) {
-                                        front = aInfo.loadIcon(packMan);
-                                    } else {
-                                        front = res.getDrawable(android.R.drawable.sym_def_app_icon);
-                                    }
-                                }
-                                TargetDrawable nDrawable = new TargetDrawable(res, getLayeredDrawable(back,front, tmpInset, frontBlank));
-                                ComponentName compName = in.getComponent();
-                                if (compName != null) {
-                                    String cls = compName.getClassName();
-                                    if (cls.equals("com.android.camera.CameraLauncher")) {
-                                        nDrawable.setEnabled(!mCameraDisabled);
-                                    } else if (cls.equals("SearchActivity")) {
-                                        nDrawable.setEnabled(!mSearchDisabled);
-                                    }
-                                }
-                                storedDraw.add(nDrawable);
-                            } catch (Exception e) {
-                                storedDraw.add(new TargetDrawable(res, 0));
-                            }
-                        } else {
-                            storedDraw.add(new TargetDrawable(res, 0));
+                resId = R.array.lockscreen_targets_with_camera;
+            }
+            if (mGlowPadView.getTargetResourceId() != resId) {
+                mGlowPadView.setTargetResources(resId);
+            }
+
+            // Update the search icon with drawable from the search .apk
+            if (!mSearchDisabled) {
+                SearchManager searchManager = getSearchManager();
+                if (searchManager != null) {
+                    ComponentName component = searchManager.getGlobalSearchActivity();
+                    if (component != null) {
+                        if (!mGlowPadView.replaceTargetDrawablesIfPresent(component,
+                                ASSIST_ICON_METADATA_NAME,
+                                com.android.internal.R.drawable.ic_lockscreen_search)) {
+                            Slog.w(TAG, "Couldn't grab icon from package " + component);
                         }
                     } else {
                         storedDraw.add(new TargetDrawable(res, 0));
@@ -650,11 +525,10 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
         }
 
         public void onTrigger(View v, int target) {
-            if (mStoredTargets == null) {
-                final int resId = mGlowPadView.getResourceIdForTarget(target);
-                switch (resId) {
-                case com.android.internal.R.drawable.ic_action_assist_generic:
-                    Intent assistIntent = SearchManager.getAssistIntent(mContext);
+            final int resId = mGlowPadView.getResourceIdForTarget(target);
+            switch (resId) {
+                case com.android.internal.R.drawable.ic_lockscreen_search:
+                    Intent assistIntent = getAssistIntent();
                     if (assistIntent != null) {
                         launchActivity(assistIntent);
                     } else {
@@ -705,21 +579,37 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
             // Don't poke the wake lock when returning to a state where the handle is
             // not grabbed since that can happen when the system (instead of the user)
             // cancels the grab.
-            if (handle != MultiWaveView.OnTriggerListener.NO_HANDLE) {
+            if (handle != GlowPadView.OnTriggerListener.NO_HANDLE) {
                 mCallback.pokeWakelock();
             }
         }
 
         public View getView() {
-            return mMultiWaveView;
+            return mGlowPadView;
         }
 
         public void reset(boolean animate) {
-            mMultiWaveView.reset(animate);
+            mGlowPadView.reset(animate);
         }
 
         public void ping() {
-            mMultiWaveView.ping();
+            mGlowPadView.ping();
+        }
+
+        public void setEnabled(int resourceId, boolean enabled) {
+            mGlowPadView.setEnableTarget(resourceId, enabled);
+        }
+
+        public int getTargetPosition(int resourceId) {
+            return mGlowPadView.getTargetPosition(resourceId);
+        }
+
+        public void cleanUp() {
+            mGlowPadView.setOnTriggerListener(null);
+        }
+
+        public void onFinishFinalAnimation() {
+
         }
     }
 
@@ -887,7 +777,25 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
             throw new IllegalStateException("Unrecognized unlock widget: " + mUnlockWidget);
         }
 
-        // Update widget with initial ring state
+    private void updateTargets() {
+        boolean disabledByAdmin = mLockPatternUtils.getDevicePolicyManager()
+                .getCameraDisabled(null);
+        boolean disabledBySimState = mUpdateMonitor.isSimLocked();
+        boolean cameraPresent = mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+
+        boolean searchTargetPresent = (mUnlockWidgetMethods instanceof GlowPadViewMethods)
+                ? ((GlowPadViewMethods) mUnlockWidgetMethods)
+                        .isTargetPresent(com.android.internal.R.drawable.ic_lockscreen_search)
+                        : false;
+
+        if (disabledByAdmin) {
+            Log.v(TAG, "Camera disabled by Device Policy");
+        } else if (disabledBySimState) {
+            Log.v(TAG, "Camera disabled by Sim State");
+        }
+        boolean searchActionAvailable = isAssistantAvailable();
+        mCameraDisabled = disabledByAdmin || disabledBySimState || !cameraTargetPresent;
+        mSearchDisabled = disabledBySimState || !searchActionAvailable || !searchTargetPresent;
         mUnlockWidgetMethods.updateResources();
 
         if (DBG) Log.v(TAG, "*** LockScreen accel is "

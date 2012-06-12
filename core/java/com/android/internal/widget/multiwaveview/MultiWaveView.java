@@ -140,8 +140,9 @@ public class MultiWaveView extends View {
     private float mTapRadius;
     private float mWaveCenterX;
     private float mWaveCenterY;
-    private float mVerticalOffset;
-    private float mHorizontalOffset;
+    private int mMaxTargetHeight;
+    private int mMaxTargetWidth;
+
     private float mOuterRadius = 0.0f;
     private float mHitRadius = 0.0f;
     private float mSnapMargin = 0.0f;
@@ -198,10 +199,6 @@ public class MultiWaveView extends View {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MultiWaveView);
         mOuterRadius = a.getDimension(R.styleable.MultiWaveView_outerRadius, mOuterRadius);
-        mHorizontalOffset = a.getDimension(R.styleable.MultiWaveView_horizontalOffset,
-                mHorizontalOffset);
-        mVerticalOffset = a.getDimension(R.styleable.MultiWaveView_verticalOffset,
-                mVerticalOffset);
         mHitRadius = a.getDimension(R.styleable.MultiWaveView_hitRadius, mHitRadius);
         mSnapMargin = a.getDimension(R.styleable.MultiWaveView_snapMargin, mSnapMargin);
         mVibrationDuration = a.getInt(R.styleable.MultiWaveView_vibrationDuration,
@@ -211,19 +208,19 @@ public class MultiWaveView extends View {
         mHandleDrawable = new TargetDrawable(res,
                 a.getDrawable(R.styleable.MultiWaveView_handleDrawable));
         mTapRadius = mHandleDrawable.getWidth()/2;
-        mOuterRing = new TargetDrawable(res, a.getDrawable(R.styleable.MultiWaveView_waveDrawable));
+        mOuterRing = new TargetDrawable(res,
+                a.peekValue(R.styleable.MultiWaveView_waveDrawable).resourceId);
+        mAlwaysTrackFinger = a.getBoolean(R.styleable.MultiWaveView_alwaysTrackFinger, false);
 
-        // Read chevron animation drawables
-        final int chevrons[] = { R.styleable.MultiWaveView_leftChevronDrawable,
-                R.styleable.MultiWaveView_rightChevronDrawable,
-                R.styleable.MultiWaveView_topChevronDrawable,
-                R.styleable.MultiWaveView_bottomChevronDrawable
-        };
-        for (int chevron : chevrons) {
-            Drawable chevronDrawable = a.getDrawable(chevron);
-            for (int i = 0; i < mFeedbackCount; i++) {
-                mChevronDrawables.add(
-                    chevronDrawable != null ? new TargetDrawable(res, chevronDrawable) : null);
+        // Read array of chevron drawables
+        TypedValue outValue = new TypedValue();
+        if (a.getValue(R.styleable.MultiWaveView_chevronDrawables, outValue)) {
+            ArrayList<TargetDrawable> chevrons = loadDrawableArray(outValue.resourceId);
+            for (int i = 0; i < chevrons.size(); i++) {
+                final TargetDrawable chevron = chevrons.get(i);
+                for (int k = 0; k < mFeedbackCount; k++) {
+                    mChevronDrawables.add(chevron == null ? null : new TargetDrawable(chevron));
+                }
             }
         }
 
@@ -255,6 +252,12 @@ public class MultiWaveView extends View {
         }
 
         a.recycle();
+
+        // Use gravity attribute from LinearLayout
+        a = context.obtainStyledAttributes(attrs, android.R.styleable.LinearLayout);
+        mGravity = a.getInt(android.R.styleable.LinearLayout_gravity, Gravity.TOP);
+        a.recycle();
+
         setVibrateEnabled(mVibrationDuration > 0);
     }
 
@@ -267,8 +270,6 @@ public class MultiWaveView extends View {
         Log.v(TAG, "TapRadius = " + mTapRadius);
         Log.v(TAG, "WaveCenterX = " + mWaveCenterX);
         Log.v(TAG, "WaveCenterY = " + mWaveCenterY);
-        Log.v(TAG, "HorizontalOffset = " + mHorizontalOffset);
-        Log.v(TAG, "VerticalOffset = " + mVerticalOffset);
     }
 
     @Override
@@ -897,8 +898,33 @@ public class MultiWaveView extends View {
             mWaveCenterX = newWaveCenterX;
             mWaveCenterY = newWaveCenterY;
 
-            mOuterRing.setX(mWaveCenterX);
-            mOuterRing.setY(Math.max(mWaveCenterY, mWaveCenterY));
+        // Target placement width/height. This puts the targets on the greater of the ring
+        // width or the specified outer radius.
+        final float placementWidth = Math.max(mOuterRing.getWidth(), 2 * mOuterRadius);
+        final float placementHeight = Math.max(mOuterRing.getHeight(), 2 * mOuterRadius);
+        float newWaveCenterX = mHorizontalInset
+                + Math.max(width, mMaxTargetWidth + placementWidth) / 2;
+        float newWaveCenterY = mVerticalInset
+                + Math.max(height, + mMaxTargetHeight + placementHeight) / 2;
+
+        if (mInitialLayout) {
+            hideChevrons();
+            hideTargets(false, false);
+            moveHandleTo(0, 0, false);
+            mInitialLayout = false;
+        }
+
+        mOuterRing.setPositionX(newWaveCenterX);
+        mOuterRing.setPositionY(newWaveCenterY);
+
+        mHandleDrawable.setPositionX(newWaveCenterX);
+        mHandleDrawable.setPositionY(newWaveCenterY);
+
+        updateTargetPositions(newWaveCenterX, newWaveCenterY);
+        updateChevronPositions(newWaveCenterX, newWaveCenterY);
+
+        mWaveCenterX = newWaveCenterX;
+        mWaveCenterY = newWaveCenterY;
 
             updateTargetPositions();
         }

@@ -107,4 +107,53 @@
     <!-- The padding on the global screenshot background image -->
     <dimen name="global_screenshot_bg_padding">20dp</dimen>
 
+    <!-- The width of the view containing non-menu status bar icons -->
+    <dimen name="navigation_key_width">80dip</dimen>
+
+    <!-- The width of the view containing the menu status bar icon -->
+    <dimen name="navigation_menu_key_width">40dip</dimen>
+
+    <!-- Default distance beyond which snaps to the target radius -->
+    <dimen name="navbar_search_snap_margin">20dip</dimen>
+
+    <!-- Default distance from each snap target considers a "hit" -->
+    <dimen name="navbar_search_hit_radius">60dip</dimen>
+
+    <!-- Diameter of outer shape drawable shown in navbar search-->
+    <dimen name="navbar_search_outerring_diameter">340dp</dimen>
+
+    <!-- Diameter of outer shape drawable shown in navbar search. Should be 1/2 of above value -->
+    <dimen name="navbar_search_outerring_radius">170dp</dimen>
+
+    <!-- Threshold for swipe-up gesture to activate search dialog -->
+    <dimen name="navbar_search_up_threshhold">40dip</dimen>
+
+    <!-- Height of search panel including navigation bar height -->
+    <dimen name="navbar_search_panel_height">230dip</dimen>
+
+    <!-- Height of the draggable handle at the bottom of the phone notification panel -->
+    <dimen name="close_handle_height">32dp</dimen>
+
+    <!-- Amount of close_handle that will not overlap the notification list -->
+    <dimen name="close_handle_underlap">18dp</dimen>
+
+    <!-- Height of the notification panel header bar -->
+    <dimen name="notification_panel_header_height">48dp</dimen>
+
+    <!-- Extra space above the panel -->
+    <dimen name="notification_panel_padding_top">0dp</dimen>
+
+    <!-- Extra space above the clock in the panel -->
+    <dimen name="notification_panel_header_padding_top">0dp</dimen>
+
+    <!-- Layout parameters for the notification panel -->
+    <dimen name="notification_panel_margin_bottom">0dp</dimen>
+    <dimen name="notification_panel_margin_left">0dp</dimen>
+
+    <!-- Gravity for the notification panel -->
+    <!-- 0x37 = fill_horizontal|top -->
+    <integer name="notification_panel_layout_gravity">0x37</integer>
+
+    <!-- Height of the carrier/wifi name label -->
+    <dimen name="carrier_label_height">24dp</dimen>
 </resources>
