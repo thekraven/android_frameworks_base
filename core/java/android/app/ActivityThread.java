@@ -17,6 +17,7 @@
 
 package android.app;
 
+import android.util.ExtendedPropertiesUtils;
 import com.android.internal.app.IAssetRedirectionManager;
 import com.android.internal.os.BinderInternal;
 import com.android.internal.os.RuntimeInit;
@@ -1505,6 +1506,9 @@ public final class ActivityThread {
         //}
 
         AssetManager assets = new AssetManager();
+        if ( !assets.paranoidGetActive() && resDir != null )
+            assets.paranoidOverride( resDir );
+        assets.paranoidLog( "----------TopLevelRes=" + resDir );
         assets.setThemeSupport(compInfo.isThemeable);
         if (assets.addAssetPath(resDir) == 0) {
             return null;
@@ -1524,7 +1528,9 @@ public final class ActivityThread {
 
         //Slog.i(TAG, "Resource: key=" + key + ", display metrics=" + metrics);
         DisplayMetrics metrics = getDisplayMetricsLocked(null, false);
+        metrics.paranoidOverride( assets );
         r = new Resources(assets, metrics, getConfiguration(), compInfo);
+        r.paranoidOverride( assets );
         if (false) {
             Slog.i(TAG, "Created app resources " + resDir + " " + r + ": "
                     + r.getConfiguration() + " appScale="
@@ -4566,6 +4572,7 @@ public final class ActivityThread {
 
         ActivityThread thread = new ActivityThread();
         thread.attach(false);
+        //paranoidInit(thread);
 
         if (false) {
             Looper.myLooper().setMessageLogging(new

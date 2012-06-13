@@ -16,6 +16,7 @@
 
 package android.content.res;
 
+import android.util.ExtendedPropertiesUtils;
 import com.android.internal.util.XmlUtils;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -69,7 +70,7 @@ import libcore.icu.NativePluralRules;
  * <p>For more information about using resources, see the documentation about <a
  * href="{@docRoot}guide/topics/resources/index.html">Application Resources</a>.</p>
  */
-public class Resources {
+public class Resources extends ExtendedPropertiesUtils {
     static final String TAG = "Resources";
     private static final boolean DEBUG_LOAD = false;
     private static final boolean DEBUG_CONFIG = false;
@@ -171,6 +172,20 @@ public class Resources {
         }
     }
 
+    // PARANOID
+    public void paranoidHook() {
+        mConfiguration.active = true;        
+        mConfiguration.paranoidOverride(this);
+        mConfiguration.paranoidHook();
+
+        mTmpConfig.active = true;        
+        mTmpConfig.paranoidOverride(this);
+        mTmpConfig.paranoidHook();
+
+        mMetrics.paranoidOverride(this);
+        mMetrics.paranoidHook();
+    }
+
     /**
      * Create a new Resources object on top of an existing set of assets in an
      * AssetManager.
@@ -202,6 +217,8 @@ public class Resources {
             Configuration config, CompatibilityInfo compInfo) {
         mAssets = assets;
         mMetrics.setToDefaults();
+        paranoidOverride(assets);
+        paranoidHook();
         mCompatibilityInfo = compInfo;
         updateConfiguration(config, metrics);
         assets.ensureStringBlocks();

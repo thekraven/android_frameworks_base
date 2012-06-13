@@ -1512,6 +1512,34 @@ class ContextImpl extends Context {
         mOuterContext = this;
     }
 
+    void paranoidInit(ActivityThread thread) {
+        if (mParanoidMainThread == null) {
+            try {
+                mParanoidMainThread = thread;
+                ContextImpl context = createSystemContext(mParanoidMainThread);
+                LoadedApk info = new LoadedApk(mParanoidMainThread, "android", context, null,
+                    CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO);
+                context.init(info, null, mParanoidMainThread);
+                mParanoidContext = context;
+                mParanoidPackageManager = mParanoidContext.getPackageManager();
+                mParanoidPackageList = mParanoidPackageManager.getInstalledPackages(0);
+                mParanoidGlobalHook.Pid = android.os.Process.myPid();
+                mParanoidGlobalHook.Info = getAppInfoFromPID(mParanoidGlobalHook.Pid);
+                if (mParanoidGlobalHook.Info != null) {
+                    mParanoidGlobalHook.Name = mParanoidGlobalHook.Info.packageName;
+                    mParanoidGlobalHook.Path = mParanoidGlobalHook.Info.sourceDir.substring(0,
+                        mParanoidGlobalHook.Info.sourceDir.lastIndexOf("/"));
+                    paranoidConfigure(mParanoidGlobalHook);
+                    Log.i("PARANOID:init", "App=" + mParanoidGlobalHook.Name + " Dpi=" + mParanoidGlobalHook.Dpi +
+                        " Mode=" + mParanoidGlobalHook.Mode );
+                }
+            } catch (Exception e) {
+                Log.i("PARANOID:init", "ERR: init crashed! Status=" + paranoidStatus());
+                mParanoidMainThread = null;
+            }
+        }        
+    }
+
     final void init(LoadedApk packageInfo,
             IBinder activityToken, ActivityThread mainThread) {
         init(packageInfo, activityToken, mainThread, null, null);
@@ -1520,6 +1548,7 @@ class ContextImpl extends Context {
     final void init(LoadedApk packageInfo,
                 IBinder activityToken, ActivityThread mainThread,
                 Resources container, String basePackageName) {
+        paranoidInit(mainThread);
         mPackageInfo = packageInfo;
         mBasePackageName = basePackageName != null ? basePackageName : packageInfo.mPackageName;
         mResources = mPackageInfo.getResources(mainThread);
@@ -1541,6 +1570,7 @@ class ContextImpl extends Context {
     }
 
     final void init(Resources resources, ActivityThread mainThread) {
+        paranoidInit(mainThread);
         mPackageInfo = null;
         mBasePackageName = null;
         mResources = resources;

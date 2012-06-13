@@ -18,7 +18,6 @@ package android.util;
 
 import android.os.SystemProperties;
 
-
 /**
  * A structure describing general information about a display, such as its
  * size, density, and font scaling.
@@ -26,7 +25,7 @@ import android.os.SystemProperties;
  * <pre> DisplayMetrics metrics = new DisplayMetrics();
  * getWindowManager().getDefaultDisplay().getMetrics(metrics);</pre>
  */
-public class DisplayMetrics {
+public class DisplayMetrics extends ExtendedPropertiesUtils {
     /**
      * Standard quantized DPI for low-density screens.
      */
@@ -151,6 +150,15 @@ public class DisplayMetrics {
      */
     public float noncompatYdpi;
 
+    // PARANOID
+    public void paranoidHook() {
+        if (paranoidGetActive()) {
+            density = paranoidGetDensity() == 0 ? density : paranoidGetDensity();
+            scaledDensity = paranoidGetScaledDensity() == 0 ? scaledDensity : paranoidGetScaledDensity();
+            densityDpi = paranoidGetDpi() == 0 ? densityDpi : paranoidGetDpi();
+        }
+    }
+
     public DisplayMetrics() {
     }
     
@@ -168,6 +176,7 @@ public class DisplayMetrics {
         noncompatScaledDensity = o.noncompatScaledDensity;
         noncompatXdpi = o.noncompatXdpi;
         noncompatYdpi = o.noncompatYdpi;
+        paranoidHook();
     }
     
     public void setToDefaults() {
