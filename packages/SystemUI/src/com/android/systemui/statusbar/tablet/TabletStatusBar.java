@@ -20,6 +20,8 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.app.ActivityManagerNative;
@@ -522,6 +524,7 @@ public class TabletStatusBar extends StatusBar implements
         }
     }
 
+    boolean mButtonBusy= true;
     protected View makeStatusBarView() {
         final Context context = mContext;
 
@@ -616,7 +619,33 @@ public class TabletStatusBar extends StatusBar implements
         mHomeButton = mNavigationArea.findViewById(R.id.home);
         mMenuButton = mNavigationArea.findViewById(R.id.menu);
         mRecentButton = mNavigationArea.findViewById(R.id.recent_apps);
-        mRecentButton.setOnClickListener(mOnClickListener);
+
+        //PARANOID
+        mRecentButton.setOnLongClickListener(new OnLongClickListener() {
+            public boolean onLongClick(View v) {
+                try { 
+                    Runtime.getRuntime().exec("input keyevent 82"); 
+                } catch (Exception ex) { }
+                mButtonBusy = false;                        
+                return true;        
+            }
+        });
+
+        mRecentButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if (DEBUG) 
+                    Slog.d(TAG, "clicked recent apps; disabled=" + mDisabled);
+                if(mButtonBusy){
+                    if ((mDisabled & StatusBarManager.DISABLE_EXPAND) == 0) {
+                        int msg = (mRecentsPanel.getVisibility() == View.VISIBLE)
+                            ? MSG_CLOSE_RECENTS_PANEL : MSG_OPEN_RECENTS_PANEL;
+                        mHandler.removeMessages(msg);
+                        mHandler.sendEmptyMessage(msg);
+                    }
+                } else
+                    mButtonBusy = true;
+            } 
+        });
 
         mUseTabletSoftKeys = Settings.System.getInt(mContext.getContentResolver(), Settings.System.SOFT_KEYS, mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0) == 1;
 	mNavigationArea.setVisibility(mUseTabletSoftKeys ? View.VISIBLE : View.GONE);
@@ -1392,9 +1421,7 @@ public class TabletStatusBar extends StatusBar implements
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            if (v == mRecentButton) {
-                onClickRecentButton();
-            } else if (v == mInputMethodSwitchButton) {
+            if (v == mInputMethodSwitchButton) {
                 onClickInputMethodSwitchButton();
             } else if (v == mCompatModeButton) {
                 onClickCompatModeButton();
