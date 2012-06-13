@@ -19,6 +19,7 @@ package android.app;
 
 import com.android.internal.policy.PolicyManager;
 
+import android.util.ExtendedPropertiesUtils;
 import android.accounts.AccountManager;
 import android.accounts.IAccountManager;
 import android.content.BroadcastReceiver;
@@ -1512,30 +1513,68 @@ class ContextImpl extends Context {
         mOuterContext = this;
     }
 
-    void paranoidInit(ActivityThread thread) {
-        if (mParanoidMainThread == null) {
+    static void paranoidInit(ActivityThread thread) {
+        // GLOBAL PROCESS IS YET UNKNOWN?
+        if (ExtendedPropertiesUtils.mParanoidMainThread == null) {
             try {
-                mParanoidMainThread = thread;
-                ContextImpl context = createSystemContext(mParanoidMainThread);
-                LoadedApk info = new LoadedApk(mParanoidMainThread, "android", context, null,
+                // SET UP THREAD
+                ExtendedPropertiesUtils.mParanoidMainThread = thread;
+
+                // CHECK IF HYBRID MODE IS ON
+                if (ExtendedPropertiesUtils.getProperty("hybrid_mode", "0").equals("0")) throw new Exception();
+   
+                // TRY TO RETRIEVE A CONTEXT
+                ContextImpl context = createSystemContext(thread);
+                if (context == null) throw new Exception();
+
+                // BIND IT TO ANDROID-SYSTEM
+                LoadedApk info = new LoadedApk(thread, "android", context, null,
                     CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO);
-                context.init(info, null, mParanoidMainThread);
-                mParanoidContext = context;
-                mParanoidPackageManager = mParanoidContext.getPackageManager();
-                mParanoidPackageList = mParanoidPackageManager.getInstalledPackages(0);
-                mParanoidGlobalHook.Pid = android.os.Process.myPid();
-                mParanoidGlobalHook.Info = getAppInfoFromPID(mParanoidGlobalHook.Pid);
-                if (mParanoidGlobalHook.Info != null) {
-                    mParanoidGlobalHook.Name = mParanoidGlobalHook.Info.packageName;
-                    mParanoidGlobalHook.Path = mParanoidGlobalHook.Info.sourceDir.substring(0,
-                        mParanoidGlobalHook.Info.sourceDir.lastIndexOf("/"));
-                    paranoidConfigure(mParanoidGlobalHook);
-                    Log.i("PARANOID:init", "App=" + mParanoidGlobalHook.Name + " Dpi=" + mParanoidGlobalHook.Dpi +
-                        " Mode=" + mParanoidGlobalHook.Mode );
+                if (info == null) throw new Exception();
+
+                context.init(info, null, thread);
+                ExtendedPropertiesUtils.mParanoidContext = context;
+                // FETCH PACKAGE MANAGER
+                ExtendedPropertiesUtils.mParanoidPackageManager = 
+                    ExtendedPropertiesUtils.mParanoidContext.getPackageManager();
+                if (ExtendedPropertiesUtils.mParanoidPackageManager == null) throw new Exception();
+
+                // GET PACKAGE LIST
+                ExtendedPropertiesUtils.mParanoidPackageList = 
+                    ExtendedPropertiesUtils.mParanoidPackageManager.getInstalledPackages(0);
+                ExtendedPropertiesUtils.mParanoidGlobalHook.Pid = android.os.Process.myPid();
+
+                // FIND PROCESS BY ITS PID AND GET ITS APP-INFO
+                ExtendedPropertiesUtils.mParanoidGlobalHook.Info = 
+                    ExtendedPropertiesUtils.getAppInfoFromPID(ExtendedPropertiesUtils.mParanoidGlobalHook.Pid);
+                if (ExtendedPropertiesUtils.mParanoidGlobalHook.Info != null) {
+                    // FILL COMMON VALUES AND CONFIGURE IT
+                    ExtendedPropertiesUtils.mParanoidGlobalHook.Name = 
+                        ExtendedPropertiesUtils.mParanoidGlobalHook.Info.packageName;
+                    ExtendedPropertiesUtils.mParanoidGlobalHook.Path = 
+                        ExtendedPropertiesUtils.mParanoidGlobalHook.Info.sourceDir.substring(0,
+                        ExtendedPropertiesUtils.mParanoidGlobalHook.Info.sourceDir.lastIndexOf("/"));
+                    ExtendedPropertiesUtils.paranoidConfigure(ExtendedPropertiesUtils.mParanoidGlobalHook);
+                } else {
+                    // ANDROID SYSTEM ITSELF
+                    ExtendedPropertiesUtils.mParanoidGlobalHook.Name = "android";
+                    ExtendedPropertiesUtils.mParanoidGlobalHook.Path = "/system/app";
+                    ExtendedPropertiesUtils.paranoidConfigure(ExtendedPropertiesUtils.mParanoidGlobalHook);
                 }
-            } catch (Exception e) {
-                Log.i("PARANOID:init", "ERR: init crashed! Status=" + paranoidStatus());
-                mParanoidMainThread = null;
+
+                Log.i("PARANOID:init", "App=" + ExtendedPropertiesUtils.mParanoidGlobalHook.Name + " Dpi=" + 
+                    ExtendedPropertiesUtils.mParanoidGlobalHook.Dpi + " Mode=" + 
+                    ExtendedPropertiesUtils.mParanoidGlobalHook.Mode );
+                    
+            } catch (Exception e) { 
+                Log.i("PARANOID:init", "Crash! App=" + ExtendedPropertiesUtils.mParanoidGlobalHook.Name + " Dpi=" + 
+                    ExtendedPropertiesUtils.mParanoidGlobalHook.Dpi + " Mode=" + 
+                    ExtendedPropertiesUtils.mParanoidGlobalHook.Mode );
+
+                e.printStackTrace();
+
+                // PULL OUT
+                ExtendedPropertiesUtils.mParanoidMainThread = null;
             }
         }        
     }

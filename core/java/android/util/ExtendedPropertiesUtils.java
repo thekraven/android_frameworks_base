@@ -56,9 +56,6 @@ public class ExtendedPropertiesUtils {
 
     // SET UP HOOK BY READING OUT PAD.PROP
     public static void paranoidConfigure(ParanoidAppInfo Info) {
-        if (!getProperty("hybrid_mode", "0").equals("1"))
-            return;
-
         // CONFIGURE LAYOUT
         Info.Mode = Integer.parseInt(getProperty(Info.Name + ".mode", "0"));
         switch (Info.Mode) {
@@ -93,7 +90,7 @@ public class ExtendedPropertiesUtils {
     }
 
     public boolean paranoidOverride(ApplicationInfo Info) {
-        if (Info != null) {
+        if (paranoidIsInitialized() && Info != null) {
             mParanoidLocalHook.Pid = android.os.Process.myPid();
             mParanoidLocalHook.Info = Info;
             if (mParanoidLocalHook.Info != null) {
@@ -101,8 +98,6 @@ public class ExtendedPropertiesUtils {
                 mParanoidLocalHook.Path = mParanoidLocalHook.Info.sourceDir.substring(0, 
                     mParanoidLocalHook.Info.sourceDir.lastIndexOf("/"));
                 paranoidConfigure(mParanoidLocalHook);
-                //Log.i("PARANOID:override", "App=" + mParanoidLocalHook.Name + " RealApp=" + mParanoidGlobalHook.Name +
-                //    " Dpi=" + mParanoidLocalHook.Dpi + " Mode=" + mParanoidLocalHook.Mode );
             }
             return true;
         }
@@ -111,7 +106,7 @@ public class ExtendedPropertiesUtils {
 
     // COMPONENTS CAN OVERRIDE THEIR PROCESS-HOOK
     public boolean paranoidOverride(String Fullname) {
-        if (Fullname != null) {
+        if (paranoidIsInitialized() && Fullname != null) {
             mParanoidLocalHook.Pid = android.os.Process.myPid();
             mParanoidLocalHook.Info = getAppInfoFromPath(Fullname);
             if (mParanoidLocalHook.Info != null) {
@@ -119,9 +114,8 @@ public class ExtendedPropertiesUtils {
                 mParanoidLocalHook.Path = mParanoidLocalHook.Info.sourceDir.substring(0,
                     mParanoidLocalHook.Info.sourceDir.lastIndexOf("/"));
                 paranoidConfigure(mParanoidLocalHook);
-                //Log.i("PARANOID:override", "App=" + mParanoidLocalHook.Name + " RealApp=" + mParanoidGlobalHook.Name + 
-                //    " Dpi=" + mParanoidLocalHook.Dpi + " Mode=" + mParanoidLocalHook.Mode );
             }
+            paranoidLog("Override");
             return true;
         }
         return false;
@@ -129,7 +123,7 @@ public class ExtendedPropertiesUtils {
 
     // COMPONENTS CAN COPY ANOTHER COMPONENTS HOOK
     public boolean paranoidOverride(ExtendedPropertiesUtils New) {
-        if (New != null && New.mParanoidLocalHook.Active) {
+        if (paranoidIsInitialized() && New != null && New.mParanoidLocalHook.Active) {
             mParanoidLocalHook.Active = New.mParanoidLocalHook.Active;
             mParanoidLocalHook.Pid = New.mParanoidLocalHook.Pid;
             mParanoidLocalHook.Info = New.mParanoidLocalHook.Info;
@@ -143,14 +137,21 @@ public class ExtendedPropertiesUtils {
             mParanoidLocalHook.ScaledDensity = New.mParanoidLocalHook.ScaledDensity;
             mParanoidLocalHook.Density = New.mParanoidLocalHook.Density;
             mParanoidLocalHook.Force = New.mParanoidLocalHook.Force;
-            //Log.i("PARANOID:override", "App=" + mParanoidLocalHook.Name + " RealApp=" + mParanoidGlobalHook.Name + 
-            //    " Dpi=" + mParanoidLocalHook.Dpi + " Mode=" + mParanoidLocalHook.Mode );
+            paranoidLog("Override");
             return true;
         }
         return false;
     }
 
-    public boolean paranoidGetActive(){
+    static public boolean paranoidIsInitialized() {
+        return (mParanoidContext != null);
+    }
+
+    static public boolean paranoidIsHooked() {
+        return (paranoidIsInitialized() && !mParanoidGlobalHook.Name.equals("android") && !mParanoidGlobalHook.Name.equals(""));
+    }
+
+    public boolean paranoidGetActive() {
         return mParanoidLocalHook.Active ? mParanoidLocalHook.Active : mParanoidGlobalHook.Active;
     }
     public int paranoidGetPid() {
@@ -191,25 +192,29 @@ public class ExtendedPropertiesUtils {
     }
 
     public static ApplicationInfo getAppInfoFromPath(String Path) {
-        for(int i=0; mParanoidPackageList != null && i<mParanoidPackageList.size(); i++) {
-            PackageInfo p = mParanoidPackageList.get(i);
-            if (p.applicationInfo != null && p.applicationInfo.sourceDir.equals(Path))
-                return p.applicationInfo;
+        if(paranoidIsInitialized()) {
+            for(int i=0; mParanoidPackageList != null && i<mParanoidPackageList.size(); i++) {
+                PackageInfo p = mParanoidPackageList.get(i);
+                if (p.applicationInfo != null && p.applicationInfo.sourceDir.equals(Path))
+                    return p.applicationInfo;
+            }
         }
         return null;
     }
 
     public static ApplicationInfo getAppInfoFromPackageName(String PackageName) {
-        for(int i=0; mParanoidPackageList != null && i<mParanoidPackageList.size(); i++) {
-            PackageInfo p = mParanoidPackageList.get(i);
-            if (p.applicationInfo != null && p.applicationInfo.packageName.equals(PackageName))
-                return p.applicationInfo;
+        if(paranoidIsInitialized()) {
+            for(int i=0; mParanoidPackageList != null && i<mParanoidPackageList.size(); i++) {
+                PackageInfo p = mParanoidPackageList.get(i);
+                if (p.applicationInfo != null && p.applicationInfo.packageName.equals(PackageName))
+                    return p.applicationInfo;
+            }
         }
         return null;
     }
 
     public static ApplicationInfo getAppInfoFromPID(int PID) {
-        if (mParanoidContext != null) {
+        if (paranoidIsInitialized()) {
             List mProcessList = ((ActivityManager)mParanoidContext.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses();
             Iterator mProcessListIt = mProcessList.iterator();
             while(mProcessListIt.hasNext()) {

@@ -1506,7 +1506,7 @@ public final class ActivityThread {
         //}
 
         AssetManager assets = new AssetManager();
-        if ( !assets.paranoidGetActive() && resDir != null )
+        if ( !assets.paranoidIsHooked() && resDir != null )
             assets.paranoidOverride( resDir );
         assets.paranoidLog( "----------TopLevelRes=" + resDir );
         assets.setThemeSupport(compInfo.isThemeable);
@@ -4536,6 +4536,7 @@ public final class ActivityThread {
         HardwareRenderer.disable(true);
         ActivityThread thread = new ActivityThread();
         thread.attach(true);
+        ContextImpl.paranoidInit(thread);
         return thread;
     }
 
@@ -4572,7 +4573,7 @@ public final class ActivityThread {
 
         ActivityThread thread = new ActivityThread();
         thread.attach(false);
-        //paranoidInit(thread);
+        ContextImpl.paranoidInit(thread);
 
         if (false) {
             Looper.myLooper().setMessageLogging(new
