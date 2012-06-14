@@ -282,8 +282,7 @@ public class HoloClock extends FrameLayout {
             }
         }
 
-        mShowClock = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_CLOCK, 1) == 1);
+        mShowClock = true;
 
         if(mShowClock)
             setVisibility(View.VISIBLE);
