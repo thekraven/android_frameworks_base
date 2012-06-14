@@ -407,15 +407,15 @@ VideoFrame *StagefrightMetadataRetriever::getFrameAtTime(
         }
         else {
             frame = extractVideoFrameWithCodecFlags(
+                &mClient, trackMeta, source, OMXCodec::kSoftwareCodecsOnly,
+                timeUs, option);
+        }
+    }
 #else
     VideoFrame *frame =
         extractVideoFrameWithCodecFlags(
-#endif
                 &mClient, trackMeta, source, OMXCodec::kPreferSoftwareCodecs,
                 timeUs, option);
-#ifdef QCOM_HARDWARE
-        }
-    }
 #endif
 
     if (frame == NULL) {
