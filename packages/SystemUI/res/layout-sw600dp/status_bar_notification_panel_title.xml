@@ -210,12 +210,13 @@
     </TableLayout>
 
     <com.android.systemui.statusbar.tablet.HoloClock
-        android:id="@+id/clock"
+        android:id="@+id/clock_big"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dip"
         android:layout_marginTop="16dip"
+        systemui:showAlways="true"
         >
         <TextView android:id="@+id/time_bg"
             android:layout_width="match_parent"
