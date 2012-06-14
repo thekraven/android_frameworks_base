@@ -227,16 +227,16 @@ public class ExtendedPropertiesUtils {
     }
 
     public void paranoidLog(String Message) {
-        Log.i("PARANOID:" + Message, "Init=" + ( mParanoidMainThread != null && mParanoidContext != null && 
-            mParanoidPackageManager != null ) + " App=" + paranoidGetName() + " Dpi=" + paranoidGetDpi() + 
-            " Mode=" + paranoidGetMode() );
+        Log.i("PARANOID:" + Message, "Init=" + (mParanoidMainThread != null && mParanoidContext != null && 
+            mParanoidPackageManager != null) + " App=" + paranoidGetName() + " Dpi=" + paranoidGetDpi() + 
+            " Mode=" + paranoidGetMode());
     }
 
     public void paranoidTrace(String Message) {
         StringWriter sw = new StringWriter();
         new Throwable("").printStackTrace(new PrintWriter(sw));
         String stackTrace = sw.toString();
-        Log.i("PARANOID:" + Message, "Trace=" + stackTrace ); 
+        Log.i("PARANOID:" + Message, "Trace=" + stackTrace); 
     }
 
    public static String getFixedProperty(String prop, String orElse) {
@@ -320,7 +320,7 @@ public class ExtendedPropertiesUtils {
             bb.limit(nRead);
             while(bb.hasRemaining()){
                 nGet = Math.min(bb.remaining(), 8192);
-                bb.get( barray, 0, nGet );
+                bb.get(barray, 0, nGet);
                 char[] theChars = new char[nGet];
                 for (int i = 0; i < nGet;) {
                     theChars[i] = (char)(barray[i++] & 0xff);
@@ -329,7 +329,7 @@ public class ExtendedPropertiesUtils {
 
             }
 
-            bb.clear( );
+            bb.clear();
         }
         removedBadChars = text;
     }

@@ -1506,9 +1506,9 @@ public final class ActivityThread {
         //}
 
         AssetManager assets = new AssetManager();
-        if ( !assets.paranoidIsHooked() && resDir != null )
-            assets.paranoidOverride( resDir );
-        assets.paranoidLog( "----------TopLevelRes=" + resDir );
+        if (!assets.paranoidIsHooked() && resDir != null)
+            assets.paranoidOverride(resDir);
+        assets.paranoidLog("----------TopLevelRes=" + resDir);
         assets.setThemeSupport(compInfo.isThemeable);
         if (assets.addAssetPath(resDir) == 0) {
             return null;
@@ -1528,9 +1528,9 @@ public final class ActivityThread {
 
         //Slog.i(TAG, "Resource: key=" + key + ", display metrics=" + metrics);
         DisplayMetrics metrics = getDisplayMetricsLocked(null, false);
-        metrics.paranoidOverride( assets );
+        metrics.paranoidOverride(assets);
         r = new Resources(assets, metrics, getConfiguration(), compInfo);
-        r.paranoidOverride( assets );
+        r.paranoidOverride(assets);
         if (false) {
             Slog.i(TAG, "Created app resources " + resDir + " " + r + ": "
                     + r.getConfiguration() + " appScale="
