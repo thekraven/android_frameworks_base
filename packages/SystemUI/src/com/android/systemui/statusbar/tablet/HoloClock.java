@@ -283,7 +283,6 @@ public class HoloClock extends FrameLayout {
         }
 
         mShowClock = true;
-
         if(mShowClock)
             setVisibility(View.VISIBLE);
         else
