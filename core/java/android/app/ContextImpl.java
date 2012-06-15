@@ -105,6 +105,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.IllegalStateException;
+import java.lang.NullPointerException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -1521,23 +1523,23 @@ class ContextImpl extends Context {
                 ExtendedPropertiesUtils.mParanoidMainThread = thread;
 
                 // CHECK IF HYBRID MODE IS ON
-                if (ExtendedPropertiesUtils.getProperty("hybrid_mode", "0").equals("0")) throw new Exception();
+                if (ExtendedPropertiesUtils.getProperty("hybrid_mode", "0").equals("0")) throw new IllegalStateException();
    
                 // TRY TO RETRIEVE A CONTEXT
                 ContextImpl context = createSystemContext(thread);
-                if (context == null) throw new Exception();
+                if (context == null) throw new NullPointerException();
 
                 // BIND IT TO ANDROID-SYSTEM
                 LoadedApk info = new LoadedApk(thread, "android", context, null,
                     CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO);
-                if (info == null) throw new Exception();
+                if (info == null) throw new NullPointerException();
 
                 context.init(info, null, thread);
                 ExtendedPropertiesUtils.mParanoidContext = context;
                 // FETCH PACKAGE MANAGER
                 ExtendedPropertiesUtils.mParanoidPackageManager = 
                     ExtendedPropertiesUtils.mParanoidContext.getPackageManager();
-                if (ExtendedPropertiesUtils.mParanoidPackageManager == null) throw new Exception();
+                if (ExtendedPropertiesUtils.mParanoidPackageManager == null) throw new NullPointerException();
 
                 // GET PACKAGE LIST
                 ExtendedPropertiesUtils.mParanoidPackageList = 
@@ -1563,18 +1565,12 @@ class ContextImpl extends Context {
                     ExtendedPropertiesUtils.mParanoidGlobalHook.Name = "android";
                     ExtendedPropertiesUtils.mParanoidGlobalHook.Path = "/system/app";
                     ExtendedPropertiesUtils.paranoidConfigure(ExtendedPropertiesUtils.mParanoidGlobalHook);
-                }
-
-                /*Log.i("PARANOID:init", "App=" + ExtendedPropertiesUtils.mParanoidGlobalHook.Name + " Dpi=" + 
-                    ExtendedPropertiesUtils.mParanoidGlobalHook.Dpi + " Mode=" + 
-                    ExtendedPropertiesUtils.mParanoidGlobalHook.Mode );*/
-                    
-            } catch (Exception e) { 
-                /*Log.i("PARANOID:init", "Crash! App=" + ExtendedPropertiesUtils.mParanoidGlobalHook.Name + " Dpi=" + 
-                    ExtendedPropertiesUtils.mParanoidGlobalHook.Dpi + " Mode=" + 
-                    ExtendedPropertiesUtils.mParanoidGlobalHook.Mode );*/
-
-                // PULL OUT
+                }                   
+            } catch (NullPointerException e) { 
+                // UPS, SOME VALUES ARE NULL
+                ExtendedPropertiesUtils.mParanoidMainThread = null;
+            } catch (IllegalStateException e) {
+                // HYBRID MODE IS DISABLED
                 ExtendedPropertiesUtils.mParanoidMainThread = null;
             }
         }        
