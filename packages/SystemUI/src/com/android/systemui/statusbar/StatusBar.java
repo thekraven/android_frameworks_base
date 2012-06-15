@@ -18,10 +18,13 @@ package com.android.systemui.statusbar;
 
 import android.app.ActivityManager;
 import android.app.Service;
+import android.database.ContentObserver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.ServiceManager;
@@ -48,6 +51,7 @@ import com.android.systemui.R;
 public abstract class StatusBar extends SystemUI implements CommandQueue.Callbacks {
     static final String TAG = "StatusBar";
     private static final boolean SPEW = false;
+    private static final int NO_OPACITY = -16777216;
 
     protected CommandQueue mCommandQueue;
     protected IStatusBarService mBarService;
@@ -58,15 +62,35 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
     public abstract int getStatusBarHeight();
     public abstract void animateCollapse();
 
+    private View mStatusBar;
     private DoNotDisturb mDoNotDisturb;
 
     private boolean mShowNotificationCounts;
+    private static int mOpacity;
+    private Handler mHandler;
+
+    private final class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRANSPARENCY), false, this);
+        }
+
+        @Override public void onChange(boolean selfChange) {
+            setStatusBarParams();
+        }
+    }
+
 
     public void start() {
         // First set up our views and stuff.
-        View sb = makeStatusBarView();
+        mStatusBar = makeStatusBarView();
 
-        mStatusBarContainer.addView(sb);
+        mStatusBarContainer.addView(mStatusBar);
 
         mShowNotificationCounts = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_NOTIF_COUNT, 0) == 1;
@@ -126,10 +150,8 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                     | WindowManager.LayoutParams.FLAG_TOUCHABLE_WHEN_WAKING
                     | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
-                // We use a pixel format of RGB565 for the status bar to save memory bandwidth and
-                // to ensure that the layer can be handled by HWComposer.  On some devices the
-                // HWComposer is unable to handle SW-rendered RGBX_8888 layers.
-                PixelFormat.RGB_565);
+                PixelFormat.TRANSPARENT);
+        setStatusBarParams();
         
         // the status bar should be in an overlay if possible
         final Display defaultDisplay 
@@ -158,6 +180,19 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
         }
 
         mDoNotDisturb = new DoNotDisturb(mContext);
+    }
+
+    private void getStatusBarParams(){
+        mOpacity = Settings.System.getInt(mStatusBar.getContext().getContentResolver(), Settings.System.STATUS_BAR_TRANSPARENCY, 100);
+    }
+
+    private void setStatusBarParams(){
+        getStatusBarParams();
+        if (mOpacity != 100) {
+	    int background = (int) (((float) mOpacity / 100.0F) * 255) * 0x1000000;
+            mStatusBar.setBackgroundColor(background);
+        } else
+            mStatusBar.setBackgroundColor(NO_OPACITY);
     }
 
     protected View updateNotificationVetoButton(View row, StatusBarNotification n) {
