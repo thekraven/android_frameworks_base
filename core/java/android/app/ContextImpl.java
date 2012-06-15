@@ -1565,14 +1565,14 @@ class ContextImpl extends Context {
                     ExtendedPropertiesUtils.paranoidConfigure(ExtendedPropertiesUtils.mParanoidGlobalHook);
                 }
 
-                Log.i("PARANOID:init", "App=" + ExtendedPropertiesUtils.mParanoidGlobalHook.Name + " Dpi=" + 
+                /*Log.i("PARANOID:init", "App=" + ExtendedPropertiesUtils.mParanoidGlobalHook.Name + " Dpi=" + 
                     ExtendedPropertiesUtils.mParanoidGlobalHook.Dpi + " Mode=" + 
-                    ExtendedPropertiesUtils.mParanoidGlobalHook.Mode );
+                    ExtendedPropertiesUtils.mParanoidGlobalHook.Mode );*/
                     
             } catch (Exception e) { 
-                Log.i("PARANOID:init", "Crash! App=" + ExtendedPropertiesUtils.mParanoidGlobalHook.Name + " Dpi=" + 
+                /*Log.i("PARANOID:init", "Crash! App=" + ExtendedPropertiesUtils.mParanoidGlobalHook.Name + " Dpi=" + 
                     ExtendedPropertiesUtils.mParanoidGlobalHook.Dpi + " Mode=" + 
-                    ExtendedPropertiesUtils.mParanoidGlobalHook.Mode );
+                    ExtendedPropertiesUtils.mParanoidGlobalHook.Mode );*/
 
                 // PULL OUT
                 ExtendedPropertiesUtils.mParanoidMainThread = null;

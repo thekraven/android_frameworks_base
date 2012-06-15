@@ -161,7 +161,6 @@ public class ExtendedPropertiesUtils {
             mParanoidLocalHook.ScaledDensity = New.mParanoidLocalHook.ScaledDensity;
             mParanoidLocalHook.Density = New.mParanoidLocalHook.Density;
             mParanoidLocalHook.Force = New.mParanoidLocalHook.Force;
-            paranoidLog("Override");
             return true;
         }
         return false;
