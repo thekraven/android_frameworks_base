@@ -82,7 +82,6 @@ public class NMEAParser {
     private boolean mSatsReady = true;
     private Location loc = new Location(provider);
 
-
     /**
      * @param prov  Location provider name
      */
