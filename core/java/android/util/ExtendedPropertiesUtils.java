@@ -115,10 +115,34 @@ public class ExtendedPropertiesUtils {
                     mParanoidLocalHook.Info.sourceDir.lastIndexOf("/"));
                 paranoidConfigure(mParanoidLocalHook);
             }
-            paranoidLog("Override");
             return true;
         }
         return false;
+    }
+
+    // COMPONENTS CAN OVERRIDE THEIR PROCESS-HOOK
+    public boolean paranoidOverrideAndExclude(String Fullname) {
+        ApplicationInfo tempInfo = getAppInfoFromPath(Fullname);
+        if (tempInfo != null && (!paranoidIsHooked() || isExcluded(tempInfo.packageName))) {
+            mParanoidLocalHook.Pid = android.os.Process.myPid();
+            mParanoidLocalHook.Info = tempInfo;
+            mParanoidLocalHook.Name = mParanoidLocalHook.Info.packageName;
+            mParanoidLocalHook.Path = mParanoidLocalHook.Info.sourceDir.substring(0,
+                mParanoidLocalHook.Info.sourceDir.lastIndexOf("/"));
+            paranoidConfigure(mParanoidLocalHook);
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isExcluded(String packageName){
+        if(mExcludedList.size() > 0){
+		    for(int i=0; i<mExcludedList.size(); i++){
+			    if(mExcludedList.get(i).equals(packageName))
+				    return true;
+		    }
+	    }
+	    return false;
     }
 
     // COMPONENTS CAN COPY ANOTHER COMPONENTS HOOK

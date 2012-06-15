@@ -1506,9 +1506,7 @@ public final class ActivityThread {
         //}
 
         AssetManager assets = new AssetManager();
-        if (!assets.paranoidIsHooked() && resDir != null)
-            assets.paranoidOverride(resDir);
-        assets.paranoidLog("----------TopLevelRes=" + resDir);
+        assets.paranoidOverrideAndExclude(resDir);
         assets.setThemeSupport(compInfo.isThemeable);
         if (assets.addAssetPath(resDir) == 0) {
             return null;

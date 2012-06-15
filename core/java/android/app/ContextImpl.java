@@ -1544,6 +1544,9 @@ class ContextImpl extends Context {
                     ExtendedPropertiesUtils.mParanoidPackageManager.getInstalledPackages(0);
                 ExtendedPropertiesUtils.mParanoidGlobalHook.Pid = android.os.Process.myPid();
 
+                // FILL VIP LIST
+                ExtendedPropertiesUtils.fillArray();
+
                 // FIND PROCESS BY ITS PID AND GET ITS APP-INFO
                 ExtendedPropertiesUtils.mParanoidGlobalHook.Info = 
                     ExtendedPropertiesUtils.getAppInfoFromPID(ExtendedPropertiesUtils.mParanoidGlobalHook.Pid);
@@ -1570,8 +1573,6 @@ class ContextImpl extends Context {
                 Log.i("PARANOID:init", "Crash! App=" + ExtendedPropertiesUtils.mParanoidGlobalHook.Name + " Dpi=" + 
                     ExtendedPropertiesUtils.mParanoidGlobalHook.Dpi + " Mode=" + 
                     ExtendedPropertiesUtils.mParanoidGlobalHook.Mode );
-
-                e.printStackTrace();
 
                 // PULL OUT
                 ExtendedPropertiesUtils.mParanoidMainThread = null;

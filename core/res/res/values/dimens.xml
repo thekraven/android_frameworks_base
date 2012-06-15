@@ -37,7 +37,7 @@
     <!-- Height of the system bar (combined status + navigation, used on large screens) -->
     <dimen name="system_bar_height">48dip</dimen>
     <!-- Height of the horizontal navigation bar on devices that require it -->
-    <dimen name="navigation_bar_height">37dp</dimen>
+    <dimen name="navigation_bar_height">48dp</dimen>
     <!-- Width of the vertical navigation bar on devices that require it -->
     <dimen name="navigation_bar_width">42dp</dimen>
     <!-- Height of notification icons in the status bar -->
@@ -206,5 +206,4 @@
 
     <!-- Lockscreen target insets -->
     <item type="dimen" name="lockscreen_target_inset">25dp</item>
-
 </resources>
