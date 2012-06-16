@@ -2345,6 +2345,12 @@ public final class Settings {
         public static final String STATUS_BAR_TRANSPARENCY = "status_bar_transparency";
 
  	/**
+         * StatusBar Hardware Rendering
+         * @hide
+         */
+        public static final String STATUS_BAR_HW_RENDERING = "status_bar_hw_rendering";
+
+ 	/**
          * Lockscreen Vibration
          * @hide
          */
