@@ -66,6 +66,7 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
     private DoNotDisturb mDoNotDisturb;
 
     private boolean mShowNotificationCounts;
+    private boolean mHardwareRendering;
     private static int mOpacity;
     private Handler mHandler;
 
@@ -95,6 +96,9 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
 
         mShowNotificationCounts = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_NOTIF_COUNT, 0) == 1;
+
+        mHardwareRendering = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_HW_RENDERING, 0) == 1;
 
         // Connect in to the status bar manager service
         StatusBarIconList iconList = new StatusBarIconList();
@@ -144,8 +148,6 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
         // Put up the view
         final int height = getStatusBarHeight();
 
-        final boolean mHardwareRendering = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_HW_RENDERING, 0) == 1;
         final WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 height,
@@ -186,7 +188,8 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
 
     private void setStatusBarParams(){
         mOpacity = Settings.System.getInt(mStatusBar.getContext().getContentResolver(), Settings.System.STATUS_BAR_TRANSPARENCY, 100);
-        mStatusBar.setBackgroundColor((int) (((float) mOpacity / 100.0f) * 255) * 0x1000000);
+        if(mHardwareRendering)
+             mStatusBar.setBackgroundColor((int) (((float) mOpacity / 100.0f) * 255) * 0x1000000);
     }
 
     protected View updateNotificationVetoButton(View row, StatusBarNotification n) {
