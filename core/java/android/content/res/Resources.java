@@ -716,9 +716,9 @@ public class Resources extends ExtendedPropertiesUtils {
              */
             if (value.density > 0 && value.density != TypedValue.DENSITY_NONE) {
                 if (value.density == density) {
-                    value.density = DisplayMetrics.DENSITY_DEVICE;
+                    value.density = DisplayMetrics.getDeviceDensity();
                 } else {
-                    value.density = (value.density * DisplayMetrics.DENSITY_DEVICE) / density;
+                    value.density = (value.density * DisplayMetrics.getDeviceDensity()) / density;
                 }
             }
 

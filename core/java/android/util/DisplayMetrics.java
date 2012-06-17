@@ -51,7 +51,7 @@ public class DisplayMetrics extends ExtendedPropertiesUtils {
     public static final int DENSITY_HIGH = 240;
 
     /**
-     * Standard quantized DPI for extra-high-density screens.
+     * Standard quantized DPI foparanoidInitConstantsr extra-high-density screens.
      */
     public static final int DENSITY_XHIGH = 320;
 
@@ -65,7 +65,8 @@ public class DisplayMetrics extends ExtendedPropertiesUtils {
      * @hide becase eventually this should be able to change while
      * running, so shouldn't be a constant.
      */
-    public static final int DENSITY_DEVICE = getDeviceDensity();
+    public static final int DENSITY_DEVICE = SystemProperties.getInt("qemu.sf.lcd_density",
+        SystemProperties.getInt("ro.sf.lcd_density", DisplayMetrics.DENSITY_DEFAULT));
 
     /**
      * The absolute width of the display in pixels.
@@ -198,13 +199,12 @@ public class DisplayMetrics extends ExtendedPropertiesUtils {
             ", xdpi=" + xdpi + ", ydpi=" + ydpi + "}";
     }
 
-    private static int getDeviceDensity() {
-        // qemu.sf.lcd_density can be used to override ro.sf.lcd_density
-        // when running in the emulator, allowing for dynamic configurations.
-        // The reason for this is that ro.sf.lcd_density is write-once and is
-        // set by the init process when it parses build.prop before anything else.
-        return SystemProperties.getInt("qemu.sf.lcd_density",
-                SystemProperties.getInt("ro.sf.lcd_density", DENSITY_DEFAULT));
+    public static int getDeviceDensity() {
+        if (mParanoidGlobalHook.Mode==0)        
+            return DENSITY_DEVICE;                 
+        else
+            return mParanoidGlobalHook.Mode == 2 ? mParanoidRomTabletBase : mParanoidRomPhoneBase;
     }
+
 }
 

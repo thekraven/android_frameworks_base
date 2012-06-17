@@ -19,7 +19,8 @@ package android.app;
 
 import com.android.internal.policy.PolicyManager;
 
-import android.util.ExtendedPropertiesUtils;
+import android.util.*;
+import android.os.SystemProperties;
 import android.accounts.AccountManager;
 import android.accounts.IAccountManager;
 import android.content.BroadcastReceiver;
@@ -1545,6 +1546,28 @@ class ContextImpl extends Context {
                 ExtendedPropertiesUtils.mParanoidPackageList = 
                     ExtendedPropertiesUtils.mParanoidPackageManager.getInstalledPackages(0);
                 ExtendedPropertiesUtils.mParanoidGlobalHook.Pid = android.os.Process.myPid();
+
+                // INIT CONSTANTS
+                ExtendedPropertiesUtils.mParanoidScreenDefaultWidth = Integer.parseInt(
+                    ExtendedPropertiesUtils.getProperty("screen_default_width", "0"));
+                ExtendedPropertiesUtils.mParanoidScreenDefaultHeight = Integer.parseInt(
+                    ExtendedPropertiesUtils.getProperty("screen_default_height", "0"));
+                ExtendedPropertiesUtils.mParanoidScreenDefaultLayout = Integer.parseInt(
+                    ExtendedPropertiesUtils.getProperty("screen_default_layout", "0"));
+                ExtendedPropertiesUtils.mParanoidScreenOppositeWidth = Integer.parseInt(
+                    ExtendedPropertiesUtils.getProperty("screen_opposite_width", "0"));
+                ExtendedPropertiesUtils.mParanoidScreenOppositeHeight = Integer.parseInt(
+                    ExtendedPropertiesUtils.getProperty("screen_opposite_height", "0"));
+                ExtendedPropertiesUtils.mParanoidScreenOppositeLayout = Integer.parseInt(
+                    ExtendedPropertiesUtils.getProperty("screen_opposite_layout", "0"));
+                ExtendedPropertiesUtils.mParanoidRomTabletBase = Integer.parseInt(
+                    ExtendedPropertiesUtils.getProperty( "rom_tablet_base", "0"));
+                ExtendedPropertiesUtils.mParanoidRomPhoneBase = Integer.parseInt(
+                    ExtendedPropertiesUtils.getProperty( "rom_phone_base", "0"));
+                ExtendedPropertiesUtils.mParanoidRomCurrentBase = Integer.parseInt(
+                    ExtendedPropertiesUtils.getProperty( "rom_current_base", "0"));
+                ExtendedPropertiesUtils.mParanoidRomLcdDensity = SystemProperties.getInt("qemu.sf.lcd_density",
+                    SystemProperties.getInt("ro.sf.lcd_density", DisplayMetrics.DENSITY_DEFAULT));
 
                 // FILL VIP LIST
                 ExtendedPropertiesUtils.fillArray();

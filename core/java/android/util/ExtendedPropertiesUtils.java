@@ -41,11 +41,23 @@ public class ExtendedPropertiesUtils {
 
     // STATIC PROPERTIES
     public static final String PARANOID_PROPIERTIES = "/system/pad.prop";
+
     public static ActivityThread mParanoidMainThread = null;
     public static Context mParanoidContext = null;
     public static PackageManager mParanoidPackageManager = null;
     public static List<PackageInfo> mParanoidPackageList;
     public static ArrayList<String> mExcludedList = new ArrayList <String>();
+
+    public static int mParanoidScreenDefaultWidth = 0;
+    public static int mParanoidScreenDefaultHeight = 0;
+    public static int mParanoidScreenDefaultLayout = 0;
+    public static int mParanoidScreenOppositeWidth = 0;
+    public static int mParanoidScreenOppositeHeight = 0;
+    public static int mParanoidScreenOppositeLayout = 0;
+    public static int mParanoidRomTabletBase = 0;
+    public static int mParanoidRomPhoneBase = 0;
+    public static int mParanoidRomCurrentBase = 0;
+    public static int mParanoidRomLcdDensity = DisplayMetrics.DENSITY_DEFAULT;
 
     public static ParanoidAppInfo mParanoidGlobalHook = new ParanoidAppInfo();
     public ParanoidAppInfo mParanoidLocalHook = new ParanoidAppInfo();
@@ -60,14 +72,14 @@ public class ExtendedPropertiesUtils {
         Info.Mode = Integer.parseInt(getProperty(Info.Name + ".mode", "0"));
         switch (Info.Mode) {
             case 1:  
-                Info.ScreenWidthDp = Integer.parseInt(getProperty("screen_default_width", "0"));
-                Info.ScreenHeightDp = Integer.parseInt(getProperty("screen_default_height", "0"));
-                Info.ScreenLayout = Integer.parseInt(getProperty("screen_default_layout", "0"));
+                Info.ScreenWidthDp = mParanoidScreenDefaultWidth;
+                Info.ScreenHeightDp = mParanoidScreenDefaultHeight;
+                Info.ScreenLayout = mParanoidScreenDefaultLayout;
                 break;
             case 2: 
-                Info.ScreenWidthDp = Integer.parseInt(getProperty("screen_opposite_width", "0"));
-                Info.ScreenHeightDp = Integer.parseInt(getProperty("screen_opposite_height", "0"));
-                Info.ScreenLayout = Integer.parseInt(getProperty("screen_opposite_layout", "0"));
+                Info.ScreenWidthDp = mParanoidScreenOppositeWidth;
+                Info.ScreenHeightDp = mParanoidScreenOppositeHeight;
+                Info.ScreenLayout = mParanoidScreenOppositeLayout;
                 break;
         }
 
@@ -81,8 +93,8 @@ public class ExtendedPropertiesUtils {
 
         // CALCULATE RELATIONS, IF NEEDED
         if (Info.Dpi != 0) {			
-            Info.Density = Info.Density == 0 ? Info.Dpi / (float) 160 : Info.Density;
-			Info.ScaledDensity = Info.ScaledDensity == 0 ? Info.Dpi / (float) 160 : Info.ScaledDensity;
+            Info.Density = Info.Density == 0 ? Info.Dpi / (float) DisplayMetrics.DENSITY_DEFAULT : Info.Density;
+			Info.ScaledDensity = Info.ScaledDensity == 0 ? Info.Dpi / (float) DisplayMetrics.DENSITY_DEFAULT : Info.ScaledDensity;
         }
 
         // FLAG AS READY TO GO
