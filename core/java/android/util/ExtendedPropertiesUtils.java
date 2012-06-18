@@ -72,7 +72,8 @@ public class ExtendedPropertiesUtils {
         // FETCH DEFAUTS
         boolean systemApp = getProperty(Info.Path.equals("/system/app");
         int DefaultDpi = Integer.parseInt(getProperty(systemApp ? "system_default_dpi" : "user_default_dpi", "0"));
-        int DefaultMode = Integer.parseInt(getProperty(systemApp ? "system_default_mode" : "user_default_mode", "0"));
+        int DefaultMode = systemApp == false ? 
+            Integer.parseInt(getProperty("user_default_mode", "0")) : 0;
 
         // CONFIGURE LAYOUT
         Info.Mode = Integer.parseInt(getProperty(Info.Name + ".mode", String.valueOf(DefaultMode)));
