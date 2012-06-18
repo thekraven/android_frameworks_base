@@ -68,8 +68,14 @@ public class ExtendedPropertiesUtils {
 
     // SET UP HOOK BY READING OUT PAD.PROP
     public static void paranoidConfigure(ParanoidAppInfo Info) {
+
+        // FETCH DEFAUTS
+        boolean systemApp = getProperty(Info.Path.equals("/system/app");
+        int DefaultDpi = Integer.parseInt(getProperty(systemApp ? "system_default_dpi" : "user_default_dpi", "0"));
+        int DefaultMode = Integer.parseInt(getProperty(systemApp ? "system_default_mode" : "user_default_mode", "0"));
+
         // CONFIGURE LAYOUT
-        Info.Mode = Integer.parseInt(getProperty(Info.Name + ".mode", "0"));
+        Info.Mode = Integer.parseInt(getProperty(Info.Name + ".mode", String.valueOf(DefaultMode)));
         switch (Info.Mode) {
             case 1:  
                 Info.ScreenWidthDp = mParanoidScreenDefaultWidth;
@@ -84,7 +90,6 @@ public class ExtendedPropertiesUtils {
         }
 
         // CONFIGURE DPI
-        int DefaultDpi = Integer.parseInt(getProperty(Info.Path.equals("/system/app") ? "system_default_dpi" : "user_default_dpi", "0"));
         Info.Dpi = Integer.parseInt(getProperty(Info.Name + ".dpi", String.valueOf(DefaultDpi)));
 
         // CONFIGURE DENSITIES

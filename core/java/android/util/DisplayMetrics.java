@@ -51,7 +51,7 @@ public class DisplayMetrics extends ExtendedPropertiesUtils {
     public static final int DENSITY_HIGH = 240;
 
     /**
-     * Standard quantized DPI foparanoidInitConstantsr extra-high-density screens.
+     * Standard quantized DPI for extra-high-density screens.
      */
     public static final int DENSITY_XHIGH = 320;
 
