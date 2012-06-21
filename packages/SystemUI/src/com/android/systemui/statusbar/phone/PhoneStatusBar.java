@@ -582,9 +582,7 @@ public class PhoneStatusBar extends StatusBar {
             mNavigationBarView.unregisterReceivers();
             WindowManagerImpl.getDefault().removeView(mNavigationBarView);
         }
-    }
-
-                    
+    }                   
 
     private void repositionNavigationBar() {
         if (mNavigationBarView == null) return;
