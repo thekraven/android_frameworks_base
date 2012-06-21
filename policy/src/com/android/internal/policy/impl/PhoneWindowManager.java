@@ -4107,7 +4107,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     // Use this instead of checking config_showNavigationBar so that it can be consistently
-    // overridden by qemu.hw.mainkeys in the emulator.
+    // overridden by Settings.System.SOFT_KEYS
     public boolean hasNavigationBar() {
         return mHasNavigationBar;
     }
