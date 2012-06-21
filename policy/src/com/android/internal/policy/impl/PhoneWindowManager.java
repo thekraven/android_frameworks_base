@@ -538,6 +538,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.ACCELEROMETER_ROTATION_ANGLES), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SOFT_KEYS), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUSBAR_STATE), false, this);
             updateSettings();
         }
 
@@ -1122,7 +1124,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.VOLBTN_MUSIC_CONTROLS, 1) == 1);
             
             int mDefaultDensity = Integer.parseInt(ExtendedPropertiesUtils.getProperty("rom_phone_base"));
-	    mHasNavigationBar = Settings.System.getInt(mContext.getContentResolver(), Settings.System.SOFT_KEYS, mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0) == 1 && SystemProperties.getInt("ro.sf.lcd_density", mDefaultDensity) > Integer.parseInt(ExtendedPropertiesUtils.getProperty("rom_tablet_base", String.valueOf(mDefaultDensity)));
+            mHasNavigationBar = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.SOFT_KEYS, mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0) == 1 && SystemProperties.getInt("ro.sf.lcd_density", mDefaultDensity) > Integer.parseInt(ExtendedPropertiesUtils.getProperty("rom_tablet_base", String.valueOf(mDefaultDensity)))) && Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_STATE, 0) != 1;
 
             mNavigationBarHeight = mHasNavigationBar
                 ? mContext.getResources().getDimensionPixelSize(

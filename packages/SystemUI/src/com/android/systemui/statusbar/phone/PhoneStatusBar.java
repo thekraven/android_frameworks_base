@@ -293,23 +293,20 @@ public class PhoneStatusBar extends StatusBar {
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
-	    resolver.registerContentObserver(Settings.System.getUriFor(
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SOFT_KEYS), false, this);
         }
 
         @Override
         public void onChange(boolean selfChange) {
-		if(Settings.System.getInt(mContext.getContentResolver(), Settings.System.SOFT_KEYS, mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0) == 1){
-		    if(mNavigationBarView != null){
-			mNavigationBarView.unregisterReceivers();
-			WindowManagerImpl.getDefault().removeView(mNavigationBarView);
-		    }
-		    mNavigationBarView = (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar, null);
-	            mNavigationBarView.setDisabledFlags(mDisabled);
-		    addNavigationBar();
-		}
-		repositionNavigationBar();
-		
+                if(Settings.System.getInt(mContext.getContentResolver(), Settings.System.SOFT_KEYS, mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0) == 1){
+                    removeNavigationBar();
+                    mNavigationBarView = (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar, null);
+                    mNavigationBarView.setDisabledFlags(mDisabled);
+                    addNavigationBar();
+                }
+                repositionNavigationBar();
+                
         }
     }
 
@@ -354,7 +351,7 @@ public class PhoneStatusBar extends StatusBar {
         SettingsObserver observer = new SettingsObserver(mHandler);
         observer.observe();
         mSoftKeysObserver softkeys = new mSoftKeysObserver(mHandler);
-	softkeys.observe();
+        softkeys.observe();
 
         // Lastly, call to the icon policy to install/update all the icons.
         mIconPolicy = new PhoneStatusBarPolicy(mContext);
@@ -494,7 +491,7 @@ public class PhoneStatusBar extends StatusBar {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         context.registerReceiver(mBroadcastReceiver, filter);
 
-	mPowerWidget.setupWidget();
+        mPowerWidget.setupWidget();
 
         return sb;
     }
@@ -580,6 +577,15 @@ public class PhoneStatusBar extends StatusBar {
                 mNavigationBarView, getNavigationBarLayoutParams());
     }
 
+    private void removeNavigationBar() {
+        if(mNavigationBarView != null){
+            mNavigationBarView.unregisterReceivers();
+            WindowManagerImpl.getDefault().removeView(mNavigationBarView);
+        }
+    }
+
+                    
+
     private void repositionNavigationBar() {
         if (mNavigationBarView == null) return;
 
@@ -646,7 +652,7 @@ public class PhoneStatusBar extends StatusBar {
         StatusBarIconView view = new StatusBarIconView(mContext, slot, null);
         view.set(icon);
         mStatusIcons.addView(view, viewIndex, new LinearLayout.LayoutParams(mIconSize, mIconSize));
-	mPowerWidget.updateWidget();
+        mPowerWidget.updateWidget();
     }
 
     public void updateIcon(String slot, int index, int viewIndex,
@@ -2439,10 +2445,7 @@ public class PhoneStatusBar extends StatusBar {
         copyNotifications(notifications, mNotificationData);
         mNotificationData.clear();
 
-        if (mNavigationBarView != null) {
-            mNavigationBarView.unregisterReceivers();
-            WindowManagerImpl.getDefault().removeView(mNavigationBarView);
-        }
+        removeNavigationBar();
         View newStatusBarView = makeStatusBarView();
         addNavigationBar();
 
