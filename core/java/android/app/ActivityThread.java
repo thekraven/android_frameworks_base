@@ -1528,7 +1528,6 @@ public final class ActivityThread {
         DisplayMetrics metrics = getDisplayMetricsLocked(null, false);
         metrics.paranoidOverride(assets);
         r = new Resources(assets, metrics, getConfiguration(), compInfo);
-        r.paranoidOverride(assets);
         if (false) {
             Slog.i(TAG, "Created app resources " + resDir + " " + r + ": "
                     + r.getConfiguration() + " appScale="

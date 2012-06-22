@@ -1589,11 +1589,7 @@ class ContextImpl extends Context {
                     ExtendedPropertiesUtils.mParanoidGlobalHook.Path = "/system/app";
                     ExtendedPropertiesUtils.paranoidConfigure(ExtendedPropertiesUtils.mParanoidGlobalHook);
                 }                   
-            } catch (NullPointerException e) { 
-                // UPS, SOME VALUES ARE NULL
-                ExtendedPropertiesUtils.mParanoidMainThread = null;
-            } catch (IllegalStateException e) {
-                // HYBRID MODE IS DISABLED
+            } catch (Exception e) { 
                 ExtendedPropertiesUtils.mParanoidMainThread = null;
             }
         }        

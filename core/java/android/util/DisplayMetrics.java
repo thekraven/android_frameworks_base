@@ -200,10 +200,7 @@ public class DisplayMetrics extends ExtendedPropertiesUtils {
     }
 
     public static int getDeviceDensity() {
-        if (mParanoidGlobalHook.Mode==0)        
-            return DENSITY_DEVICE;                 
-        else
-            return mParanoidGlobalHook.Mode == 2 ? mParanoidRomTabletBase : mParanoidRomPhoneBase;
+        return mParanoidGlobalHook.Dpi == 0 ? DENSITY_DEVICE : mParanoidGlobalHook.Dpi;        
     }
 
 }
