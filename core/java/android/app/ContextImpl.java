@@ -1523,8 +1523,18 @@ class ContextImpl extends Context {
                 // SET UP THREAD
                 ExtendedPropertiesUtils.mParanoidMainThread = thread;
 
+                // LOAD PROPERTY HASH MAP
+                String[] props = ExtendedPropertiesUtils.readFile(ExtendedPropertiesUtils.PARANOID_PROPIERTIES).split("\n");
+                for(int i=0; i<props.length; i++) {
+                    if (!props[i].startsWith("#")) {
+                        String[] pair = props[i].split("=");
+                        if (pair.length == 2)
+                            ExtendedPropertiesUtils.mPropertyMap.put(pair[0].trim(), pair[1].trim());
+                    }
+                }
+
                 // CHECK IF HYBRID MODE IS ON
-                if (ExtendedPropertiesUtils.getProperty("hybrid_mode", "0").equals("0")) throw new IllegalStateException();
+                if (ExtendedPropertiesUtils.getProperty("$hybrid_mode", "0", true).equals("0")) throw new Exception();
    
                 // TRY TO RETRIEVE A CONTEXT
                 ContextImpl context = createSystemContext(thread);
@@ -1540,7 +1550,7 @@ class ContextImpl extends Context {
                 // FETCH PACKAGE MANAGER
                 ExtendedPropertiesUtils.mParanoidPackageManager = 
                     ExtendedPropertiesUtils.mParanoidContext.getPackageManager();
-                if (ExtendedPropertiesUtils.mParanoidPackageManager == null) throw new NullPointerException();
+                if (ExtendedPropertiesUtils.mParanoidPackageManager == null) throw new Exception();
 
                 // GET PACKAGE LIST
                 ExtendedPropertiesUtils.mParanoidPackageList = 
@@ -1549,28 +1559,25 @@ class ContextImpl extends Context {
 
                 // INIT CONSTANTS
                 ExtendedPropertiesUtils.mParanoidScreenDefaultWidth = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("screen_default_width", "0"));
+                    ExtendedPropertiesUtils.getProperty("$screen_default_width", "0", true));
                 ExtendedPropertiesUtils.mParanoidScreenDefaultHeight = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("screen_default_height", "0"));
+                    ExtendedPropertiesUtils.getProperty("$screen_default_height", "0", true));
                 ExtendedPropertiesUtils.mParanoidScreenDefaultLayout = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("screen_default_layout", "0"));
+                    ExtendedPropertiesUtils.getProperty("$screen_default_layout", "0", true));
                 ExtendedPropertiesUtils.mParanoidScreenOppositeWidth = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("screen_opposite_width", "0"));
+                    ExtendedPropertiesUtils.getProperty("$screen_opposite_width", "0", true));
                 ExtendedPropertiesUtils.mParanoidScreenOppositeHeight = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("screen_opposite_height", "0"));
+                    ExtendedPropertiesUtils.getProperty("$screen_opposite_height", "0", true));
                 ExtendedPropertiesUtils.mParanoidScreenOppositeLayout = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("screen_opposite_layout", "0"));
+                    ExtendedPropertiesUtils.getProperty("$screen_opposite_layout", "0", true));
                 ExtendedPropertiesUtils.mParanoidRomTabletBase = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty( "rom_tablet_base", "0"));
+                    ExtendedPropertiesUtils.getProperty( "$rom_tablet_base", "0", true));
                 ExtendedPropertiesUtils.mParanoidRomPhoneBase = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty( "rom_phone_base", "0"));
+                    ExtendedPropertiesUtils.getProperty( "$rom_phone_base", "0", true));
                 ExtendedPropertiesUtils.mParanoidRomCurrentBase = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty( "rom_current_base", "0"));
+                    ExtendedPropertiesUtils.getProperty( "$rom_current_base", "0", true));
                 ExtendedPropertiesUtils.mParanoidRomLcdDensity = SystemProperties.getInt("qemu.sf.lcd_density",
                     SystemProperties.getInt("ro.sf.lcd_density", DisplayMetrics.DENSITY_DEFAULT));
-
-                // FILL VIP LIST
-                ExtendedPropertiesUtils.fillArray();
 
                 // FIND PROCESS BY ITS PID AND GET ITS APP-INFO
                 ExtendedPropertiesUtils.mParanoidGlobalHook.Info = 

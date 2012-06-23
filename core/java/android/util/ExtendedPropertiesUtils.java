@@ -36,7 +36,6 @@ public class ExtendedPropertiesUtils {
         public int Dpi = 0;
         public float ScaledDensity = 0;
         public float Density = 0;
-        public boolean Force = false;
     }
 
     // STATIC PROPERTIES
@@ -46,7 +45,7 @@ public class ExtendedPropertiesUtils {
     public static Context mParanoidContext = null;
     public static PackageManager mParanoidPackageManager = null;
     public static List<PackageInfo> mParanoidPackageList;
-    public static ArrayList<String> mExcludedList = new ArrayList <String>();
+    public static HashMap<String, String> mPropertyMap = new HashMap<String, String>();
 
     public static int mParanoidScreenDefaultWidth = 0;
     public static int mParanoidScreenDefaultHeight = 0;
@@ -62,21 +61,17 @@ public class ExtendedPropertiesUtils {
     public static ParanoidAppInfo mParanoidGlobalHook = new ParanoidAppInfo();
     public ParanoidAppInfo mParanoidLocalHook = new ParanoidAppInfo();
 
-    public static String paranoidStatus() {
-        return " T:" + (mParanoidMainThread != null) + " CXT:" + (mParanoidContext != null) + " PM:" + (mParanoidPackageManager != null);
-    }
-
     // SET UP HOOK BY READING OUT PAD.PROP
     public static void paranoidConfigure(ParanoidAppInfo Info) {
 
         // FETCH DEFAUTS
         boolean systemApp = Info.Path.equals("/system/app");
-        int DefaultDpi = Integer.parseInt(getProperty(systemApp ? "system_default_dpi" : "user_default_dpi", "0"));
+        int DefaultDpi = Integer.parseInt(getProperty(systemApp ? "$system_default_dpi" : "$user_default_dpi", "0", true));
         int DefaultMode = systemApp == false ? 
-            Integer.parseInt(getProperty("user_default_mode", "0")) : 0;
+            Integer.parseInt(getProperty("$user_default_mode", "0", true)) : 0;
 
         // CONFIGURE LAYOUT
-        Info.Mode = Integer.parseInt(getProperty(Info.Name + ".mode", String.valueOf(DefaultMode)));
+        Info.Mode = Integer.parseInt(getProperty(Info.Name + ".mode", String.valueOf(DefaultMode), true));
         switch (Info.Mode) {
             case 1:  
                 Info.ScreenWidthDp = mParanoidScreenDefaultWidth;
@@ -91,11 +86,11 @@ public class ExtendedPropertiesUtils {
         }
 
         // CONFIGURE DPI
-        Info.Dpi = Integer.parseInt(getProperty(Info.Name + ".dpi", String.valueOf(DefaultDpi)));
+        Info.Dpi = Integer.parseInt(getProperty(Info.Name + ".dpi", String.valueOf(DefaultDpi), true));
 
         // CONFIGURE DENSITIES
-        Info.Density = Float.parseFloat(getProperty(Info.Name + ".den", "0"));
-        Info.ScaledDensity = Float.parseFloat(getProperty(Info.Name + ".sden", "0"));
+        Info.Density = Float.parseFloat(getProperty(Info.Name + ".den", "0", true));
+        Info.ScaledDensity = Float.parseFloat(getProperty(Info.Name + ".sden", "0", true));
 
         // CALCULATE RELATIONS, IF NEEDED
         if (Info.Dpi != 0) {			
@@ -141,7 +136,7 @@ public class ExtendedPropertiesUtils {
     // COMPONENTS CAN OVERRIDE THEIR PROCESS-HOOK
     public boolean paranoidOverrideAndExclude(String Fullname) {
         ApplicationInfo tempInfo = getAppInfoFromPath(Fullname);
-        if (tempInfo != null && (!paranoidIsHooked() || isExcluded(tempInfo.packageName))) {
+        if (tempInfo != null && (!paranoidIsHooked() || getProperty(tempInfo.packageName + ".force", "0", true).equals("1"))) {
             mParanoidLocalHook.Pid = android.os.Process.myPid();
             mParanoidLocalHook.Info = tempInfo;
             mParanoidLocalHook.Name = mParanoidLocalHook.Info.packageName;
@@ -151,16 +146,6 @@ public class ExtendedPropertiesUtils {
             return true;
         }
         return false;
-    }
-
-    private static boolean isExcluded(String packageName){
-        if(mExcludedList.size() > 0){
-		    for(int i=0; i<mExcludedList.size(); i++){
-			    if(mExcludedList.get(i).equals(packageName))
-				    return true;
-		    }
-	    }
-	    return false;
     }
 
     // COMPONENTS CAN COPY ANOTHER COMPONENTS HOOK
@@ -178,7 +163,6 @@ public class ExtendedPropertiesUtils {
             mParanoidLocalHook.Dpi = New.mParanoidLocalHook.Dpi;
             mParanoidLocalHook.ScaledDensity = New.mParanoidLocalHook.ScaledDensity;
             mParanoidLocalHook.Density = New.mParanoidLocalHook.Density;
-            mParanoidLocalHook.Force = New.mParanoidLocalHook.Force;
             return true;
         }
         return false;
@@ -187,11 +171,9 @@ public class ExtendedPropertiesUtils {
     static public boolean paranoidIsInitialized() {
         return (mParanoidContext != null);
     }
-
     static public boolean paranoidIsHooked() {
         return (paranoidIsInitialized() && !mParanoidGlobalHook.Name.equals("android") && !mParanoidGlobalHook.Name.equals(""));
     }
-
     public boolean paranoidGetActive() {
         return mParanoidLocalHook.Active ? mParanoidLocalHook.Active : mParanoidGlobalHook.Active;
     }
@@ -227,9 +209,6 @@ public class ExtendedPropertiesUtils {
     }
     public float paranoidGetDensity() {
         return mParanoidLocalHook.Active ? mParanoidLocalHook.Density : mParanoidGlobalHook.Density;
-    }
-    public boolean paranoidGetForce() {
-        return mParanoidLocalHook.Active ? mParanoidLocalHook.Force : mParanoidGlobalHook.Force;
     }
 
     public static ApplicationInfo getAppInfoFromPath(String Path) {
@@ -267,6 +246,10 @@ public class ExtendedPropertiesUtils {
         return null;
     }
 
+    public static String paranoidStatus() {
+        return " T:" + (mParanoidMainThread != null) + " CXT:" + (mParanoidContext != null) + " PM:" + (mParanoidPackageManager != null);
+    }
+
     public void paranoidLog(String Message) {
         Log.i("PARANOID:" + Message, "Init=" + (mParanoidMainThread != null && mParanoidContext != null && 
             mParanoidPackageManager != null) + " App=" + paranoidGetName() + " Dpi=" + paranoidGetDpi() + 
@@ -280,104 +263,64 @@ public class ExtendedPropertiesUtils {
         Log.i("PARANOID:" + Message, "Trace=" + stackTrace); 
     }
 
-   public static String getFixedProperty(String prop, String orElse) {
+    public static String getProperty(String prop, String orElse, boolean interpretVariables) {
         try {
-            String[] props = readFile(PARANOID_PROPIERTIES).split("\n");
-            for(int i=0; i<props.length; i++)
-			if(props[i].contains("=") && props[i].substring(0, props[i].lastIndexOf("=")).equals(prop))
-				return props[i].replace(prop+"=", "").trim();	
-		} catch (Exception e) {
-                     e.printStackTrace(); 
+            if (paranoidIsInitialized()) {
+                String result = mPropertyMap.get(prop);
+                if (result == null)
+                    return orElse;
+                if (interpretVariables && result.startsWith("$"))
+		            result = getProperty(result, orElse, true);
+		        return result;	
+            } else {
+                String[] props = readFile(PARANOID_PROPIERTIES).split("\n");
+                for(int i=0; i<props.length; i++) {
+                    if(props[i].contains("=")) {
+                        if(props[i].substring(0, props[i].lastIndexOf("=")).equals(prop)) {
+                            String result = props[i].replace(prop+"=", "").trim();  
+                            if (interpretVariables && result.startsWith("$"))
+                                result = getProperty(result, orElse, true);
+                            return result;  
+                        }
+                    }
                 }
-        return orElse.trim();
-    }
-
-    public static String getProperty(String prop){
-        return getProperty(prop, null);
-    }
-
-    public static String getProperty(String prop, String orElse) {
-        try {
-            String[] props = readFile(PARANOID_PROPIERTIES).split("\n");
-            for(int i=0; i<props.length; i++){
-		if(props[i].contains("=")){
-			if(props[i].substring(0, props[i].lastIndexOf("=")).equals(prop)){
-				String result = props[i].replace(prop+"=", "").trim();	
-				if (result.contains("rom_current_base"))
-					result = SystemProperties.get("ro.sf.lcd_density", orElse);
-                                else if (!isParsableToInt(result))
-					result = getProperty(result, orElse);
-				return result;	
-			}
-		}
-	    }
-        } catch (Exception e) {
-              e.printStackTrace();
-        }
-        return orElse.trim();
-    }
-
-    public static boolean isParsableToInt(String toParse){
-        try {
-            Integer.parseInt(toParse);
-            return true;
-        } catch(Exception e){
-            return false;
-        }
-    }
-
-    public static void fillArray(){
-        try {
-		FileInputStream fstream = new FileInputStream(PARANOID_PROPIERTIES);
-		DataInputStream in = new DataInputStream(fstream);
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		String strLine = "";
-		while ((strLine = br.readLine()) != null){
-			if(strLine.contains("=") && strLine.contains(".")){					
-				String mLeft  = strLine.substring(0, strLine.lastIndexOf("="));
-				String mRight = strLine.replace(mLeft+"=", "").trim();
-				if (mLeft.substring(mLeft.lastIndexOf(".") + 1).equals("force") && Integer.parseInt(mRight) == 1)
-					mExcludedList.add(mLeft.substring(0, mLeft.lastIndexOf(".")).trim());
-			}
-		}
-		in.close();
-        } catch (Exception e) { e.printStackTrace(); }
+                return orElse.trim();
+            }
+        } catch (Exception e) { }
+        return orElse;
     }
 
     public static String readFile(String file) {
-    String text = "";
-    String removedBadChars = "";
-    try{
-        FileInputStream f = new FileInputStream(file);
-        FileChannel ch = f.getChannel();
-        ByteBuffer bb = ByteBuffer.allocateDirect(8192);
-        byte[] barray = new byte[8192];
-
-        int nRead, nGet;
-        while ((nRead=ch.read(bb)) != -1){
-            if (nRead == 0)
-                continue;
-            bb.position(0);
-            bb.limit(nRead);
-            while(bb.hasRemaining()){
-                nGet = Math.min(bb.remaining(), 8192);
-                bb.get(barray, 0, nGet);
-                char[] theChars = new char[nGet];
-                for (int i = 0; i < nGet;) {
-                    theChars[i] = (char)(barray[i++] & 0xff);
+        String text = "";
+        String removedBadChars = "";
+        try{
+            FileInputStream f = new FileInputStream(file);
+            FileChannel ch = f.getChannel();
+            ByteBuffer bb = ByteBuffer.allocateDirect(8192);
+            byte[] barray = new byte[8192];
+            int nRead, nGet;
+            while ((nRead=ch.read(bb)) != -1){
+                if (nRead == 0)
+                    continue;
+                bb.position(0);
+                bb.limit(nRead);
+                while(bb.hasRemaining()){
+                    nGet = Math.min(bb.remaining(), 8192);
+                    bb.get(barray, 0, nGet);
+                    char[] theChars = new char[nGet];
+                    for (int i = 0; i < nGet;) {
+                        theChars[i] = (char)(barray[i++] & 0xff);
+                    }
+                    text += new String(theChars);
                 }
-                text += new String(theChars);
-
+                bb.clear();
             }
-
-            bb.clear();
+            removedBadChars = text;
         }
-        removedBadChars = text;
-    }
-    catch(Exception e){
-        e.printStackTrace();
-    }
-	return removedBadChars;
+        catch(Exception e){
+            e.printStackTrace();
+        }
+	    return removedBadChars;
     }
 
 
