@@ -263,6 +263,18 @@ public class ExtendedPropertiesUtils {
         Log.i("PARANOID:" + Message, "Trace=" + stackTrace); 
     }
 
+    public static void refreshProperties() {
+        mPropertyMap.clear();
+        String[] props = readFile(PARANOID_PROPIERTIES).split("\n");
+        for(int i=0; i<props.length; i++) {
+            if (!props[i].startsWith("#")) {
+                String[] pair = props[i].split("=");
+                if (pair.length == 2)
+                    mPropertyMap.put(pair[0].trim(), pair[1].trim());
+            }
+        }
+    }
+
     public static String getProperty(String prop, String orElse, boolean interpretVariables) {
         try {
             if (paranoidIsInitialized()) {

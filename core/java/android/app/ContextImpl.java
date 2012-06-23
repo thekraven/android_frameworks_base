@@ -1524,14 +1524,7 @@ class ContextImpl extends Context {
                 ExtendedPropertiesUtils.mParanoidMainThread = thread;
 
                 // LOAD PROPERTY HASH MAP
-                String[] props = ExtendedPropertiesUtils.readFile(ExtendedPropertiesUtils.PARANOID_PROPIERTIES).split("\n");
-                for(int i=0; i<props.length; i++) {
-                    if (!props[i].startsWith("#")) {
-                        String[] pair = props[i].split("=");
-                        if (pair.length == 2)
-                            ExtendedPropertiesUtils.mPropertyMap.put(pair[0].trim(), pair[1].trim());
-                    }
-                }
+                ExtendedPropertiesUtils.refreshProperties();
 
                 // CHECK IF HYBRID MODE IS ON
                 if (ExtendedPropertiesUtils.getProperty("$hybrid_mode", "0", true).equals("0")) throw new Exception();
