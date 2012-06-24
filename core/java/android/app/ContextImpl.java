@@ -1527,7 +1527,8 @@ class ContextImpl extends Context {
                 ExtendedPropertiesUtils.refreshProperties();
 
                 // CHECK IF HYBRID MODE IS ON
-                if (ExtendedPropertiesUtils.getProperty("$hybrid_mode", "0", true).equals("0")) throw new Exception();
+                if (ExtendedPropertiesUtils.getProperty(ExtendedPropertiesUtils.PARANOID_PREFIX + "hybrid_mode", 
+                    "0", true).equals("0")) throw new Exception();
    
                 // TRY TO RETRIEVE A CONTEXT
                 ContextImpl context = createSystemContext(thread);
@@ -1552,23 +1553,23 @@ class ContextImpl extends Context {
 
                 // INIT CONSTANTS
                 ExtendedPropertiesUtils.mParanoidScreenDefaultWidth = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("$screen_default_width", "0", true));
+                    ExtendedPropertiesUtils.getProperty(ExtendedPropertiesUtils.PARANOID_PREFIX + "screen_default_width", "0", true));
                 ExtendedPropertiesUtils.mParanoidScreenDefaultHeight = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("$screen_default_height", "0", true));
+                    ExtendedPropertiesUtils.getProperty(ExtendedPropertiesUtils.PARANOID_PREFIX + "screen_default_height", "0", true));
                 ExtendedPropertiesUtils.mParanoidScreenDefaultLayout = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("$screen_default_layout", "0", true));
+                    ExtendedPropertiesUtils.getProperty(ExtendedPropertiesUtils.PARANOID_PREFIX + "screen_default_layout", "0", true));
                 ExtendedPropertiesUtils.mParanoidScreenOppositeWidth = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("$screen_opposite_width", "0", true));
+                    ExtendedPropertiesUtils.getProperty(ExtendedPropertiesUtils.PARANOID_PREFIX + "screen_opposite_width", "0", true));
                 ExtendedPropertiesUtils.mParanoidScreenOppositeHeight = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("$screen_opposite_height", "0", true));
+                    ExtendedPropertiesUtils.getProperty(ExtendedPropertiesUtils.PARANOID_PREFIX + "screen_opposite_height", "0", true));
                 ExtendedPropertiesUtils.mParanoidScreenOppositeLayout = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty("$screen_opposite_layout", "0", true));
+                    ExtendedPropertiesUtils.getProperty(ExtendedPropertiesUtils.PARANOID_PREFIX + "screen_opposite_layout", "0", true));
                 ExtendedPropertiesUtils.mParanoidRomTabletBase = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty( "$rom_tablet_base", "0", true));
+                    ExtendedPropertiesUtils.getProperty(ExtendedPropertiesUtils.PARANOID_PREFIX + "rom_tablet_base", "0", true));
                 ExtendedPropertiesUtils.mParanoidRomPhoneBase = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty( "$rom_phone_base", "0", true));
+                    ExtendedPropertiesUtils.getProperty(ExtendedPropertiesUtils.PARANOID_PREFIX + "rom_phone_base", "0", true));
                 ExtendedPropertiesUtils.mParanoidRomCurrentBase = Integer.parseInt(
-                    ExtendedPropertiesUtils.getProperty( "$rom_current_base", "0", true));
+                    ExtendedPropertiesUtils.getProperty(ExtendedPropertiesUtils.PARANOID_PREFIX + "rom_current_base", "0", true));
                 ExtendedPropertiesUtils.mParanoidRomLcdDensity = SystemProperties.getInt("qemu.sf.lcd_density",
                     SystemProperties.getInt("ro.sf.lcd_density", DisplayMetrics.DENSITY_DEFAULT));
 

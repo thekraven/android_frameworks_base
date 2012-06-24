@@ -40,6 +40,7 @@ public class ExtendedPropertiesUtils {
 
     // STATIC PROPERTIES
     public static final String PARANOID_PROPIERTIES = "/system/pad.prop";
+    public static final String PARANOID_PREFIX = "%";
 
     public static ActivityThread mParanoidMainThread = null;
     public static Context mParanoidContext = null;
@@ -66,9 +67,9 @@ public class ExtendedPropertiesUtils {
 
         // FETCH DEFAUTS
         boolean systemApp = Info.Path.equals("/system/app");
-        int DefaultDpi = Integer.parseInt(getProperty(systemApp ? "$system_default_dpi" : "$user_default_dpi", "0", true));
+        int DefaultDpi = Integer.parseInt(getProperty(PARANOID_PREFIX + (systemApp ? "system_default_dpi" : "user_default_dpi"), "0", true));
         int DefaultMode = systemApp == false ? 
-            Integer.parseInt(getProperty("$user_default_mode", "0", true)) : 0;
+            Integer.parseInt(getProperty(PARANOID_PREFIX + "user_default_mode", "0", true)) : 0;
 
         // CONFIGURE LAYOUT
         Info.Mode = Integer.parseInt(getProperty(Info.Name + ".mode", String.valueOf(DefaultMode), true));
@@ -281,7 +282,7 @@ public class ExtendedPropertiesUtils {
                 String result = mPropertyMap.get(prop);
                 if (result == null)
                     return orElse;
-                if (interpretVariables && result.startsWith("$"))
+                if (interpretVariables && result.startsWith(PARANOID_PREFIX))
 		            result = getProperty(result, orElse, true);
 		        return result;	
             } else {
@@ -290,7 +291,7 @@ public class ExtendedPropertiesUtils {
                     if(props[i].contains("=")) {
                         if(props[i].substring(0, props[i].lastIndexOf("=")).equals(prop)) {
                             String result = props[i].replace(prop+"=", "").trim();  
-                            if (interpretVariables && result.startsWith("$"))
+                            if (interpretVariables && result.startsWith(PARANOID_PREFIX))
                                 result = getProperty(result, orElse, true);
                             return result;  
                         }
