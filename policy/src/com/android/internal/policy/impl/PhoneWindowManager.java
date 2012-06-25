@@ -367,6 +367,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     static final int DEFAULT_ACCELEROMETER_ROTATION = 0;
     int mAccelerometerDefault = DEFAULT_ACCELEROMETER_ROTATION;
     boolean mHasSoftInput = false;
+    int mBackKillTimeout;
     
     int mPointerLocationMode = 0;
     PointerLocationView mPointerLocationView = null;
@@ -796,8 +797,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         public void run() {
             try {
                 performHapticFeedbackLw(null, HapticFeedbackConstants.LONG_PRESS, false);
-                IActivityManager mgr = ActivityManagerNative.getDefault();
-                List<RunningAppProcessInfo> apps = mgr.getRunningAppProcesses();
+                IActivityManager am = ActivityManagerNative.getDefault();
+                List<RunningAppProcessInfo> apps = am.getRunningAppProcesses();
                 for (RunningAppProcessInfo appInfo : apps) {
                     int uid = appInfo.uid;
                     // Make sure it's a foreground user application (not system,
@@ -806,9 +807,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             && appInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                         Toast.makeText(mContext, R.string.app_killed_message, Toast.LENGTH_SHORT).show();
                         // Kill the entire pid
-                        if (appInfo.pkgList!=null && (apps.size() > 0)){
-                            mgr.forceStopPackage(appInfo.pkgList[0]);
-                        }else{
+                        if (appInfo.pkgList != null && (apps.size() > 0)) {
+                            am.forceStopPackage(appInfo.pkgList[0]);
+                        } else {
                             Process.killProcess(appInfo.pid);
                         }
                         break;
@@ -993,6 +994,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 com.android.internal.R.integer.config_lidKeyboardAccessibility);
         mLidNavigationAccessibility = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_lidNavigationAccessibility);
+        mBackKillTimeout = mContext.getResources().getInteger(
+                com.android.internal.R.integer.config_backKillTimeout);
         // register for dock events
         IntentFilter filter = new IntentFilter();
         filter.addAction(UiModeManager.ACTION_ENTER_CAR_MODE);
@@ -1894,7 +1897,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             if (Settings.Secure.getInt(mContext.getContentResolver(),
                     Settings.Secure.KILL_APP_LONGPRESS_BACK, 0) == 1) {
                 if (down && repeatCount == 0) {
-                    mHandler.postDelayed(mBackLongPress, ViewConfiguration.getGlobalActionKeyTimeout());
+                    mHandler.postDelayed(mBackLongPress, mBackKillTimeout);
                 }
             }
         }
