@@ -175,7 +175,7 @@
 
             <!-- this will stretch to eat up available space -->
             <View
-                android:layout_width="70dp"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 />
