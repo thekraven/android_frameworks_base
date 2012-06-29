@@ -1123,7 +1123,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mVolBtnMusicControls = (Settings.System.getInt(resolver,
                     Settings.System.VOLBTN_MUSIC_CONTROLS, 1) == 1);
             
-            mStatusBarCanHide = Integer.parseInt(ExtendedPropertiesUtils.getProperty("com.android.systemui.mode", "2", true)) == 1;
+            mStatusBarCanHide = canStatusBarHide();
             mHasNavigationBar = Settings.System.getInt(mContext.getContentResolver(), Settings.System.SOFT_KEYS, mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar) ? 1 : 0) == 1 && mStatusBarCanHide && Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_STATE, 0) != 1;
 
             mNavigationBarHeight = mHasNavigationBar
@@ -1431,7 +1431,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     public boolean canStatusBarHide() {
-        return mStatusBarCanHide;
+        return Integer.parseInt(ExtendedPropertiesUtils.getProperty("com.android.systemui.mode", "2", true)) == 1;
     }
 
     public int getNonDecorDisplayWidth(int fullWidth, int fullHeight, int rotation) {
