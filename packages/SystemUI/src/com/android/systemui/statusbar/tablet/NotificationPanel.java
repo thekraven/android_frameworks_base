@@ -115,9 +115,37 @@ public class NotificationPanel extends RelativeLayout implements StatusBarPanel,
         return mClearButton;
     }
 
+    public void togglePanels() {
+        final View toShow, toHide;
+        if (mSettingsView == null) {
+            addSettingsView();
+            toShow = mSettingsView;
+            toHide = mNotificationScroller;
+        } else {
+            toShow = mNotificationScroller;
+            toHide = mSettingsView;
+        }
+        toHide.setVisibility(View.GONE);
+        if (toShow != null) {
+            if (mNotificationCount == 0) {
+                // show the frame for settings, hide for notifications
+                setContentFrameVisible(toShow == mSettingsView, true);
+            }
+            toShow.setVisibility(View.VISIBLE);
+            if (toHide == mSettingsView) {
+                removeSettingsView();
+            }
+        }
+        updateClearButton();
+        updatePanelModeButtons();
+    }
+
     public void show(boolean show, boolean animate) {
         if (show && !mShowing) {
             setContentFrameVisible(mSettingsView != null || mNotificationCount > 0, false);
+            if (mNotificationCount == 0) {
+                togglePanels();
+            }
         }
 
         if (animate) {
