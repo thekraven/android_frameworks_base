@@ -2590,8 +2590,8 @@ public final class Settings {
 
         /*
          * Control the display of the action overflow button within app UI.
-         * 0 = force off
-         * 1 = use system default
+         * 0 = use system default
+         * 1 = force off
          * @hide
          */
         public static final String UI_FORCE_OVERFLOW_BUTTON = "ui_force_overflow_button";

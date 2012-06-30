@@ -705,7 +705,8 @@ public class ViewConfiguration {
             // Force overflow button off
             return true;
         } else {
-            return sHasPermanentMenuKey;
+            // Force overflow button on
+            return false;
         }
     }
 
