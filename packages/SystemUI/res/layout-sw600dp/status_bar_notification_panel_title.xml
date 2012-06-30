@@ -129,6 +129,13 @@
                 android:text="@string/status_bar_settings_settings_button"
                 />
 
+            <!-- this will stretch to eat up available space -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                />
+
             <ImageView
                 android:id="@+id/dock_battery"
                 android:layout_height="wrap_content"
@@ -171,13 +178,6 @@
                 android:paddingRight="2dp"
                 android:singleLine="true"
                 android:text="@string/status_bar_settings_settings_button"
-                />
-
-            <!-- this will stretch to eat up available space -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
                 />
 
             <FrameLayout
