@@ -2588,14 +2588,6 @@ public final class Settings {
          */
         public static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
 
-        /*
-         * Control the display of the action overflow button within app UI.
-         * 0 = use system default
-         * 1 = force off
-         * @hide
-         */
-        public static final String UI_FORCE_OVERFLOW_BUTTON = "ui_force_overflow_button";
-
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
