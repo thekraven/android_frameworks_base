@@ -241,6 +241,8 @@ public class ViewConfiguration {
     private boolean sHasPermanentMenuKey;
     private boolean sHasPermanentMenuKeySet;
 
+    private Context mContext;
+
     static final SparseArray<ViewConfiguration> sConfigurations =
             new SparseArray<ViewConfiguration>(2);
 
@@ -287,6 +289,8 @@ public class ViewConfiguration {
         } else {
             sizeAndDensity = density;
         }
+ 
+        mContext = context;
 
         mEdgeSlop = (int) (sizeAndDensity * EDGE_SLOP + 0.5f);
         mFadingEdgeLength = (int) (sizeAndDensity * FADING_EDGE_LENGTH + 0.5f);
