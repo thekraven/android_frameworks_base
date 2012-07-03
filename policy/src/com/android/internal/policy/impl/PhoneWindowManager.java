@@ -1431,7 +1431,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     public boolean canStatusBarHide() {
-        return Integer.parseInt(ExtendedPropertiesUtils.getProperty("com.android.systemui.mode", "2", true)) == 1;
+        return Integer.parseInt(ExtendedPropertiesUtils.getProperty("com.android.systemui.mode", "2")) == 1;
     }
 
     public int getNonDecorDisplayWidth(int fullWidth, int fullHeight, int rotation) {

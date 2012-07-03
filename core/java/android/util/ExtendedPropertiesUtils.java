@@ -1,5 +1,17 @@
 /*
- * Copyright (C) 2012 ParanoidAndroid Team
+ * Copyright (C) 2012 ParanoidAndroid Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package android.util;
@@ -16,6 +28,7 @@ import android.content.res.CompatibilityInfo;
 import java.util.*;
 import java.lang.Math;
 import java.lang.NumberFormatException;
+import java.lang.IllegalAccessException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -62,17 +75,19 @@ public class ExtendedPropertiesUtils {
     public static ParanoidAppInfo mParanoidGlobalHook = new ParanoidAppInfo();
     public ParanoidAppInfo mParanoidLocalHook = new ParanoidAppInfo();
 
+    public static native String readFile(String s);
+
     // SET UP HOOK BY READING OUT PAD.PROP
     public static void paranoidConfigure(ParanoidAppInfo Info) {
 
         // FETCH DEFAUTS
         boolean systemApp = Info.Path.equals("/system/app");
-        int DefaultDpi = Integer.parseInt(getProperty(PARANOID_PREFIX + (systemApp ? "system_default_dpi" : "user_default_dpi"), "0", true));
+        int DefaultDpi = Integer.parseInt(getProperty(PARANOID_PREFIX + (systemApp ? "system_default_dpi" : "user_default_dpi"), "0"));
         int DefaultMode = systemApp == false ? 
-            Integer.parseInt(getProperty(PARANOID_PREFIX + "user_default_mode", "0", true)) : 0;
+            Integer.parseInt(getProperty(PARANOID_PREFIX + "user_default_mode", "0")) : 0;
 
         // CONFIGURE LAYOUT
-        Info.Mode = Integer.parseInt(getProperty(Info.Name + ".mode", String.valueOf(DefaultMode), true));
+        Info.Mode = Integer.parseInt(getProperty(Info.Name + ".mode", String.valueOf(DefaultMode)));
         switch (Info.Mode) {
             case 1:  
                 Info.ScreenWidthDp = mParanoidScreenDefaultWidth;
@@ -87,11 +102,11 @@ public class ExtendedPropertiesUtils {
         }
 
         // CONFIGURE DPI
-        Info.Dpi = Integer.parseInt(getProperty(Info.Name + ".dpi", String.valueOf(DefaultDpi), true));
+        Info.Dpi = Integer.parseInt(getProperty(Info.Name + ".dpi", String.valueOf(DefaultDpi)));
 
         // CONFIGURE DENSITIES
-        Info.Density = Float.parseFloat(getProperty(Info.Name + ".den", "0", true));
-        Info.ScaledDensity = Float.parseFloat(getProperty(Info.Name + ".sden", "0", true));
+        Info.Density = Float.parseFloat(getProperty(Info.Name + ".den", "0"));
+        Info.ScaledDensity = Float.parseFloat(getProperty(Info.Name + ".sden", "0"));
 
         // CALCULATE RELATIONS, IF NEEDED
         if (Info.Dpi != 0) {			
@@ -137,7 +152,7 @@ public class ExtendedPropertiesUtils {
     // COMPONENTS CAN OVERRIDE THEIR PROCESS-HOOK
     public boolean paranoidOverrideAndExclude(String Fullname) {
         ApplicationInfo tempInfo = getAppInfoFromPath(Fullname);
-        if (tempInfo != null && (!paranoidIsHooked() || getProperty(tempInfo.packageName + ".force", "0", true).equals("1"))) {
+        if (tempInfo != null && (!paranoidIsHooked() || getProperty(tempInfo.packageName + ".force", "0").equals("1"))) {
             mParanoidLocalHook.Pid = android.os.Process.myPid();
             mParanoidLocalHook.Info = tempInfo;
             mParanoidLocalHook.Name = mParanoidLocalHook.Info.packageName;
@@ -276,14 +291,18 @@ public class ExtendedPropertiesUtils {
         }
     }
 
-    public static String getProperty(String prop, String orElse, boolean interpretVariables) {
+    public static String getProperty(String prop){
+        return getProperty(prop, null);
+    }
+
+    public static String getProperty(String prop, String orElse) {
         try {
             if (paranoidIsInitialized()) {
                 String result = mPropertyMap.get(prop);
                 if (result == null)
                     return orElse;
-                if (interpretVariables && result.startsWith(PARANOID_PREFIX))
-		            result = getProperty(result, orElse, true);
+                if (result.startsWith(PARANOID_PREFIX))
+		            result = getProperty(result, orElse);
 		        return result;	
             } else {
                 String[] props = readFile(PARANOID_PROPIERTIES).split("\n");
@@ -291,50 +310,17 @@ public class ExtendedPropertiesUtils {
                     if(props[i].contains("=")) {
                         if(props[i].substring(0, props[i].lastIndexOf("=")).equals(prop)) {
                             String result = props[i].replace(prop+"=", "").trim();  
-                            if (interpretVariables && result.startsWith(PARANOID_PREFIX))
-                                result = getProperty(result, orElse, true);
+                            if (result.startsWith(PARANOID_PREFIX))
+                                result = getProperty(result, orElse);
                             return result;  
                         }
                     }
                 }
                 return orElse.trim();
             }
-        } catch (Exception e) { }
-        return orElse;
-    }
-
-    public static String readFile(String file) {
-        String text = "";
-        String removedBadChars = "";
-        try{
-            FileInputStream f = new FileInputStream(file);
-            FileChannel ch = f.getChannel();
-            ByteBuffer bb = ByteBuffer.allocateDirect(8192);
-            byte[] barray = new byte[8192];
-            int nRead, nGet;
-            while ((nRead=ch.read(bb)) != -1){
-                if (nRead == 0)
-                    continue;
-                bb.position(0);
-                bb.limit(nRead);
-                while(bb.hasRemaining()){
-                    nGet = Math.min(bb.remaining(), 8192);
-                    bb.get(barray, 0, nGet);
-                    char[] theChars = new char[nGet];
-                    for (int i = 0; i < nGet;) {
-                        theChars[i] = (char)(barray[i++] & 0xff);
-                    }
-                    text += new String(theChars);
-                }
-                bb.clear();
-            }
-            removedBadChars = text;
-        }
-        catch(Exception e){
+        } catch (NullPointerException e){
             e.printStackTrace();
         }
-	    return removedBadChars;
+        return orElse;
     }
-
-
 }
