@@ -36,9 +36,7 @@ bool isParanoidRom()
 {
     FILE* file = fopen(BUILD_PROP, "r");
     if(file == NULL)
-    {
         return false;
-    }
 
     fseek(file, 0, SEEK_END);
     long int size = ftell(file);
@@ -48,10 +46,7 @@ bool isParanoidRom()
 
     fread(content,1,size,file);
 
-    if (strstr(content, "ro.cm.version=PARANOIDANDROID") != NULL)
-        return true;
-    else
-        return false;
+    return strstr(content, "ro.cm.version=PARANOIDANDROID") != NULL;
 }
 
 /*
@@ -76,7 +71,7 @@ static jstring android_util_ExtendedPropertiesUtils_readFile(JNIEnv* env, jobjec
     if(isParanoidRom())
         return env->NewStringUTF(content);
     else{
-        jniThrowException(env, "java/lang/IllegalAccessException", "This ROM is not ParanoidAndroid");
+        jniThrowException(env, "java/lang/SecurityException", "This ROM is not ParanoidAndroid");
         return NULL;
     }
 }

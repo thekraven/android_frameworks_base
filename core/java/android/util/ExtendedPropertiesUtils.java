@@ -28,7 +28,6 @@ import android.content.res.CompatibilityInfo;
 import java.util.*;
 import java.lang.Math;
 import java.lang.NumberFormatException;
-import java.lang.IllegalAccessException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
