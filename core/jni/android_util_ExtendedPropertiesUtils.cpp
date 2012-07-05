@@ -15,15 +15,16 @@
 ** limitations under the License.
 */
 
+#include <android/log.h>
+#include <android_runtime/AndroidRuntime.h>
 #include <jni.h>
 #include <JNIHelp.h>
-#include <utils/misc.h>
-#include <android_runtime/AndroidRuntime.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <android/log.h>
 #include <time.h>
+#include <utils/misc.h>
+#include <wctype.h>
 
 #define BUILD_PROP "/system/build.prop"
 
@@ -46,7 +47,7 @@ bool isParanoidRom()
 
     fread(content,1,size,file);
 
-    return strstr(content, "ro.cm.version=PARANOIDANDROID") != NULL;
+    return (strstr(content, "ro.cm.version=PARANOIDANDROID") != NULL && strstr(content, "aokp") == NULL && strstr(content, "ro.modversion=PARANOIDANDROID") != NULL);
 }
 
 /*
