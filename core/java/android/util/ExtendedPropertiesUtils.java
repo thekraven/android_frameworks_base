@@ -294,32 +294,36 @@ public class ExtendedPropertiesUtils {
         return getProperty(prop, null);
     }
 
-    public static String getProperty(String prop, String orElse) {
+    public static String getProperty(String prop, String def){
+        return getProperty(prop, def, true);
+    }
+
+    public static String getProperty(String prop, String def, boolean parse) {
         try {
             if (paranoidIsInitialized()) {
                 String result = mPropertyMap.get(prop);
                 if (result == null)
-                    return orElse;
-                if (result.startsWith(PARANOID_PREFIX))
-		            result = getProperty(result, orElse);
-		        return result;	
+                    return def;
+                if (result.startsWith(PARANOID_PREFIX) && parse)
+		    result = getProperty(result, def);
+		return result;	
             } else {
                 String[] props = readFile(PARANOID_PROPIERTIES).split("\n");
                 for(int i=0; i<props.length; i++) {
                     if(props[i].contains("=")) {
                         if(props[i].substring(0, props[i].lastIndexOf("=")).equals(prop)) {
                             String result = props[i].replace(prop+"=", "").trim();  
-                            if (result.startsWith(PARANOID_PREFIX))
-                                result = getProperty(result, orElse);
+                            if (result.startsWith(PARANOID_PREFIX) && parse)
+                                result = getProperty(result, def);
                             return result;  
                         }
                     }
                 }
-                return orElse.trim();
+                return def;
             }
         } catch (NullPointerException e){
             e.printStackTrace();
         }
-        return orElse;
+        return def;
     }
 }
