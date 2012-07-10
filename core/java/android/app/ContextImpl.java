@@ -1541,6 +1541,7 @@ class ContextImpl extends Context {
 
                 context.init(info, null, thread);
                 ExtendedPropertiesUtils.mParanoidContext = context;
+                ExtendedPropertiesUtils.getTabletModeStatus();
                 // FETCH PACKAGE MANAGER
                 ExtendedPropertiesUtils.mParanoidPackageManager = 
                     ExtendedPropertiesUtils.mParanoidContext.getPackageManager();

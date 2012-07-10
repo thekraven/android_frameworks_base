@@ -74,7 +74,14 @@ public class ExtendedPropertiesUtils {
     public static ParanoidAppInfo mParanoidGlobalHook = new ParanoidAppInfo();
     public ParanoidAppInfo mParanoidLocalHook = new ParanoidAppInfo();
 
+    public static boolean mIsTablet;
+
     public static native String readFile(String s);
+
+    // TODO: Port to native code
+    public static void getTabletModeStatus(){
+        mIsTablet = Integer.parseInt(getProperty("com.android.systemui.mode")) == 2;
+    }
 
     // SET UP HOOK BY READING OUT PAD.PROP
     public static void paranoidConfigure(ParanoidAppInfo Info) {
@@ -265,6 +272,7 @@ public class ExtendedPropertiesUtils {
         return " T:" + (mParanoidMainThread != null) + " CXT:" + (mParanoidContext != null) + " PM:" + (mParanoidPackageManager != null);
     }
 
+    // TODO: Port to native code
     public void paranoidLog(String Message) {
         Log.i("PARANOID:" + Message, "Init=" + (mParanoidMainThread != null && mParanoidContext != null && 
             mParanoidPackageManager != null) + " App=" + paranoidGetName() + " Dpi=" + paranoidGetDpi() + 
@@ -298,6 +306,7 @@ public class ExtendedPropertiesUtils {
         return getProperty(prop, def, true);
     }
 
+    // TODO: Port to native code
     public static String getProperty(String prop, String def, boolean parse) {
         try {
             if (paranoidIsInitialized()) {
