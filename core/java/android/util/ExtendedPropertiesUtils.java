@@ -299,21 +299,17 @@ public class ExtendedPropertiesUtils {
     }
 
     public static String getProperty(String prop){
-        return getProperty(prop, null);
-    }
-
-    public static String getProperty(String prop, String def){
-        return getProperty(prop, def, true);
+        return getProperty(prop, "0");
     }
 
     // TODO: Port to native code
-    public static String getProperty(String prop, String def, boolean parse) {
+    public static String getProperty(String prop, String def) {
         try {
             if (paranoidIsInitialized()) {
                 String result = mPropertyMap.get(prop);
                 if (result == null)
                     return def;
-                if (result.startsWith(PARANOID_PREFIX) && parse)
+                if (result.startsWith(PARANOID_PREFIX))
 		    result = getProperty(result, def);
 		return result;	
             } else {
@@ -322,7 +318,7 @@ public class ExtendedPropertiesUtils {
                     if(props[i].contains("=")) {
                         if(props[i].substring(0, props[i].lastIndexOf("=")).equals(prop)) {
                             String result = props[i].replace(prop+"=", "").trim();  
-                            if (result.startsWith(PARANOID_PREFIX) && parse)
+                            if (result.startsWith(PARANOID_PREFIX))
                                 result = getProperty(result, def);
                             return result;  
                         }
