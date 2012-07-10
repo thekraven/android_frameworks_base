@@ -87,9 +87,9 @@ public class ExtendedPropertiesUtils {
     public static void paranoidConfigure(ParanoidAppInfo Info) {
 
         // FETCH DEFAUTS
-        boolean systemApp = Info.Path.equals("/system/app");
-        int DefaultDpi = Integer.parseInt(getProperty(PARANOID_PREFIX + (systemApp ? "system_default_dpi" : "user_default_dpi"), "0"));
-        int DefaultMode = systemApp == false ? 
+        boolean isSystemApp = Info.Path.contains("system/app");
+        int DefaultDpi = Integer.parseInt(getProperty(PARANOID_PREFIX + (isSystemApp ? "system_default_dpi" : "user_default_dpi"), "0"));
+        int DefaultMode = isSystemApp == false ? 
             Integer.parseInt(getProperty(PARANOID_PREFIX + "user_default_mode", "0")) : 0;
 
         // CONFIGURE LAYOUT
@@ -298,6 +298,7 @@ public class ExtendedPropertiesUtils {
         }
     }
 
+    // TODO: Port to native code
     public static String getProperty(String prop){
         return getProperty(prop, "0");
     }
