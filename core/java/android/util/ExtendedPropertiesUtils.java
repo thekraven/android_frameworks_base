@@ -16,22 +16,21 @@
 
 package android.util;
 
+import android.app.ActivityManager;
 import android.os.SystemProperties;
 import android.util.Log;
 import android.content.Context;
-import android.util.ExtendedPropertiesUtils;
 import android.content.pm.*;
 import android.app.*;
-import java.io.*;
 import android.content.res.Resources;
 import android.content.res.CompatibilityInfo;
-import java.util.*;
+
+import java.io.*;
 import java.lang.Math;
-import java.lang.NumberFormatException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.*;
 import java.util.ArrayList;
-import android.app.ActivityManager;
 
 public class ExtendedPropertiesUtils {
 

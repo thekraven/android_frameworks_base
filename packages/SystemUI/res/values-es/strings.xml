@@ -141,7 +141,9 @@
     <string name="gps_notification_searching_text" msgid="8574247005642736060">"Buscando GPS"</string>
     <string name="gps_notification_found_text" msgid="4619274244146446464">"Ubicación definida por GPS"</string>
     <string name="accessibility_clear_all" msgid="5235938559247164925">"Borrar todas las notificaciones"</string>
+
     <string name="recent_apps_title">Aplicaciones Recientes</string>
+
     <string name="navbar_dialog_title">Seleccionar acción a asignar</string>
     <string name="navbar_home_button">Botón inicio</string>
     <string name="navbar_recent_button">Botón recientes</string>

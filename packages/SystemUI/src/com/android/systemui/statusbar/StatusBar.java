@@ -87,7 +87,6 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
         }
     }
 
-
     public void start() {
         // First set up our views and stuff.
         mStatusBar = makeStatusBarView();
@@ -99,6 +98,9 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
 
         mHardwareRendering = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_HW_RENDERING, 0) == 1;
+
+        mShowNotificationCounts = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NOTIF_COUNT, 0) == 1;
 
         // Connect in to the status bar manager service
         StatusBarIconList iconList = new StatusBarIconList();

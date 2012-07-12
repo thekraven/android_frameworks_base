@@ -211,4 +211,5 @@
 
     <!-- Lockscreen target insets -->
     <item type="dimen" name="lockscreen_target_inset">25dp</item>
+
 </resources>

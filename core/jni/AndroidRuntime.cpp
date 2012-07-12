@@ -44,7 +44,6 @@
 #include <dirent.h>
 #include <assert.h>
 
-
 using namespace android;
 
 extern void register_BindTest();
@@ -1089,8 +1088,8 @@ static const RegJNIRec gRegJNI[] = {
     REG_JNI(register_com_android_internal_os_RuntimeInit),
     REG_JNI(register_android_os_SystemClock),
     REG_JNI(register_android_util_EventLog),
-    REG_JNI(register_android_util_ExtendedPropertiesUtils),
     REG_JNI(register_android_util_Log),
+    REG_JNI(register_android_util_ExtendedPropertiesUtils),
     REG_JNI(register_android_util_FloatMath),
     REG_JNI(register_android_text_format_Time),
     REG_JNI(register_android_content_AssetManager),

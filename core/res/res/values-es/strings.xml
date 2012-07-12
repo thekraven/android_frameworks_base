@@ -1309,6 +1309,6 @@
 
     <!-- Lock screen Weather - error messages -->
     <string name="weather_no_data">Sin datos</string>
-    <string name="weather_tap_to_refresh">Toca para actualizar</string>
+    <string name="weather_tap_to_refresh">Toca para refrescar</string>
     <string name="weather_refreshing">Actualizando</string>
 </resources>

@@ -708,7 +708,6 @@ LOCAL_DX_FLAGS := --core-library
 
 include $(BUILD_JAVA_LIBRARY)
 
-
 # Include subdirectory makefiles
 # ============================================================
 
