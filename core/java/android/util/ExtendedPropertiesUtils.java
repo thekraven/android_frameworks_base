@@ -16,14 +16,13 @@
 
 package android.util;
 
+import android.app.*;
 import android.app.ActivityManager;
-import android.os.SystemProperties;
-import android.util.Log;
 import android.content.Context;
 import android.content.pm.*;
-import android.app.*;
 import android.content.res.Resources;
 import android.content.res.CompatibilityInfo;
+import android.os.SystemProperties;
 
 import java.io.*;
 import java.lang.Math;
@@ -50,6 +49,7 @@ public class ExtendedPropertiesUtils {
     }
 
     // STATIC PROPERTIES
+    public static final String TAG = "PARANOID:";
     public static final String PARANOID_PROPIERTIES = "/system/pad.prop";
     public static final String PARANOID_PREFIX = "%";
 
@@ -273,7 +273,7 @@ public class ExtendedPropertiesUtils {
 
     // TODO: Port to native code
     public void paranoidLog(String Message) {
-        Log.i("PARANOID:" + Message, "Init=" + (mParanoidMainThread != null && mParanoidContext != null && 
+        Log.i(TAG + Message, "Init=" + (mParanoidMainThread != null && mParanoidContext != null && 
             mParanoidPackageManager != null) + " App=" + paranoidGetName() + " Dpi=" + paranoidGetDpi() + 
             " Mode=" + paranoidGetMode());
     }
@@ -282,7 +282,7 @@ public class ExtendedPropertiesUtils {
         StringWriter sw = new StringWriter();
         new Throwable("").printStackTrace(new PrintWriter(sw));
         String stackTrace = sw.toString();
-        Log.i("PARANOID:" + Message, "Trace=" + stackTrace); 
+        Log.i(TAG + Message, "Trace=" + stackTrace); 
     }
 
     public static void refreshProperties() {
@@ -308,7 +308,7 @@ public class ExtendedPropertiesUtils {
     }
 
     // TODO: Port to native code
-    public static String getProperty(String prop, String def, String parse) {
+    public static String getProperty(String prop, String def, boolean parse) {
         try {
             if (paranoidIsInitialized()) {
                 String result = mPropertyMap.get(prop);
