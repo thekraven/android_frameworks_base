@@ -26,6 +26,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.CompoundButton;
 import com.android.internal.telephony.Phone;
+import android.util.Log;
 
 import com.android.systemui.R;
 
@@ -35,37 +36,53 @@ public class NetworkModeController implements CompoundButton.OnCheckedChangeList
     private Context mContext;
     private CompoundButton mCheckBox;
 
-    private boolean mNetworkMode;
+    public static final String ACTION_MODIFY_NETWORK_MODE = "com.android.internal.telephony.MODIFY_NETWORK_MODE";
+    public static final String EXTRA_NETWORK_MODE = "networkMode";
+
+    private int mNetworkMode;
+    private boolean mState = false;
 
     public NetworkModeController(Context context, CompoundButton checkbox) {
         mContext = context;
         mNetworkMode = getNetworkMode();
+        mState = networkModeToState(mNetworkMode);
         mCheckBox = checkbox;
-        checkbox.setChecked(mNetworkMode);
+        checkbox.setChecked(mState);
         checkbox.setOnCheckedChangeListener(this);
     }
 
     public void onCheckedChanged(CompoundButton view, boolean checked) {
         int networkType = checked ? Phone.NT_MODE_WCDMA_PREF : Phone.NT_MODE_GSM_ONLY;
-        Settings.Secure.putInt(mContext.getContentResolver(), Settings.Secure.PREFERRED_NETWORK_MODE, networkType);
+
+        Intent intent = new Intent(ACTION_MODIFY_NETWORK_MODE);
+        intent.putExtra(EXTRA_NETWORK_MODE, networkType);
+        mContext.sendBroadcast(intent);
     }
 
-    private boolean getNetworkMode() {
-        int state = 99;
+    private int getNetworkMode() {
+        int mode = 99;
         try {
-            state = Settings.Secure.getInt(mContext.getContentResolver(), Settings.Secure.PREFERRED_NETWORK_MODE);
+            mode = Settings.Secure.getInt(mContext.getContentResolver(), Settings.Secure.PREFERRED_NETWORK_MODE);
         } catch (Exception e) {}
-        return networkModeToState(state);
+        return mode;
     }
 
-    private static boolean networkModeToState(int state) {
-        switch(state) {
+    private static boolean networkModeToState(int mode) {
+        switch(mode) {
             case Phone.NT_MODE_WCDMA_PREF:
+            case Phone.NT_MODE_WCDMA_ONLY:
+            case Phone.NT_MODE_GSM_UMTS:
                 return true;
             case Phone.NT_MODE_GSM_ONLY:
                 return false;
+            case Phone.NT_MODE_CDMA:
+            case Phone.NT_MODE_CDMA_NO_EVDO:
+            case Phone.NT_MODE_EVDO_NO_CDMA:
+            case Phone.NT_MODE_GLOBAL:
+                // need to check wtf is going on
+                Log.d(TAG, "Unexpected network mode (" + mode + ")");
         }
+
         return false;
     }
 }
-
