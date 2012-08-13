@@ -60,6 +60,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.Runtime;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -500,7 +501,7 @@ public class Smdk4210RIL extends RIL implements CommandsInterface {
             case RIL_UNSOL_RESPONSE_NEW_BROADCAST_SMS: ret = responseString(p); break;
             case RIL_UNSOL_RIL_CONNECTED: ret = responseInts(p); break;
             // SAMSUNG STATES
-            case RIL_UNSOL_AM: ret = responseVoid(p); break;
+            case RIL_UNSOL_AM: ret = responseString(p); break;
             case RIL_UNSOL_DUN_PIN_CONTROL_SIGNAL: ret = responseVoid(p); break;
             case RIL_UNSOL_DATA_SUSPEND_RESUME: ret = responseInts(p); break;
             case RIL_UNSOL_STK_CALL_CONTROL_RESULT: ret = responseVoid(p); break;
@@ -536,7 +537,20 @@ public class Smdk4210RIL extends RIL implements CommandsInterface {
                 break;
             // SAMSUNG STATES
             case RIL_UNSOL_AM:
+                if (RILJ_LOGD) samsungUnsljLogRet(response, ret);
+                String amString = (String) ret;
+                Log.d(LOG_TAG, "Executing AM: " + amString);
+
+                try {
+                    Runtime.getRuntime().exec("am " + amString);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e(LOG_TAG, "am " + amString + " could not be executed.");
+                }
+                break;
             case RIL_UNSOL_DUN_PIN_CONTROL_SIGNAL:
+                if (RILJ_LOGD) samsungUnsljLogRet(response, ret);
+                break;
             case RIL_UNSOL_DATA_SUSPEND_RESUME:
                 if (RILJ_LOGD) samsungUnsljLogRet(response, ret);
                 break;
@@ -616,7 +630,7 @@ public class Smdk4210RIL extends RIL implements CommandsInterface {
     protected Object
     responseCallList(Parcel p) {
         int num;
-        int voiceSettings;
+        boolean isVideo;
         ArrayList<DriverCall> response;
         DriverCall dc;
         int dataAvail = p.dataAvail();
@@ -635,38 +649,35 @@ public class Smdk4210RIL extends RIL implements CommandsInterface {
 
         for (int i = 0 ; i < num ; i++) {
 
-            dc = new DriverCall();
+            dc                      = new DriverCall();
+            dc.state                = DriverCall.stateFromCLCC(p.readInt());
+            dc.index                = p.readInt();
+            dc.TOA                  = p.readInt();
+            dc.isMpty               = (0 != p.readInt());
+            dc.isMT                 = (0 != p.readInt());
+            dc.als                  = p.readInt();
+            dc.isVoice              = (0 != p.readInt());
+            isVideo                 = (0 != p.readInt());
+            dc.isVoicePrivacy       = (0 != p.readInt());
+            dc.number               = p.readString();
+            int np                  = p.readInt();
+            dc.numberPresentation   = DriverCall.presentationFromCLIP(np);
+            dc.name                 = p.readString();
+            dc.namePresentation     = p.readInt();
+            int uusInfoPresent      = p.readInt();
 
-            dc.state = DriverCall.stateFromCLCC(p.readInt());
             Log.d(LOG_TAG, "state = " + dc.state);
-            dc.index = p.readInt();
             Log.d(LOG_TAG, "index = " + dc.index);
-            dc.TOA = p.readInt();
             Log.d(LOG_TAG, "state = " + dc.TOA);
-            dc.isMpty = (0 != p.readInt());
             Log.d(LOG_TAG, "isMpty = " + dc.isMpty);
-            dc.isMT = (0 != p.readInt());
             Log.d(LOG_TAG, "isMT = " + dc.isMT);
-            dc.als = p.readInt();
             Log.d(LOG_TAG, "als = " + dc.als);
-            voiceSettings = p.readInt();
-            dc.isVoice = (0 == voiceSettings) ? false : true;
             Log.d(LOG_TAG, "isVoice = " + dc.isVoice);
-            dc.isVoicePrivacy =  (0 != p.readInt());
-            //Some Samsung magic data for Videocalls
-            voiceSettings = p.readInt();
-            //printing it to cosole for later investigation
-            Log.d(LOG_TAG, "Samsung magic = " + voiceSettings);
-            dc.number = p.readString();
+            Log.d(LOG_TAG, "isVideo = " + isVideo);
             Log.d(LOG_TAG, "number = " + dc.number);
-            int np = p.readInt();
             Log.d(LOG_TAG, "np = " + np);
-            dc.numberPresentation = DriverCall.presentationFromCLIP(np);
-            dc.name = p.readString();
             Log.d(LOG_TAG, "name = " + dc.name);
-            dc.namePresentation = p.readInt();
             Log.d(LOG_TAG, "namePresentation = " + dc.namePresentation);
-            int uusInfoPresent = p.readInt();
             Log.d(LOG_TAG, "uusInfoPresent = " + uusInfoPresent);
 
             if (uusInfoPresent == 1) {
