@@ -70,8 +70,8 @@ public class HoloClock extends FrameLayout {
     private TextView mSolidText, mBgText, mFgText;
 
     private int mAmPmStyle;
-    private boolean mShowClock;
-    private boolean mShowAlways;
+
+    private int mClockStyle;
 
     Handler mHandler;
 
@@ -85,7 +85,7 @@ public class HoloClock extends FrameLayout {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_AM_PM), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CLOCK), false, this);
+                    Settings.System.STATUS_BAR_CLOCK_STYLE), false, this);
         }
 
         @Override public void onChange(boolean selfChange) {
@@ -285,13 +285,16 @@ public class HoloClock extends FrameLayout {
             }
         }
 
-        mShowClock = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_CLOCK, 1) == 1);
+        mClockStyle = (Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CLOCK_STYLE, 1));
 
-        if(mShowClock || mShowAlways)
+
+        if(mClockStyle != 0) {
             setVisibility(View.VISIBLE);
-        else
+        }
+        else{
             setVisibility(View.GONE);
+        }
     }
 }
 
