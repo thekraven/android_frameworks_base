@@ -126,6 +126,11 @@ public class TabletStatusBar extends StatusBar implements
     final static int NOTIFICATION_PEEK_HOLD_THRESH = 200; // ms
     final static int NOTIFICATION_PEEK_FADE_DELAY = 3000; // ms
 
+    // Soft keys visibility values
+    final static int SK_HOME_VALUE = 1;
+    final static int SK_BACK_VALUE = 2;
+    final static int SK_RECENT_VALUE = 4;
+
     // The height of the bar, as definied by the build.  It may be taller if we're plugged
     // into hdmi.
     int mNaturalBarHeight = -1;
@@ -234,6 +239,8 @@ public class TabletStatusBar extends StatusBar implements
                     Settings.System.MAX_NOTIFICATION_ICONS), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_TABLET_TOP), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SOFT_KEYS_VISIBILITY), false, this);
         }
 
         @Override public void onChange(boolean selfChange) {
@@ -645,6 +652,7 @@ public class TabletStatusBar extends StatusBar implements
         mHomeButton = mNavigationArea.findViewById(R.id.home);
         mMenuButton = mNavigationArea.findViewById(R.id.menu);
         mRecentButton = mNavigationArea.findViewById(R.id.recent_apps);
+        setSoftKeysVisibility();
 
         //PARANOID
         mRecentButton.setOnLongClickListener(new OnLongClickListener() {
@@ -1195,6 +1203,23 @@ public class TabletStatusBar extends StatusBar implements
 
         mInputMethodSwitchButton.setScreenLocked(
                 (visibility & StatusBarManager.DISABLE_SYSTEM_INFO) != 0);
+
+        setSoftKeysVisibility();
+    }
+
+    private void setSoftKeysVisibility() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        int visibility = Settings.System.getInt(resolver,
+                            Settings.System.SOFT_KEYS_VISIBILITY, 7);
+
+        boolean showHome = ((visibility & SK_HOME_VALUE) != 0);
+        boolean showBack = ((visibility & SK_BACK_VALUE) != 0);
+        boolean showRecent = ((visibility & SK_RECENT_VALUE) != 0);
+
+        mHomeButton.setVisibility(showHome ? View.VISIBLE : View.GONE);
+        mBackButton.setVisibility(showBack ? View.VISIBLE : View.GONE);
+        mRecentButton.setVisibility(showRecent ? View.VISIBLE : View.GONE);
     }
 
     private boolean hasTicker(Notification n) {

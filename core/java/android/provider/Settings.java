@@ -2418,6 +2418,12 @@ public final class Settings {
          */
         public static final String SOFT_KEYS = "soft_keys";
 
+    /**
+        * Software Keys Visibility
+        * @hide
+        */
+        public static final String SOFT_KEYS_VISIBILITY = "soft_keys_visibility";
+
  	/**
          * Sense 4.0 Recent Apps
          * @hide
