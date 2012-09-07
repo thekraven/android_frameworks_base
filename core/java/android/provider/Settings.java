@@ -2406,6 +2406,12 @@ public final class Settings {
          */
         public static final String STATUS_BAR_TABLET_TOP = "status_bar_tablet_top";
 
+    /**
+         * Status Bar notification icon opacity
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_ICON_OPACITY = "status_bar_notif_icon_opacity";
+
  	/**
          * Lockscreen Vibration
          * @hide
