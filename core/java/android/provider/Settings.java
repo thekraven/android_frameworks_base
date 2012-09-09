@@ -2604,6 +2604,12 @@ public final class Settings {
 		 public static final String RECENT_APP_SWITCHER = "recent_app_switcher";
 		
         /**
+         * Where to align the clock on the lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_CLOCK_ALIGN = "lockscreen_clock_align";
+
+        /**
          * Show the pending notification counts as overlays on the status bar
          * @hide
          */
