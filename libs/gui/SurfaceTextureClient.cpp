@@ -744,7 +744,7 @@ status_t SurfaceTextureClient::lock(
                 // if we can't copy-back anything, modify the user's dirty
                 // region to make sure they redraw the whole buffer
                 newDirtyRegion.set(bounds);
-#ifdef QCOM_HARDWARE
+#ifdef w
                 for(int i = 0 ; i < bufferCount; i++ ) {
                      mOldDirtyRegion[i].clear();
                 }
@@ -771,12 +771,17 @@ status_t SurfaceTextureClient::lock(
             LOGW_IF(res, "failed locking buffer (handle = %p)",
                     backBuffer->handle);
 
-            mLockedBuffer = backBuffer;
-            outBuffer->width  = backBuffer->width;
-            outBuffer->height = backBuffer->height;
-            outBuffer->stride = backBuffer->stride;
-            outBuffer->format = backBuffer->format;
-            outBuffer->bits   = vaddr;
+
+            if (res != 0) { 
+                err = INVALID_OPERATION; 
+            } else { 
+                mLockedBuffer = backBuffer; 
+                outBuffer->width  = backBuffer->width; 
+                outBuffer->height = backBuffer->height; 
+                outBuffer->stride = backBuffer->stride; 
+                outBuffer->format = backBuffer->format; 
+                outBuffer->bits   = vaddr; 
+            } 
         }
     }
     return err;
