@@ -744,7 +744,7 @@ status_t SurfaceTextureClient::lock(
                 // if we can't copy-back anything, modify the user's dirty
                 // region to make sure they redraw the whole buffer
                 newDirtyRegion.set(bounds);
-#ifdef w
+#ifdef QCOM_HARDWARE
                 for(int i = 0 ; i < bufferCount; i++ ) {
                      mOldDirtyRegion[i].clear();
                 }
