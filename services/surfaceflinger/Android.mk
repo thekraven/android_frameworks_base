@@ -34,6 +34,12 @@ ifeq ($(TARGET_BOARD_PLATFORM), s5pc110)
 	LOCAL_CFLAGS += -DREFRESH_RATE=56
 endif
 
+ifeq ($(TARGET_BOARD_PLATFORM), msm7x27) 
+  LOCAL_CFLAGS += -DREFRESH_RATE=56 
+endif 
+# end of animations lag for msm7x27 (ealier msm7k) 
+
+
 LOCAL_SHARED_LIBRARIES := \
 	libcutils \
 	libhardware \
