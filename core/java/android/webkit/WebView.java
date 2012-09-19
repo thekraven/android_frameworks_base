@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (c) 2011-2012, Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -743,10 +744,10 @@ public class WebView extends AbsoluteLayout
     static final int ENTER_FULLSCREEN_VIDEO             = 137;
     static final int UPDATE_SELECTION                   = 138;
     static final int UPDATE_ZOOM_DENSITY                = 139;
-
+    static final int RESUME_RENDER_PRIORITY             = 140;
 
     private static final int FIRST_PACKAGE_MSG_ID = SCROLL_TO_MSG_ID;
-    private static final int LAST_PACKAGE_MSG_ID = SET_TOUCH_HIGHLIGHT_RECTS;
+    private static final int LAST_PACKAGE_MSG_ID = RESUME_RENDER_PRIORITY;
 
     static final String[] HandlerPrivateDebugString = {
         "REMEMBER_PASSWORD", //              = 1;
@@ -3648,9 +3649,9 @@ public class WebView extends AbsoluteLayout
                 abortAnimation();
                 nativeSetIsScrolling(false);
                 if (!mBlockWebkitViewMessages) {
-                    WebViewCore.resumePriority();
-
-
+                    WebViewCore.resumePriority(2000);
+                    WebSettings webSettings = getSettings();
+                    webSettings.setRenderPriority(WebSettings.RenderPriority.NORMAL);
                     if (!mSelectingText) {
                         WebViewCore.resumeUpdatePicture(mWebViewCore);
                     }
@@ -5596,9 +5597,9 @@ public class WebView extends AbsoluteLayout
             // called by mSelectCallback.onDestroyActionMode
             mSelectCallback.finish();
             mSelectCallback = null;
-            WebViewCore.resumePriority();
-
-
+            WebViewCore.resumePriority(0);
+            WebSettings webSettings = getSettings();
+            webSettings.setRenderPriority(WebSettings.RenderPriority.NORMAL);
             WebViewCore.resumeUpdatePicture(mWebViewCore);
             invalidate(); // redraw without selection
             mAutoScrollX = 0;
@@ -6503,8 +6504,8 @@ public class WebView extends AbsoluteLayout
                                 // we will not rewrite drag code here, but we
                                 // will try fling if it applies.
                                 WebViewCore.reducePriority();
-
-
+                                WebSettings webSettings = getSettings();
+                                webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
                                 // to get better performance, pause updating the
                                 // picture
                                 WebViewCore.pauseUpdatePicture(mWebViewCore);
@@ -6575,9 +6576,9 @@ public class WebView extends AbsoluteLayout
                         // device as we almost certain will get a MOVE. But this
                         // is possible on emulator.
                         mLastVelocity = 0;
-                        WebViewCore.resumePriority();
-
-
+                        WebViewCore.resumePriority(0);
+                        WebSettings webSettings = getSettings();
+                        webSettings.setRenderPriority(WebSettings.RenderPriority.NORMAL);
                         if (!mSelectingText) {
                             WebViewCore.resumeUpdatePicture(mWebViewCore);
                         }
@@ -6629,9 +6630,9 @@ public class WebView extends AbsoluteLayout
     }
 
     void handleMultiTouchInWebView(MotionEvent ev) {
-
-
-
+        WebViewCore.reducePriority();
+        WebSettings webSettings = getSettings();
+        webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
         if (DebugFlags.WEB_VIEW) {
             Log.v(LOGTAG, "multi-touch: " + ev + " at " + ev.getEventTime()
                 + " mTouchMode=" + mTouchMode
@@ -6732,8 +6733,8 @@ public class WebView extends AbsoluteLayout
 
     private void startDrag() {
         WebViewCore.reducePriority();
-
-
+        WebSettings webSettings = getSettings();
+        webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
         // to get better performance, pause updating the picture
         WebViewCore.pauseUpdatePicture(mWebViewCore);
         nativeSetIsScrolling(true);
@@ -6809,9 +6810,9 @@ public class WebView extends AbsoluteLayout
     private void stopTouch() {
         if (mScroller.isFinished() && !mSelectingText
                 && (mTouchMode == TOUCH_DRAG_MODE || mTouchMode == TOUCH_DRAG_LAYER_MODE)) {
-            WebViewCore.resumePriority();
-
-
+            WebViewCore.resumePriority(0);
+            WebSettings webSettings = getSettings();
+            webSettings.setRenderPriority(WebSettings.RenderPriority.NORMAL);
             WebViewCore.resumeUpdatePicture(mWebViewCore);
             nativeSetIsScrolling(false);
         }
@@ -6841,9 +6842,9 @@ public class WebView extends AbsoluteLayout
 
         if ((mTouchMode == TOUCH_DRAG_MODE
                 || mTouchMode == TOUCH_DRAG_LAYER_MODE) && !mSelectingText) {
-            WebViewCore.resumePriority();
-
-
+            WebViewCore.resumePriority(0);
+            WebSettings webSettings = getSettings();
+            webSettings.setRenderPriority(WebSettings.RenderPriority.NORMAL);
             WebViewCore.resumeUpdatePicture(mWebViewCore);
             nativeSetIsScrolling(false);
         }
@@ -7254,9 +7255,9 @@ public class WebView extends AbsoluteLayout
             }
         }
         if ((maxX == 0 && vy == 0) || (maxY == 0 && vx == 0)) {
-            WebViewCore.resumePriority();
-
-
+            WebViewCore.resumePriority(0);
+            WebSettings webSettings = getSettings();
+            webSettings.setRenderPriority(WebSettings.RenderPriority.NORMAL);
             if (!mSelectingText) {
                 WebViewCore.resumeUpdatePicture(mWebViewCore);
             }
@@ -8303,9 +8304,9 @@ public class WebView extends AbsoluteLayout
                                         computeMaxScrollX(), 0,
                                         computeMaxScrollY());
                                 invalidate();
-                                WebViewCore.resumePriority();
-
-
+                                WebViewCore.resumePriority(0);
+                                WebSettings webSettings = getSettings();
+                                webSettings.setRenderPriority(WebSettings.RenderPriority.NORMAL);
                                 WebViewCore.resumeUpdatePicture(mWebViewCore);
                             }
                             mDeferTouchMode = TOUCH_DONE_MODE;
@@ -8798,9 +8799,9 @@ public class WebView extends AbsoluteLayout
                     nativeSelectAt(msg.arg1, msg.arg2);
                     break;
 
-
-
-
+                case RESUME_RENDER_PRIORITY:
+                    WebSettings webSettings = getSettings();
+                    webSettings.setRenderPriority(WebSettings.RenderPriority.NORMAL);
 
                 default:
                     super.handleMessage(msg);
