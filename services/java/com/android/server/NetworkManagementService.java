@@ -977,10 +977,12 @@ public class NetworkManagementService extends INetworkManagementService.Stub
             String mainIface = resources.getBoolean(
                     com.android.internal.R.bool.config_wifi_ap_use_single_interface)
                     ? softapIface : wlanIface;
-
+					
             if (resources.getBoolean(com.android.internal.R.bool.config_wifi_ap_firmware_reload))
                 wifiFirmwareReload(wlanIface, "AP");
-            mConnector.doCommand(String.format("softap start " + mainIface));
+			if (resources.getBoolean(com.android.internal.R.bool.config_wifiApStartInterface)) 
+                mConnector.execute("softap", "start", wlanIface);
+			mConnector.doCommand(String.format("softap start " + mainIface));
             if (wifiConfig == null) {
                 mConnector.doCommand(String.format("softap set " + mainIface + " " + softapIface));
             } else {

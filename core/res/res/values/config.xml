@@ -270,6 +270,10 @@
 
     <!-- Boolean indicating whether Softap require reloading AP firware -->
     <bool name="config_wifi_ap_firmware_reload">true</bool>
+	
+	<!-- Boolean indicating whether the start command should be called on the wireless interface 
+         when starting the SoftAp --> 
+    <bool name="config_wifiApStartInterface">false</bool> 
 
     <!-- Flag indicating whether the keyguard should be bypassed when
          the slider is open.  This can be set or unset depending how easily
