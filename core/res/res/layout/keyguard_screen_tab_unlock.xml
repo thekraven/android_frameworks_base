@@ -305,7 +305,7 @@
             android:hitRadius="@dimen/multiwaveview_hit_radius"
             android:rightChevronDrawable="@drawable/ic_lockscreen_chevron_right"
             android:horizontalOffset="0dip"
-            android:verticalOffset="60dip"
+            android:verticalOffset="5dip"
             android:feedbackCount="3"
             android:vibrationDuration="20"
             />
