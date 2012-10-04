@@ -106,7 +106,7 @@ public class NotificationPanel extends RelativeLayout implements StatusBarPanel,
         setContentFrameVisible(mNotificationCount > 0, false);
 
         int hyperspaceOfframp = (Settings.System.getInt(getContext().getContentResolver(),
-                                    Settings.System.STATUS_BAR_TABLET_TOP, 0) == 1) ?
+                                    Settings.System.STATUS_BAR_TABLET_TOP, 1) == 1) ?
                                 -200 : 200;
 
         mChoreo = new Choreographer(hyperspaceOfframp);

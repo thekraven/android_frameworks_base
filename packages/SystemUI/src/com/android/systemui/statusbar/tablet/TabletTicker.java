@@ -227,7 +227,7 @@ public class TabletTicker
                 WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL, windowFlags,
                 PixelFormat.TRANSLUCENT);
         lp.gravity = ( Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.STATUS_BAR_TABLET_TOP, 0) == 1 ) ?
+                        Settings.System.STATUS_BAR_TABLET_TOP, 1) == 1 ) ?
 	                    Gravity.TOP | Gravity.LEFT : Gravity.BOTTOM | Gravity.LEFT;
 //        lp.windowAnimations = com.android.internal.R.style.Animation_Toast;
 

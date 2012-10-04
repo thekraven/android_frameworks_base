@@ -520,7 +520,7 @@ public class TabletStatusBar extends StatusBar implements
         final Resources res = mContext.getResources();
 
         if (Settings.System.getInt(mContext.getContentResolver(),
-            Settings.System.STATUS_BAR_TABLET_TOP, 0) == 1) {
+            Settings.System.STATUS_BAR_TABLET_TOP, 1) == 1) {
             isOnTop = true;
             mGravity = Gravity.TOP;
         } else {
