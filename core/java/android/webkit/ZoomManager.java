@@ -629,9 +629,7 @@ class ZoomManager {
         if (!isDoubleTapEnabled()) {
             return;
         }
-        WebViewCore.reducePriority();
-        settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
-
+        
         setZoomCenter(lastTouchX, lastTouchY);
         mAnchorX = mWebView.viewToContentX((int) lastTouchX + mWebView.getScrollX());
         mAnchorY = mWebView.viewToContentY((int) lastTouchY + mWebView.getScrollY());

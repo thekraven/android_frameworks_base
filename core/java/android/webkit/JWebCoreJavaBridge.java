@@ -231,11 +231,13 @@ final class JWebCoreJavaBridge extends Handler {
             if (mHasInstantTimer) {
                 return;
             } else {
+			    removeMessages(TIMER_MESSAGE);
                 mHasInstantTimer = true;
                 Message msg = obtainMessage(TIMER_MESSAGE);
                 sendMessageDelayed(msg, timemillis);
             }
         } else {
+		    removeMessages(TIMER_MESSAGE);
             Message msg = obtainMessage(TIMER_MESSAGE);
             sendMessageDelayed(msg, timemillis);
         }

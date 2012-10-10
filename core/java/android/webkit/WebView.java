@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -673,9 +674,9 @@ public class WebView extends AbsoluteLayout
     private int mTouchHighlightY;
     private long mTouchHighlightRequested;
 
-    // Basically this proxy is used to tell the Video to update layer tree at
+    // The HTML5VideoViewManager is used to tell the Video to update layer tree at
     // SetBaseLayer time and to pause when WebView paused.
-    private HTML5VideoViewProxy mHTML5VideoViewProxy;
+    private HTML5VideoViewManager mHTML5VideoViewManager;
 
     // If we are using a set picture, don't send view updates to webkit
     private boolean mBlockWebkitViewMessages = false;
@@ -743,7 +744,6 @@ public class WebView extends AbsoluteLayout
     static final int ENTER_FULLSCREEN_VIDEO             = 137;
     static final int UPDATE_SELECTION                   = 138;
     static final int UPDATE_ZOOM_DENSITY                = 139;
-
 
     private static final int FIRST_PACKAGE_MSG_ID = SCROLL_TO_MSG_ID;
     private static final int LAST_PACKAGE_MSG_ID = SET_TOUCH_HIGHLIGHT_RECTS;
@@ -1289,7 +1289,7 @@ public class WebView extends AbsoluteLayout
         // Initially use a size of two, since the user is likely to only hold
         // down two keys at a time (shift + another key)
         mKeysPressed = new Vector<Integer>(2);
-        mHTML5VideoViewProxy = null ;
+        mHTML5VideoViewManager = null;
     }
 
     @Override
@@ -2073,6 +2073,8 @@ public class WebView extends AbsoluteLayout
 
     private void loadUrlImpl(String url, Map<String, String> extraHeaders) {
         switchOutDrawHistory();
+        if (mHTML5VideoViewManager != null)
+            mHTML5VideoViewManager.suspend();
         WebViewCore.GetUrlData arg = new WebViewCore.GetUrlData();
         arg.mUrl = url;
         arg.mExtraHeaders = extraHeaders;
@@ -2265,6 +2267,8 @@ public class WebView extends AbsoluteLayout
         checkThread();
         clearHelpers();
         switchOutDrawHistory();
+        if (mHTML5VideoViewManager != null)
+            mHTML5VideoViewManager.suspend();
         mWebViewCore.sendMessage(EventHub.RELOAD);
     }
 
@@ -2353,6 +2357,8 @@ public class WebView extends AbsoluteLayout
 
     private void goBackOrForward(int steps, boolean ignoreSnapshot) {
         if (steps != 0) {
+            if (mHTML5VideoViewManager != null)
+                mHTML5VideoViewManager.suspend();
             clearHelpers();
             mWebViewCore.sendMessage(EventHub.GO_BACK_FORWARD, steps,
                     ignoreSnapshot ? 1 : 0);
@@ -3289,14 +3295,32 @@ public class WebView extends AbsoluteLayout
             mWebViewCore.sendMessage(EventHub.ON_PAUSE);
             // We want to pause the current playing video when switching out
             // from the current WebView/tab.
-            if (mHTML5VideoViewProxy != null) {
-                mHTML5VideoViewProxy.pauseAndDispatch();
+            if (mHTML5VideoViewManager != null) {
+                mHTML5VideoViewManager.pauseAndDispatch();
             }
             if (mNativeClass != 0) {
                 nativeSetPauseDrawing(mNativeClass, true);
             }
 
             cancelSelectDialog();
+        }
+    }
+
+    /**
+     * Call this to do any extra processing associated with this WebView
+     * when it is moved to a background tab.
+     *
+     * Note: This is different from onPause which is has a wider entry path.
+     * This function is called exclusively when this webview is moved to a
+     * background tab.
+     *
+     * @hide
+     */
+    public void onMoveToBackgroundTab() {
+        checkThread();
+        if (mHTML5VideoViewManager != null
+                && nativeShouldSuspendVideosInBackgroundTab()) {
+            mHTML5VideoViewManager.suspend();
         }
     }
 
@@ -3649,8 +3673,6 @@ public class WebView extends AbsoluteLayout
                 nativeSetIsScrolling(false);
                 if (!mBlockWebkitViewMessages) {
                     WebViewCore.resumePriority();
-
-
                     if (!mSelectingText) {
                         WebViewCore.resumeUpdatePicture(mWebViewCore);
                     }
@@ -4523,9 +4545,8 @@ public class WebView extends AbsoluteLayout
             return;
         nativeSetBaseLayer(layer, invalRegion, showVisualIndicator,
                 isPictureAfterFirstLayout, registerPageSwapCallback);
-        if (mHTML5VideoViewProxy != null) {
-            mHTML5VideoViewProxy.setBaseLayer(layer);
-        }
+        if (mHTML5VideoViewManager != null)
+            mHTML5VideoViewManager.setBaseLayer(layer);
     }
 
     int getBaseLayer() {
@@ -5597,8 +5618,6 @@ public class WebView extends AbsoluteLayout
             mSelectCallback.finish();
             mSelectCallback = null;
             WebViewCore.resumePriority();
-
-
             WebViewCore.resumeUpdatePicture(mWebViewCore);
             invalidate(); // redraw without selection
             mAutoScrollX = 0;
@@ -6503,8 +6522,6 @@ public class WebView extends AbsoluteLayout
                                 // we will not rewrite drag code here, but we
                                 // will try fling if it applies.
                                 WebViewCore.reducePriority();
-
-
                                 // to get better performance, pause updating the
                                 // picture
                                 WebViewCore.pauseUpdatePicture(mWebViewCore);
@@ -6576,8 +6593,6 @@ public class WebView extends AbsoluteLayout
                         // is possible on emulator.
                         mLastVelocity = 0;
                         WebViewCore.resumePriority();
-
-
                         if (!mSelectingText) {
                             WebViewCore.resumeUpdatePicture(mWebViewCore);
                         }
@@ -6629,9 +6644,6 @@ public class WebView extends AbsoluteLayout
     }
 
     void handleMultiTouchInWebView(MotionEvent ev) {
-
-
-
         if (DebugFlags.WEB_VIEW) {
             Log.v(LOGTAG, "multi-touch: " + ev + " at " + ev.getEventTime()
                 + " mTouchMode=" + mTouchMode
@@ -6732,8 +6744,6 @@ public class WebView extends AbsoluteLayout
 
     private void startDrag() {
         WebViewCore.reducePriority();
-
-
         // to get better performance, pause updating the picture
         WebViewCore.pauseUpdatePicture(mWebViewCore);
         nativeSetIsScrolling(true);
@@ -6810,8 +6820,6 @@ public class WebView extends AbsoluteLayout
         if (mScroller.isFinished() && !mSelectingText
                 && (mTouchMode == TOUCH_DRAG_MODE || mTouchMode == TOUCH_DRAG_LAYER_MODE)) {
             WebViewCore.resumePriority();
-
-
             WebViewCore.resumeUpdatePicture(mWebViewCore);
             nativeSetIsScrolling(false);
         }
@@ -6842,8 +6850,6 @@ public class WebView extends AbsoluteLayout
         if ((mTouchMode == TOUCH_DRAG_MODE
                 || mTouchMode == TOUCH_DRAG_LAYER_MODE) && !mSelectingText) {
             WebViewCore.resumePriority();
-
-
             WebViewCore.resumeUpdatePicture(mWebViewCore);
             nativeSetIsScrolling(false);
         }
@@ -7255,8 +7261,6 @@ public class WebView extends AbsoluteLayout
         }
         if ((maxX == 0 && vy == 0) || (maxY == 0 && vx == 0)) {
             WebViewCore.resumePriority();
-
-
             if (!mSelectingText) {
                 WebViewCore.resumeUpdatePicture(mWebViewCore);
             }
@@ -8304,8 +8308,6 @@ public class WebView extends AbsoluteLayout
                                         computeMaxScrollY());
                                 invalidate();
                                 WebViewCore.resumePriority();
-
-
                                 WebViewCore.resumeUpdatePicture(mWebViewCore);
                             }
                             mDeferTouchMode = TOUCH_DONE_MODE;
@@ -8669,9 +8671,8 @@ public class WebView extends AbsoluteLayout
                     int layerId = msg.arg1;
 
                     String url = (String) msg.obj;
-                    if (mHTML5VideoViewProxy != null) {
-                        mHTML5VideoViewProxy.enterFullScreenVideo(layerId, url);
-                    }
+                    if (mHTML5VideoViewManager != null)
+                        mHTML5VideoViewManager.enterFullScreenVideo(layerId, url);
                     break;
 
                 case SHOW_FULLSCREEN: {
@@ -8797,10 +8798,6 @@ public class WebView extends AbsoluteLayout
                 case SELECT_AT:
                     nativeSelectAt(msg.arg1, msg.arg2);
                     break;
-
-
-
-
 
                 default:
                     super.handleMessage(msg);
@@ -9456,8 +9453,21 @@ public class WebView extends AbsoluteLayout
      *
      * @hide only used by the Browser
      */
-    public void setHTML5VideoViewProxy(HTML5VideoViewProxy proxy) {
-        mHTML5VideoViewProxy = proxy;
+    public void registerHTML5VideoViewProxy(HTML5VideoViewProxy proxy) {
+        if (mHTML5VideoViewManager == null)
+            mHTML5VideoViewManager = new HTML5VideoViewManager(this);
+        mHTML5VideoViewManager.registerProxy(proxy);
+    }
+
+    /**
+     * Clean up method for registerHTML5VideoViewProxy
+     *
+     * @hide only used by the Browser
+     */
+    public void unregisterHTML5VideoViewProxy(HTML5VideoViewProxy proxy) {
+        if (mHTML5VideoViewManager != null) {
+            mHTML5VideoViewManager.unregisterProxy(proxy);
+        }
     }
 
     /**
@@ -9716,4 +9726,5 @@ public class WebView extends AbsoluteLayout
      */
     private static native void     nativeOnTrimMemory(int level);
     private static native void nativeSetPauseDrawing(int instance, boolean pause);
+    private static native boolean nativeShouldSuspendVideosInBackgroundTab();
 }
