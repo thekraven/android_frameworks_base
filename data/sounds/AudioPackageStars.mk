@@ -60,10 +60,8 @@ PRODUCT_COPY_FILES += \
 
 # Ringtones
 PRODUCT_COPY_FILES += \
-	$(LOCAL_PATH)/ringtones/ogg/Acheron.ogg:system/media/audio/ringtones/Acheron.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Andromeda.ogg:system/media/audio/ringtones/Andromeda.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Aquila.ogg:system/media/audio/ringtones/Aquila.ogg \
-	$(LOCAL_PATH)/ringtones/ogg/ArgoNavis.ogg:system/media/audio/ringtones/ArgoNavis.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Bootes.ogg:system/media/audio/ringtones/Bootes.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/CanisMajor.ogg:system/media/audio/ringtones/CanisMajor.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Carina.ogg:system/media/audio/ringtones/Carina.ogg \
@@ -77,17 +75,25 @@ PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/ringtones/ogg/Iridium.ogg:system/media/audio/ringtones/Iridium.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Lyra.ogg:system/media/audio/ringtones/Lyra.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Machina.ogg:system/media/audio/ringtones/Machina.ogg \
-	$(LOCAL_PATH)/ringtones/ogg/Nasqueron.ogg:system/media/audio/ringtones/Nasqueron.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Orion.ogg:system/media/audio/ringtones/Orion.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Pegasus.ogg:system/media/audio/ringtones/Pegasus.ogg \
-	$(LOCAL_PATH)/ringtones/ogg/Perseus.ogg:system/media/audio/ringtones/Perseus.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Pyxis.ogg:system/media/audio/ringtones/Pyxis.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Rigel.ogg:system/media/audio/ringtones/Rigel.ogg \
-	$(LOCAL_PATH)/ringtones/ogg/Scarabaeus.ogg:system/media/audio/ringtones/Scarabaeus.ogg \
-	$(LOCAL_PATH)/ringtones/ogg/Sceptrum.ogg:system/media/audio/ringtones/Sceptrum.ogg \
-	$(LOCAL_PATH)/ringtones/ogg/Solarium.ogg:system/media/audio/ringtones/Solarium.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Testudo.ogg:system/media/audio/ringtones/Testudo.ogg \
-	$(LOCAL_PATH)/ringtones/ogg/Themos.ogg:system/media/audio/ringtones/Themos.ogg \
-	$(LOCAL_PATH)/ringtones/ogg/UrsaMinor.ogg:system/media/audio/ringtones/UrsaMinor.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Vespa.ogg:system/media/audio/ringtones/Vespa.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Classic_01.ogg:system/media/audio/ringtones/Ring_Classic_01.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Classic_02.ogg:system/media/audio/ringtones/Ring_Classic_02.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Classic_03.ogg:system/media/audio/ringtones/Ring_Classic_03.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Classic_04.ogg:system/media/audio/ringtones/Ring_Classic_04.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Classic_05.ogg:system/media/audio/ringtones/Ring_Classic_05.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Digital_01.ogg:system/media/audio/ringtones/Ring_Digital_01.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Digital_02.ogg:system/media/audio/ringtones/Ring_Digital_02.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Digital_03.ogg:system/media/audio/ringtones/Ring_Digital_03.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Digital_04.ogg:system/media/audio/ringtones/Ring_Digital_04.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Digital_05.ogg:system/media/audio/ringtones/Ring_Digital_05.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Synth_01.ogg:system/media/audio/ringtones/Ring_Synth_01.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Synth_02.ogg:system/media/audio/ringtones/Ring_Synth_02.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Synth_03.ogg:system/media/audio/ringtones/Ring_Synth_03.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Synth_04.ogg:system/media/audio/ringtones/Ring_Synth_04.ogg \
+	$(LOCAL_PATH)/ringtones/old/Ring_Synth_05.ogg:system/media/audio/ringtones/Ring_Synth_05.ogg \
 	$(LOCAL_PATH)/ringtones/ogg/Zeta.ogg:system/media/audio/ringtones/Zeta.ogg
