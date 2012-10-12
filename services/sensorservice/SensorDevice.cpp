@@ -32,7 +32,7 @@
 #include "SensorService.h"
 
 #include "sensors_deprecated.h"
-#ifdef USE_LGE_ALS_DUMMY
+#ifdef SYSFS_LIGHT_SENSOR
 #include <fcntl.h>
 #endif
 
@@ -103,13 +103,14 @@ ANDROID_SINGLETON_STATIC_INSTANCE(BatteryService)
 
 ANDROID_SINGLETON_STATIC_INSTANCE(SensorDevice)
 
-#ifdef USE_LGE_ALS_DUMMY
-static ssize_t addDummyLGESensor(sensor_t const **list, ssize_t count) {
+#ifdef SYSFS_LIGHT_SENSOR
+#define DUMMY_ALS_HANDLE 0xdeadbeef
+static ssize_t addDummyLightSensor(sensor_t const **list, ssize_t count) {
     struct sensor_t dummy_light =     {
-                  name            : "Dummy LGE-Star light sensor",
+                  name            : "CyanogenMod dummy light sensor",
                   vendor          : "CyanogenMod",
                   version         : 1,
-                  handle          : SENSOR_TYPE_LIGHT,
+                  handle          : DUMMY_ALS_HANDLE,
                   type            : SENSOR_TYPE_LIGHT,
                   maxRange        : 20,
                   resolution      : 0.1,
@@ -167,8 +168,8 @@ SensorDevice::SensorDevice()
             sensor_t const* list;
             ssize_t count = mSensorModule->get_sensors_list(mSensorModule, &list);
 
-#ifdef USE_LGE_ALS_DUMMY
-            count = addDummyLGESensor(&list, count);
+#ifdef SYSFS_LIGHT_SENSOR
+            count = addDummyLightSensor(&list, count);
 #endif
 
             if (mOldSensorsCompatMode) {
@@ -223,10 +224,11 @@ ssize_t SensorDevice::getSensorList(sensor_t const** list) {
     if (!mSensorModule) return NO_INIT;
     ssize_t count = mSensorModule->get_sensors_list(mSensorModule, list);
 
-#ifdef USE_LGE_ALS_DUMMY
-    return addDummyLGESensor(list, count);
-#endif
+#ifdef SYSFS_LIGHT_SENSOR
+    return addDummyLightSensor(list, count);
+#else
     return count;
+#endif
 }
 
 status_t SensorDevice::initCheck() const {
@@ -315,41 +317,22 @@ status_t SensorDevice::activate(void* ident, int handle, int enabled)
     status_t err(NO_ERROR);
     bool actuateHardware = false;
 
-#ifdef USE_LGE_ALS_DUMMY
-
-    if (handle == SENSOR_TYPE_LIGHT) {
+#ifdef SYSFS_LIGHT_SENSOR
+    if (handle == DUMMY_ALS_HANDLE) {
         int nwr, ret, fd;
         char value[2];
 
-#ifdef USE_LGE_ALS_OMAP3
-        fd = open("/sys/class/leds/lcd-backlight/als", O_RDWR);
+        fd = open(SYSFS_LIGHT_SENSOR, O_RDWR);
         if(fd < 0)
             return -ENODEV;
 
         nwr = sprintf(value, "%s\n", enabled ? "1" : "0");
         write(fd, value, nwr);
         close(fd);
-#else
-        fd = open("/sys/devices/platform/star_aat2870.0/lsensor_onoff", O_RDWR);
-        if(fd < 0)
-            return -ENODEV;
-
-        nwr = sprintf(value, "%s\n", enabled ? "1" : "0");
-        write(fd, value, nwr);
-        close(fd);
-        fd = open("/sys/devices/platform/star_aat2870.0/alc", O_RDWR);
-        if(fd < 0)
-            return -ENODEV;
-
-        nwr = sprintf(value, "%s\n", enabled ? "2" : "0");
-        write(fd, value, nwr);
-        close(fd);
-#endif
-
         return 0;
-
     }
 #endif
+
     Info& info( mActivationCount.editValueFor(handle) );
 
 
