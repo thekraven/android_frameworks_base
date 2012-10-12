@@ -27,6 +27,7 @@ import android.database.ContentObserver;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Slog;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
