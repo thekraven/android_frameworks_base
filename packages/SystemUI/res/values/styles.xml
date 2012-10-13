@@ -118,5 +118,12 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">18sp</item>
     </style>
+	
+    <style name="StatusBar.BatteryBar"
+        parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/battery_bar</item>
+        <item name="android:minHeight">1dip</item>
+        <item name="android:maxHeight">1dip</item>
+    </style>
     
 </resources>
