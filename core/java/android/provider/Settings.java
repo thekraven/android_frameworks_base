@@ -2582,6 +2582,12 @@ public final class Settings {
         public static final String LOCKSCREEN_CALENDAR_REMINDERS_ONLY = "lockscreen_calendar_reminders_only";
 
         /**
+		 * Option to display navigation bar
+         * @hide
+         */
+	    public static final String KONSTA_NAVBAR = "konsta_navbar";
+
+        /**
          * Show the pending notification counts as overlays on the status bar
          * @hide
          */
