@@ -43,11 +43,14 @@ public class BatteryController extends BroadcastReceiver {
     private static final int BATTERY_STYLE_NORMAL  = 0;
     private static final int BATTERY_STYLE_TEXT    = 1;
     private static final int BATTERY_STYLE_GONE    = 2;
+    private static final int BATTERY_STYLE_CIRCLE    = 4;
 
     private static final int BATTERY_ICON_STYLE_NORMAL      = R.drawable.stat_sys_battery;
     private static final int BATTERY_ICON_STYLE_CHARGE      = R.drawable.stat_sys_battery_charge;
     private static final int BATTERY_ICON_STYLE_NORMAL_MIN  = R.drawable.stat_sys_battery_min;
     private static final int BATTERY_ICON_STYLE_CHARGE_MIN  = R.drawable.stat_sys_battery_charge_min;
+    private static final int BATTERY_ICON_STYLE_NORMAL_CIRCLE  = R.drawable.stat_sys_battery_circle;
+    private static final int BATTERY_ICON_STYLE_CHARGE_CIRCLE  = R.drawable.stat_sys_battery_charge_circle;
 
     private static final int BATTERY_TEXT_STYLE_NORMAL  = R.string.status_bar_settings_battery_meter_format;
     private static final int BATTERY_TEXT_STYLE_MIN     = R.string.status_bar_settings_battery_meter_min_format;
@@ -132,6 +135,10 @@ public class BatteryController extends BroadcastReceiver {
             mText = (View.VISIBLE);
             mIconStyle = mBatteryPlugged ? BATTERY_ICON_STYLE_CHARGE_MIN
                     : BATTERY_ICON_STYLE_NORMAL_MIN;
+        } else if (mBatteryStyle == 4) {
+            mIcon = (View.VISIBLE);
+            mIconStyle = mBatteryPlugged ? BATTERY_ICON_STYLE_CHARGE_CIRCLE
+                    : BATTERY_ICON_STYLE_NORMAL_CIRCLE;
         }
 
         int N = mIconViews.size();
