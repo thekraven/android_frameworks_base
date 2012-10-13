@@ -2584,7 +2584,7 @@ public final class Settings {
 		 * Option to display navigation bar
          * @hide
          */
-	    //public static final String KONSTA_NAVBAR = "konsta_navbar";
+	    public static final String KONSTA_NAVBAR = "konsta_navbar";
 
 		
         /**
