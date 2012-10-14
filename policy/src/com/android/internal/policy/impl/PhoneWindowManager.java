@@ -215,20 +215,20 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     static final int INPUT_METHOD_LAYER = 9;
     // on-screen keyboards and other such input method user interfaces go here.
     static final int INPUT_METHOD_DIALOG_LAYER = 10;
-    // the keyguard; nothing on top of these can take focus, since they are
+    static final int STATUS_BAR_SUB_PANEL_LAYER = 11;
+    static final int STATUS_BAR_LAYER = 12;
+    static final int STATUS_BAR_PANEL_LAYER = 13;
+    static final int NAVIGATION_BAR_LAYER = 14; 
+ // the keyguard; nothing on top of these can take focus, since they are
     // responsible for power management when displayed.
-    static final int KEYGUARD_LAYER = 11;
-    static final int KEYGUARD_DIALOG_LAYER = 12;
-    static final int STATUS_BAR_SUB_PANEL_LAYER = 13;
-    static final int STATUS_BAR_LAYER = 14;
-    static final int STATUS_BAR_PANEL_LAYER = 15;
+    static final int KEYGUARD_LAYER = 15;
+    static final int KEYGUARD_DIALOG_LAYER = 16;
     // the on-screen volume indicator and controller shown when the user
     // changes the device volume
-    static final int VOLUME_OVERLAY_LAYER = 16;
+    static final int VOLUME_OVERLAY_LAYER = 17;
     // things in here CAN NOT take focus, but are shown on top of everything else.
-    static final int SYSTEM_OVERLAY_LAYER = 17;
+    static final int SYSTEM_OVERLAY_LAYER = 18;
     // the navigation bar, if available, shows atop most things
-    static final int NAVIGATION_BAR_LAYER = 18;
     // system-level error dialogs
     static final int SYSTEM_ERROR_LAYER = 19;
     // the drag layer: input for drag-and-drop is associated with this window,
@@ -2334,7 +2334,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // input window to catch all touch events.  This way we can
         // detect when the user presses anywhere to bring back the nav
         // bar and ensure the application doesn't see the event.
-        if (navVisible) {
+        if (navVisible || hideNavBar) {
             if (mHideNavFakeWindow != null) {
                 mHideNavFakeWindow.dismiss();
                 mHideNavFakeWindow = null;

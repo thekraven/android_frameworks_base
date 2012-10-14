@@ -217,6 +217,15 @@ public class NavigationBarView extends LinearLayout {
         setButtonWithTagVisibility(NavbarEditor.NAVBAR_ALWAYS_MENU, disableRecent ? View.INVISIBLE : View.VISIBLE);
         setButtonWithTagVisibility(NavbarEditor.NAVBAR_MENU_BIG, disableRecent ? View.INVISIBLE : View.VISIBLE);
         setButtonWithTagVisibility(NavbarEditor.NAVBAR_SEARCH, disableRecent ? View.INVISIBLE : View.VISIBLE);
+		
+		final boolean hideBar = Settings.System.getInt(mContext.getContentResolver(),  
+                Settings.System.LOCKSCREEN_HIDE_NAV, 0) == 1;  
+        if (hideBar && disableHome && disableRecent && disableBack) {  
+            this.setVisibility(View.INVISIBLE); 
+        } else {  
+            this.setVisibility(View.VISIBLE); 
+        }  
+
     }
 
     public void setMenuVisibility(final boolean show) {
