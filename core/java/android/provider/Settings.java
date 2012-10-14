@@ -2416,6 +2416,13 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_TARGETS = "lockscreen_targets";
+		
+        /**  
+         * whether to hide the navigation bar on the lockscreen  
+         *   
+         * @hide  
+         */  
+        public static final String LOCKSCREEN_HIDE_NAV = "lockscreen_hide_nav";  
 
         /**
          * Boolean value whether to link ringtone and notification volumes

@@ -2326,6 +2326,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final boolean navVisible = (mNavigationBar == null || mNavigationBar.isVisibleLw()) &&
                 (mLastSystemUiFlags&View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0;
 
+		final boolean hideNavBar = hasNavigationBar() && keyguardOn()  
+                && Settings.System.getInt(mContext.getContentResolver(),  
+                        Settings.System.LOCKSCREEN_HIDE_NAV, 0) == 1;  
+		
         // When the navigation bar isn't visible, we put up a fake
         // input window to catch all touch events.  This way we can
         // detect when the user presses anywhere to bring back the nav
