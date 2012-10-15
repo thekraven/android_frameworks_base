@@ -434,7 +434,7 @@ public class TabletStatusBar extends StatusBar implements
         if (newTheme != null &&
                 (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
             mCurrentTheme = (CustomTheme)newTheme.clone();
-			StatusBar.resetColors(mContext);
+			// StatusBar.resetColors(mContext);
             // restart systemui 
             try { 
                 Runtime.getRuntime().exec("pkill -TERM -f  com.android.systemui"); 
