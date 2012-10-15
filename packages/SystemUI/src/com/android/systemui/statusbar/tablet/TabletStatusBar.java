@@ -289,9 +289,9 @@ public class TabletStatusBar extends StatusBar implements
                 PixelFormat.TRANSLUCENT);
 				
 		// this will allow the navbar to run in an overlay on devices that support this 
-        if (ActivityManager.isHighEndGfx(mDisplay)) { 
-            lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED; 
-        } 
+        //if (ActivityManager.isHighEndGfx(mDisplay)) { 
+        //    lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED; 
+        //} 
 		
         lp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         lp.setTitle("NotificationPanel");
