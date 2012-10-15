@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.provider.Settings;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
