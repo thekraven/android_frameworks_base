@@ -39,6 +39,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.CustomTheme;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.inputmethodservice.InputMethodService;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -286,6 +287,12 @@ public class TabletStatusBar extends StatusBar implements
                     | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
                     | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
                 PixelFormat.TRANSLUCENT);
+				
+		// this will allow the navbar to run in an overlay on devices that support this 
+        if (ActivityManager.isHighEndGfx(mDisplay)) { 
+            lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED; 
+        } 
+		
         lp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         lp.setTitle("NotificationPanel");
         lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
@@ -294,6 +301,8 @@ public class TabletStatusBar extends StatusBar implements
 //        lp.windowAnimations = com.android.internal.R.style.Animation_ZoomButtons; // simple fade
 
         WindowManagerImpl.getDefault().addView(mNotificationPanel, lp);
+		
+		
 
         // Notification preview window
         if (NOTIFICATION_PEEK_ENABLED) {
@@ -412,6 +421,25 @@ public class TabletStatusBar extends StatusBar implements
 
         WindowManagerImpl.getDefault().addView(mCompatModePanel, lp);
     }
+	
+	
+    private final class SettingsObserver extends ContentObserver { 
+        SettingsObserver(Handler handler) { 
+            super(handler); 
+        } 
+ 
+        void observe() { 
+            ContentResolver resolver = mContext.getContentResolver(); 
+            resolver.registerContentObserver(Settings.System.getUriFor( 
+                    Settings.System.STATUS_BAR_TRANSPARENCY), false, this); 
+        } 
+ 
+        @Override 
+        public void onChange(boolean selfChange) { 
+            setStatusBarParams(mStatusBarView); 
+            loadDimens(); 
+        } 
+    } 
 
     private int getNotificationPanelHeight() {
         final Resources res = mContext.getResources();
@@ -439,7 +467,8 @@ public class TabletStatusBar extends StatusBar implements
                 Runtime.getRuntime().exec("pkill -TERM -f  com.android.systemui"); 
             } catch (IOException e) { 
                 // we're screwed here fellas 
-            } 
+            }
+            setStatusBarParams(mStatusBarView);			
 
         }
             mHeightReceiver.updateHeight(); // display size may have changed
@@ -496,6 +525,8 @@ public class TabletStatusBar extends StatusBar implements
         final TabletStatusBarView sb = (TabletStatusBarView)View.inflate(
                 context, R.layout.status_bar, null);
         mStatusBarView = sb;
+		
+		setStatusBarParams(mStatusBarView);
 
         sb.setHandler(mHandler);
 
