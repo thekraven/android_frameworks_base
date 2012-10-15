@@ -272,13 +272,14 @@ public class PhoneStatusBar extends StatusBar {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SCREEN_BRIGHTNESS_MODE), false, this);
 			resolver.registerContentObserver(Settings.System.getUriFor( 
+                    Settings.System.STATUS_BAR_TRANSPARENCY), false, this); 
+			resolver.registerContentObserver(Settings.System.getUriFor( 
                     Settings.System.NAV_BAR_TRANSPARENCY), false, this); 
             update();
         }
 
         @Override
         public void onChange(boolean selfChange) {
-		    setNavigationBarParams();
             update();
         }
 
@@ -289,6 +290,8 @@ public class PhoneStatusBar extends StatusBar {
             mAutoBrightness = Settings.System.getInt(resolver,
                     Settings.System.SCREEN_BRIGHTNESS_MODE, 0) ==
                     Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
+			setStatusBarParams(mStatusBarView);
+		    setNavigationBarParams();			
         }
     }
 
@@ -381,7 +384,7 @@ public class PhoneStatusBar extends StatusBar {
         }
 
         // figure out which pixel-format to use for the status bar.
-        mPixelFormat = PixelFormat.OPAQUE;
+        mPixelFormat = PixelFormat.TRANSLUCENT;
         mStatusIcons = (LinearLayout)sb.findViewById(R.id.statusIcons);
         mNotificationIcons = (IconMerger)sb.findViewById(R.id.notificationIcons);
         mMoreIcon = sb.findViewById(R.id.moreIcon);
@@ -589,7 +592,7 @@ public class PhoneStatusBar extends StatusBar {
                     | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                     | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
                     | WindowManager.LayoutParams.FLAG_SLIPPERY,
-                PixelFormat.OPAQUE);
+                PixelFormat.TRANSLUCENT);
         // this will allow the navbar to run in an overlay on devices that support this
         if (ActivityManager.isHighEndGfx(mDisplay)) {
             lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
@@ -2432,6 +2435,7 @@ public class PhoneStatusBar extends StatusBar {
                 // we're screwed here fellas 
             } 
    			setNavigationBarParams();
+			setStatusBarParams(mStatusBarView);
         } else {
 
             if (mClearButton instanceof TextView) {

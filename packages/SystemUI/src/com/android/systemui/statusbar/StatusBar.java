@@ -19,6 +19,7 @@ package com.android.systemui.statusbar;
 import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
@@ -61,6 +62,21 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
     private DoNotDisturb mDoNotDisturb;
 
     private boolean mShowNotificationCounts;
+	
+	class StatusbarObserver extends ContentObserver { 
+        StatusbarObserver(Handler handler) { 
+            super(handler); 
+        } 
+ 
+        void observe() { 
+            ContentResolver resolver = mContext.getContentResolver(); 
+        } 
+ 
+        @Override 
+        public void onChange(boolean selfChange) { 
+        } 
+    } 
+
 
     public void start() {
         // First set up our views and stuff.
@@ -70,6 +86,9 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
 
         mShowNotificationCounts = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_NOTIF_COUNT, 0) == 1;
+				
+		StatusbarObserver StatusbarObserver = new StatusbarObserver(new Handler()); 
+        StatusbarObserver.observe(); 
 
         // Connect in to the status bar manager service
         StatusBarIconList iconList = new StatusBarIconList();
@@ -120,7 +139,7 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
         final int height = getStatusBarHeight();
 		final int transparency = Settings.System.getInt(
                                 		sb.getContext().getContentResolver(),
-                                        Settings.System.STATUSBAR_TRANSPARENCY, 100);
+                                        Settings.System.STATUS_BAR_TRANSPARENCY, 100);
 
         final WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -168,6 +187,12 @@ public abstract class StatusBar extends SystemUI implements CommandQueue.Callbac
 
         mDoNotDisturb = new DoNotDisturb(mContext);
     }
+	
+	protected void setStatusBarParams(View statusbarView){ 
+        int opacity = Settings.System.getInt(mContext.getContentResolver(), 
+                Settings.System.STATUS_BAR_TRANSPARENCY, 100); 
+        statusbarView.getBackground().setAlpha(Math.round((opacity * 255) / 100)); 
+    } 
 
     protected View updateNotificationVetoButton(View row, StatusBarNotification n) {
         View vetoButton = row.findViewById(R.id.veto);

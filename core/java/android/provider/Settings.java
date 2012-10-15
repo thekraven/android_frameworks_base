@@ -2666,7 +2666,7 @@ public final class Settings {
          * Option to change statusbar transparency
          * @hide
          */
-		 public static final String STATUSBAR_TRANSPARENCY = "statusbar_transparency";
+		 public static final String STATUS_BAR_TRANSPARENCY = "status_bar_transparency";
 		 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
