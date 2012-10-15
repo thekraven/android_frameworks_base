@@ -17,6 +17,7 @@
 package com.android.systemui.statusbar.phone;
 
 import android.animation.ObjectAnimator;
+import java.io.IOException;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.Dialog;
@@ -258,7 +259,8 @@ public class PhoneStatusBar extends StatusBar {
 
     DisplayMetrics mDisplayMetrics = new DisplayMetrics();
 
-    class SettingsObserver extends ContentObserver {
+	
+	class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
             super(handler);
         }
@@ -269,11 +271,14 @@ public class PhoneStatusBar extends StatusBar {
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SCREEN_BRIGHTNESS_MODE), false, this);
+			resolver.registerContentObserver(Settings.System.getUriFor( 
+                    Settings.System.NAV_BAR_TRANSPARENCY), false, this); 
             update();
         }
 
         @Override
         public void onChange(boolean selfChange) {
+		    setNavigationBarParams();
             update();
         }
 
@@ -542,6 +547,12 @@ public class PhoneStatusBar extends StatusBar {
         mNavigationBarView.setListener(mRecentsClickListener,mRecentsPanel);
         mNavigationBarView.reorient();
     }
+
+    protected void setNavigationBarParams(){ 
+        int opacity = Settings.System.getInt(mContext.getContentResolver(), 
+                Settings.System.NAV_BAR_TRANSPARENCY, 100); 
+        mNavigationBarView.getBackground().setAlpha(Math.round((opacity * 255) / 100)); 
+    } 
 
     // For small-screen devices (read: phones) that lack hardware navigation buttons
     private void addNavigationBar() {
@@ -2395,64 +2406,6 @@ public class PhoneStatusBar extends StatusBar {
         mIntruderAlertView.setVisibility(vis ? View.VISIBLE : View.GONE);
     }
 
-    private static void copyNotifications(ArrayList<Pair<IBinder, StatusBarNotification>> dest,
-            NotificationData source) {
-        int N = source.size();
-        for (int i = 0; i < N; i++) {
-            NotificationData.Entry entry = source.get(i);
-            dest.add(Pair.create(entry.key, entry.notification));
-        }
-    }
-
-    private void recreateStatusBar() {
-        mRecreating = true;
-        mStatusBarContainer.removeAllViews();
-
-        // extract icons from the soon-to-be recreated viewgroup.
-        int nIcons = mStatusIcons.getChildCount();
-        ArrayList<StatusBarIcon> icons = new ArrayList<StatusBarIcon>(nIcons);
-        ArrayList<String> iconSlots = new ArrayList<String>(nIcons);
-        for (int i = 0; i < nIcons; i++) {
-            StatusBarIconView iconView = (StatusBarIconView)mStatusIcons.getChildAt(i);
-            icons.add(iconView.getStatusBarIcon());
-            iconSlots.add(iconView.getStatusBarSlot());
-        }
-
-        // extract notifications.
-        int nNotifs = mNotificationData.size();
-        ArrayList<Pair<IBinder, StatusBarNotification>> notifications =
-                new ArrayList<Pair<IBinder, StatusBarNotification>>(nNotifs);
-        copyNotifications(notifications, mNotificationData);
-        mNotificationData.clear();
-
-        if (mNavigationBarView != null) {
-            mNavigationBarView.unregisterReceivers();
-            WindowManagerImpl.getDefault().removeView(mNavigationBarView);
-        }
-        View newStatusBarView = makeStatusBarView();
-        addNavigationBar();
-
-        // recreate StatusBarIconViews.
-        for (int i = 0; i < nIcons; i++) {
-            StatusBarIcon icon = icons.get(i);
-            String slot = iconSlots.get(i);
-            addIcon(slot, i, i, icon);
-        }
-
-        // recreate notifications.
-        for (int i = 0; i < nNotifs; i++) {
-            Pair<IBinder, StatusBarNotification> notifData = notifications.get(i);
-            addNotificationViews(notifData.first, notifData.second);
-        }
-
-        setAreThereNotifications();
-
-        mStatusBarContainer.addView(newStatusBarView);
-
-        updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
-        mRecreating = false;
-    }
-
     /**
      * Reload some of our resources when the configuration changes.
      *
@@ -2469,7 +2422,16 @@ public class PhoneStatusBar extends StatusBar {
         if (newTheme != null &&
                 (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
             mCurrentTheme = (CustomTheme)newTheme.clone();
-            recreateStatusBar();
+            //recreateStatusBar();
+
+        	// StatusBar.resetColors(mContext);
+            // restart system ui on theme change 
+            try { 
+                Runtime.getRuntime().exec("pkill -TERM -f  com.android.systemui"); 
+            } catch (IOException e) { 
+                // we're screwed here fellas 
+            } 
+   			setNavigationBarParams();
         } else {
 
             if (mClearButton instanceof TextView) {
