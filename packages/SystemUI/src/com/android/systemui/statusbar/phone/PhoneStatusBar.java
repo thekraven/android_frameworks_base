@@ -280,7 +280,7 @@ public class PhoneStatusBar extends StatusBar {
 
         @Override
         public void onChange(boolean selfChange) {
-		    updateSettings();
+		  //  updateSettings();
             update();
         }
 

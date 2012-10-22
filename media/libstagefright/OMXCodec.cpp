@@ -24,6 +24,7 @@
 #include "include/AMRNBEncoder.h"
 #include "include/AMRWBEncoder.h"
 #include "include/AVCEncoder.h"
+#include "include/M4vH263Decoder.h"
 #include "include/M4vH263Encoder.h"
 #include "include/MP3Decoder.h"
 
@@ -163,6 +164,7 @@ FACTORY_CREATE_ENCODER(AMRNBEncoder)
 FACTORY_CREATE_ENCODER(AMRWBEncoder)
 FACTORY_CREATE_ENCODER(AACEncoder)
 FACTORY_CREATE_ENCODER(AVCEncoder)
+FACTORY_CREATE(M4vH263Decoder)
 FACTORY_CREATE_ENCODER(M4vH263Encoder)
 
 static sp<MediaSource> InstantiateSoftwareEncoder(
@@ -178,6 +180,7 @@ static sp<MediaSource> InstantiateSoftwareEncoder(
         FACTORY_REF(AMRWBEncoder)
         FACTORY_REF(AACEncoder)
         FACTORY_REF(AVCEncoder)
+		FACTORY_REF(M4vH263Decoder)
         FACTORY_REF(M4vH263Encoder)
     };
     for (size_t i = 0;
@@ -260,13 +263,13 @@ static const CodecInfo kDecoderInfo[] = {
     { MEDIA_MIMETYPE_VIDEO_MPEG4, "OMX.qcom.video.decoder.mpeg4" },
     { MEDIA_MIMETYPE_VIDEO_MPEG4, "OMX.TI.Video.Decoder" },
     { MEDIA_MIMETYPE_VIDEO_MPEG4, "OMX.SEC.MPEG4.Decoder" },
-    { MEDIA_MIMETYPE_VIDEO_MPEG4, "OMX.google.mpeg4.decoder" },
+    OPTIONAL(MEDIA_MIMETYPE_VIDEO_MPEG4, "M4vH264Decoder")
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.TI.DUCATI1.VIDEO.DECODER" },
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.Nvidia.h263.decode" },
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.qcom.7x30.video.decoder.h263" },
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.qcom.video.decoder.h263" },
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.SEC.H263.Decoder" },
-    { MEDIA_MIMETYPE_VIDEO_H263, "OMX.google.h263.decoder" },
+    OPTIONAL(MEDIA_MIMETYPE_VIDEO_H263, "M4vH264Decoder")
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.TI.DUCATI1.VIDEO.DECODER" },
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.Nvidia.h264.decode" },
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.qcom.7x30.video.decoder.avc" },

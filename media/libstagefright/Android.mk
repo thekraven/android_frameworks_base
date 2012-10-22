@@ -131,6 +131,7 @@ LOCAL_STATIC_LIBRARIES := \
         libstagefright_amrnbenc \
         libstagefright_amrwbenc \
         libstagefright_avcenc \
+		libstagefright_m4vh263dec \
         libstagefright_m4vh263enc \
         libstagefright_matroska \
         libstagefright_timedtext \
