@@ -1974,4 +1974,309 @@
   <public type="color" name="holo_orange_dark" id="0x01060019" />
   <public type="color" name="holo_purple" id="0x0106001a" />
   <public type="color" name="holo_blue_bright" id="0x0106001b" />
+
+
+<!-- ===============================================================
+   Resources added in version 16 of the platform (Jelly Bean)
+   =============================================================== -->
+  <eat-comment />
+  <public type="attr" name="parentActivityName" id="0x010103a7" />
+  <public type="attr" name="permissionGroupFlags" id="0x010103a8" />
+  <public type="attr" name="isolatedProcess" id="0x010103a9" />
+  <public type="attr" name="importantForAccessibility" id="0x010103aa" />
+  <public type="attr" name="keyboardLayout" id="0x010103ab" />
+  <public type="attr" name="fontFamily" id="0x010103ac" />
+
+  <public type="attr" name="mediaRouteButtonStyle" id="0x010103ad" />
+  <public type="attr" name="mediaRouteTypes" id="0x010103ae" />
+  <public type="style" name="Widget.Holo.MediaRouteButton" id="0x010301d5" />
+  <public type="style" name="Widget.Holo.Light.MediaRouteButton" id="0x010301d6" />
+  <public type="style" name="Widget.DeviceDefault.MediaRouteButton" id="0x010301d7" />
+  <public type="style" name="Widget.DeviceDefault.Light.MediaRouteButton" id="0x010301d8" />
+
+<!-- ===============================================================
+   Resources added in version 10 of CyanogenMod
+   =============================================================== -->
+  <eat-comment />
+
+  <!-- Config.xml entries -->
+  <java-symbol type="string" name="config_legacyUmsLunFile" />
+  <java-symbol type="bool" name="config_forceDisableHardwareKeyboard" />
+  <java-symbol type="array" name="config_telephony_set_audioparameters" />
+  <java-symbol type="bool" name="config_autoBrightnessButtonKeyboard" />
+  <java-symbol type="string" name="config_deviceKeyHandlerLib" />
+  <java-symbol type="string" name="config_deviceKeyHandlerClass" />
+  <java-symbol type="integer" name="config_screenOnAnimation" />
+  <java-symbol type="integer" name="config_backKillTimeout" />
+  <java-symbol type="bool" name="config_screenOffAnimation" />
+  <java-symbol type="bool" name="config_hasRotationLockSwitch" />
+  <java-symbol type="bool" name="config_hasDockBattery" />
+  <java-symbol type="bool" name="config_noDelayInATwoDP" />
+  <java-symbol type="bool" name="config_smsSamsungCdmaAlternateMessageIDEncoding" />
+  <java-symbol type="integer" name="config_deviceHardwareKeys" />
+  <java-symbol type="bool" name="config_hasRemovableLid" />
+  <java-symbol type="bool" name="config_samsung_stk" />
+  <java-symbol type="integer" name="config_wallpaperMaxWidth" />
+
+  <!-- Notification and battery light -->
+  <java-symbol type="bool" name="config_intrusiveBatteryLed" />
+  <java-symbol type="bool" name="config_multiColorBatteryLed" />
+  <java-symbol type="array" name="notification_light_package_mapping" />
+
+  <!-- Power menu -->
+  <java-symbol type="string" name="global_action_screenshot" />
+  <java-symbol type="string" name="global_action_choose_profile" />
+  <java-symbol type="string" name="global_action_reboot" />
+  <java-symbol type="string" name="global_actions_toggle_expanded_desktop_mode" />
+  <java-symbol type="string" name="global_actions_expanded_desktop_mode_off_status" />
+  <java-symbol type="string" name="global_actions_expanded_desktop_mode_on_status" />
+  <java-symbol type="string" name="global_actions" />
+  <java-symbol type="string" name="reboot_system" />
+  <java-symbol type="string" name="reboot_progress" />
+  <java-symbol type="array" name="shutdown_reboot_options" />
+  <java-symbol type="array" name="shutdown_reboot_actions" />
+  <java-symbol type="drawable" name="ic_lock_screenshot" />
+  <java-symbol type="drawable" name="ic_lock_reboot" />
+  <java-symbol type="drawable" name="ic_lock_profile" />
+  <java-symbol type="drawable" name="ic_lock_expanded_desktop" />
+
+  <!-- Profiles -->
+  <java-symbol type="xml" name="profile_default" />
+  <java-symbol type="string" name="wildcardProfile" />
+
+  <!-- Lock screen Weather -->
+  <java-symbol type="drawable" name="weather_0" />
+  <java-symbol type="drawable" name="weather_1" />
+  <java-symbol type="drawable" name="weather_2" />
+  <java-symbol type="drawable" name="weather_3" />
+  <java-symbol type="drawable" name="weather_4" />
+  <java-symbol type="drawable" name="weather_5" />
+  <java-symbol type="drawable" name="weather_6" />
+  <java-symbol type="drawable" name="weather_7" />
+  <java-symbol type="drawable" name="weather_8" />
+  <java-symbol type="drawable" name="weather_9" />
+  <java-symbol type="drawable" name="weather_10" />
+  <java-symbol type="drawable" name="weather_11" />
+  <java-symbol type="drawable" name="weather_12" />
+  <java-symbol type="drawable" name="weather_13" />
+  <java-symbol type="drawable" name="weather_14" />
+  <java-symbol type="drawable" name="weather_15" />
+  <java-symbol type="drawable" name="weather_16" />
+  <java-symbol type="drawable" name="weather_17" />
+  <java-symbol type="drawable" name="weather_18" />
+  <java-symbol type="drawable" name="weather_19" />
+  <java-symbol type="drawable" name="weather_20" />
+  <java-symbol type="drawable" name="weather_21" />
+  <java-symbol type="drawable" name="weather_22" />
+  <java-symbol type="drawable" name="weather_23" />
+  <java-symbol type="drawable" name="weather_24" />
+  <java-symbol type="drawable" name="weather_25" />
+  <java-symbol type="drawable" name="weather_26" />
+  <java-symbol type="drawable" name="weather_27" />
+  <java-symbol type="drawable" name="weather_28" />
+  <java-symbol type="drawable" name="weather_29" />
+  <java-symbol type="drawable" name="weather_30" />
+  <java-symbol type="drawable" name="weather_31" />
+  <java-symbol type="drawable" name="weather_32" />
+  <java-symbol type="drawable" name="weather_33" />
+  <java-symbol type="drawable" name="weather_34" />
+  <java-symbol type="drawable" name="weather_35" />
+  <java-symbol type="drawable" name="weather_36" />
+  <java-symbol type="drawable" name="weather_37" />
+  <java-symbol type="drawable" name="weather_38" />
+  <java-symbol type="drawable" name="weather_39" />
+  <java-symbol type="drawable" name="weather_40" />
+  <java-symbol type="drawable" name="weather_41" />
+  <java-symbol type="drawable" name="weather_42" />
+  <java-symbol type="drawable" name="weather_43" />
+  <java-symbol type="drawable" name="weather_44" />
+  <java-symbol type="drawable" name="weather_45" />
+  <java-symbol type="drawable" name="weather_46" />
+  <java-symbol type="drawable" name="weather_47" />
+  <java-symbol type="drawable" name="weather_na" />
+  <java-symbol type="string" name="weather_0" />
+  <java-symbol type="string" name="weather_1" />
+  <java-symbol type="string" name="weather_2" />
+  <java-symbol type="string" name="weather_3" />
+  <java-symbol type="string" name="weather_4" />
+  <java-symbol type="string" name="weather_5" />
+  <java-symbol type="string" name="weather_6" />
+  <java-symbol type="string" name="weather_7" />
+  <java-symbol type="string" name="weather_8" />
+  <java-symbol type="string" name="weather_9" />
+  <java-symbol type="string" name="weather_10" />
+  <java-symbol type="string" name="weather_11" />
+  <java-symbol type="string" name="weather_12" />
+  <java-symbol type="string" name="weather_13" />
+  <java-symbol type="string" name="weather_14" />
+  <java-symbol type="string" name="weather_15" />
+  <java-symbol type="string" name="weather_16" />
+  <java-symbol type="string" name="weather_17" />
+  <java-symbol type="string" name="weather_18" />
+  <java-symbol type="string" name="weather_19" />
+  <java-symbol type="string" name="weather_20" />
+  <java-symbol type="string" name="weather_21" />
+  <java-symbol type="string" name="weather_22" />
+  <java-symbol type="string" name="weather_23" />
+  <java-symbol type="string" name="weather_24" />
+  <java-symbol type="string" name="weather_25" />
+  <java-symbol type="string" name="weather_26" />
+  <java-symbol type="string" name="weather_27" />
+  <java-symbol type="string" name="weather_28" />
+  <java-symbol type="string" name="weather_29" />
+  <java-symbol type="string" name="weather_30" />
+  <java-symbol type="string" name="weather_31" />
+  <java-symbol type="string" name="weather_32" />
+  <java-symbol type="string" name="weather_33" />
+  <java-symbol type="string" name="weather_34" />
+  <java-symbol type="string" name="weather_35" />
+  <java-symbol type="string" name="weather_36" />
+  <java-symbol type="string" name="weather_37" />
+  <java-symbol type="string" name="weather_38" />
+  <java-symbol type="string" name="weather_39" />
+  <java-symbol type="string" name="weather_40" />
+  <java-symbol type="string" name="weather_41" />
+  <java-symbol type="string" name="weather_42" />
+  <java-symbol type="string" name="weather_43" />
+  <java-symbol type="string" name="weather_44" />
+  <java-symbol type="string" name="weather_45" />
+  <java-symbol type="string" name="weather_46" />
+  <java-symbol type="string" name="weather_47" />
+  <java-symbol type="string" name="weather_3200" />
+  <java-symbol type="string" name="weather_N" />
+  <java-symbol type="string" name="weather_NE" />
+  <java-symbol type="string" name="weather_E" />
+  <java-symbol type="string" name="weather_SE" />
+  <java-symbol type="string" name="weather_S" />
+  <java-symbol type="string" name="weather_SW" />
+  <java-symbol type="string" name="weather_W" />
+  <java-symbol type="string" name="weather_NW" />
+  <java-symbol type="string" name="weather_no_data" />
+  <java-symbol type="string" name="weather_tap_to_refresh" />
+  <java-symbol type="string" name="weather_refreshing" />
+  <java-symbol type="string" name="weather_last_sync_just_now" />
+  <java-symbol type="id" name="weather_panel" />
+  <java-symbol type="id" name="weather_city" />
+  <java-symbol type="id" name="weather_condition" />
+  <java-symbol type="id" name="weather_image" />
+  <java-symbol type="id" name="weather_temp" />
+  <java-symbol type="id" name="weather_low_high" />
+  <java-symbol type="id" name="update_time" />
+  <java-symbol type="id" name="weather_temps_panel" />
+
+  <!-- Lock screen calendar -->
+  <java-symbol type="drawable" name="ic_lock_idle_calendar" />
+  <java-symbol type="id" name="calendar_panel" />
+  <java-symbol type="id" name="calendar_event_title" />
+  <java-symbol type="id" name="calendar_event_details" />
+
+  <!-- Power widget -->
+  <java-symbol type="string" name="hour" />
+  <java-symbol type="string" name="hours" />
+  <java-symbol type="string" name="minute" />
+  <java-symbol type="string" name="minutes" />
+  <java-symbol type="string" name="second" />
+  <java-symbol type="string" name="seconds" />
+
+  <!-- Lock screen always show battery -->
+  <java-symbol type="string" name="lockscreen_discharging" />
+
+  <!-- Options that show upon long-pressing a key on the physical keyboard -->
+  <java-symbol type="string" name="symbol_picker_0" />
+  <java-symbol type="string" name="symbol_picker_1" />
+  <java-symbol type="string" name="symbol_picker_2" />
+  <java-symbol type="string" name="symbol_picker_3" />
+  <java-symbol type="string" name="symbol_picker_4" />
+  <java-symbol type="string" name="symbol_picker_5" />
+  <java-symbol type="string" name="symbol_picker_7" />
+  <java-symbol type="string" name="symbol_picker_a" />
+  <java-symbol type="string" name="symbol_picker_A" />
+  <java-symbol type="string" name="symbol_picker_c" />
+  <java-symbol type="string" name="symbol_picker_C" />
+  <java-symbol type="string" name="symbol_picker_closing_parenthesis" />
+  <java-symbol type="string" name="symbol_picker_comma" />
+  <java-symbol type="string" name="symbol_picker_d" />
+  <java-symbol type="string" name="symbol_picker_D" />
+  <java-symbol type="string" name="symbol_picker_dollar" />
+  <java-symbol type="string" name="symbol_picker_e" />
+  <java-symbol type="string" name="symbol_picker_E" />
+  <java-symbol type="string" name="symbol_picker_equal" />
+  <java-symbol type="string" name="symbol_picker_exclamation" />
+  <java-symbol type="string" name="symbol_picker_g" />
+  <java-symbol type="string" name="symbol_picker_G" />
+  <java-symbol type="string" name="symbol_picker_gt" />
+  <java-symbol type="string" name="symbol_picker_i" />
+  <java-symbol type="string" name="symbol_picker_I" />
+  <java-symbol type="string" name="symbol_picker_l" />
+  <java-symbol type="string" name="symbol_picker_L" />
+  <java-symbol type="string" name="symbol_picker_lt" />
+  <java-symbol type="string" name="symbol_picker_minus" />
+  <java-symbol type="string" name="symbol_picker_n" />
+  <java-symbol type="string" name="symbol_picker_N" />
+  <java-symbol type="string" name="symbol_picker_o" />
+  <java-symbol type="string" name="symbol_picker_O" />
+  <java-symbol type="string" name="symbol_picker_opening_parenthesis" />
+  <java-symbol type="string" name="symbol_picker_percent" />
+  <java-symbol type="string" name="symbol_picker_plus" />
+  <java-symbol type="string" name="symbol_picker_question" />
+  <java-symbol type="string" name="symbol_picker_quote" />
+  <java-symbol type="string" name="symbol_picker_r" />
+  <java-symbol type="string" name="symbol_picker_R" />
+  <java-symbol type="string" name="symbol_picker_s" />
+  <java-symbol type="string" name="symbol_picker_S" />
+  <java-symbol type="string" name="symbol_picker_slash" />
+  <java-symbol type="string" name="symbol_picker_star" />
+  <java-symbol type="string" name="symbol_picker_sym" />
+  <java-symbol type="string" name="symbol_picker_t" />
+  <java-symbol type="string" name="symbol_picker_T" />
+  <java-symbol type="string" name="symbol_picker_u" />
+  <java-symbol type="string" name="symbol_picker_U" />
+  <java-symbol type="string" name="symbol_picker_y" />
+  <java-symbol type="string" name="symbol_picker_Y" />
+  <java-symbol type="string" name="symbol_picker_z" />
+  <java-symbol type="string" name="symbol_picker_Z" />
+
+<!-- ===============================================================
+     AVRCP 1.3 Meta Data Resources
+     =============================================================== -->
+  <eat-comment />
+
+  <java-symbol type="array" name="avrcp_meta_changed_intents" />
+  <java-symbol type="array" name="avrcp_playstate_changed_intents" />
+  <java-symbol type="array" name="avrcp_special_extra_keys" />
+  <java-symbol type="array" name="avrcp_overridable_extra_keys" />
+  <java-symbol type="string" name="com.amazon.mp3.metachanged_track" />
+  <java-symbol type="string" name="com.amazon.mp3.metachanged_artist" />
+  <java-symbol type="string" name="com.amazon.mp3.metachanged_album" />
+  <java-symbol type="string" name="com.amazon.mp3.metachanged_id" />
+  <java-symbol type="string" name="com.amazon.mp3.playstatechanged_track" />
+  <java-symbol type="string" name="com.amazon.mp3.playstatechanged_artist" />
+  <java-symbol type="string" name="com.amazon.mp3.playstatechanged_album" />
+  <java-symbol type="string" name="com.amazon.mp3.playstatechanged_id" />
+
+  <!-- WiredAccessoryObserver -->
+  <java-symbol type="array" name="config_accessoryDockNames" />
+
+  <!-- HW rotation lock -->
+  <java-symbol type="string" name="toast_rotation_unlocked" />
+  <java-symbol type="string" name="toast_rotation_locked" />
+
+  <!-- Hide Navbar -->
+  <java-symbol type="layout" name="global_actions_navbar_mode" />
+  <java-symbol type="id" name="navbarrecent" />
+  <java-symbol type="id" name="navbarhome" />
+  <java-symbol type="id" name="navbarback" />
+  <java-symbol type="id" name="navbarmenu" />
+
+  <!-- Sense 4 -->
+  <java-symbol type="dimen" name="thumbnail_height_sense4"/>
+  <java-symbol type="dimen" name="thumbnail_width_sense4"/>
+
+  <java-symbol type="drawable" name="ic_lockscreen_chevron_up" />
+  <java-symbol type="drawable" name="ic_lockscreen_chevron_down" />
+  <java-symbol type="drawable" name="ic_lockscreen_chevron_left" />
+  <java-symbol type="drawable" name="ic_lockscreen_chevron_right" />
+  <java-symbol type="id" name="multiwave_widget" />
+  <java-symbol type="id" name="tab_widget" />
+  <java-symbol type="id" name="rotary_widget" />
 </resources>

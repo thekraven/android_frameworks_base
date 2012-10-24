@@ -2119,7 +2119,13 @@ public final class Settings {
         public static final String DOCK_USB_AUDIO_ENABLED = "dock_usb_audio_enabled";
 
         /**
-         * Whether to play a sound for dock events.
+         * Whether the lockscreen vibrate should be enabled.
+         * @hide
+         */
+        public static final String LOCKSCREEN_VIBRATE_ENABLED = "lockscreen.vibrate_enabled";
+
+        /**
+         * Whether the screen will be locked if a call ends and the screen is off.
          * @hide
          */
         public static final String DOCK_SOUNDS_ENABLED = "dock_sounds_enabled";
@@ -2671,6 +2677,23 @@ public final class Settings {
          */
 		 public static final String STATUSBAR_TRANSPARENCY = "statusbar_transparency";
 		 
+          /**
+           * Toggle to render the recent apps view resembling sense 4.0
+           * @hide
+           */
+           public static final String SENSE4_RECENT_APPS = "sense4_recent_apps";
+
+        /**
+         * Which lockscreen style to use. The value is an integer.
+         * ( 0 - GlowPadView: JB )
+         * ( 1 - MultiwaveView: ICS )
+         * ( 2 - Tabs: GB   )
+         * ( 3 - Rotary: Eclair )
+         * @hide
+         */
+        public static final String LOCKSCREEN_STYLE = "lockscreen_style";
+
+
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
