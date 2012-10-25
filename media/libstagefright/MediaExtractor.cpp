@@ -30,7 +30,7 @@
 #include "include/WVMExtractor.h"
 #include "include/FLACExtractor.h"
 #include "include/AACExtractor.h"
-#ifdef QCOM_HARDWARE
+#if (defined QCOM_HARDWARE) || (defined USES_NAM)
 #include "include/ExtendedExtractor.h"
 #endif
 
@@ -95,6 +95,20 @@ sp<MediaExtractor> MediaExtractor::Create(
     }
 
     MediaExtractor *ret = NULL;
+
+#ifdef USES_NAM
+    AString extractorType;
+    bool isExtendedExtractor = false;
+    if (meta != NULL) {
+        if (meta->findString("extended-extractor", &extractorType))
+            isExtendedExtractor = true;
+    }
+
+    LOGI("isExtendedExtractor: %d", isExtendedExtractor);
+
+    if (!isExtendedExtractor) {
+#endif
+
     if (!strcasecmp(mime, MEDIA_MIMETYPE_CONTAINER_MPEG4)
             || !strcasecmp(mime, "audio/mp4")) {
         ret = new MPEG4Extractor(source);
@@ -129,10 +143,15 @@ sp<MediaExtractor> MediaExtractor::Create(
        }
     }
 
-#ifdef QCOM_HARDWARE
+#ifdef USES_NAM
+    } //if (!isExtendedExtractor)
+#endif
+
+//#ifdef QCOM_HARDWARE
+#if (defined QCOM_HARDWARE) || (defined USES_NAM)
     if (ret) return ret;
 
-        LOGV(" Using ExtendedExtractor\n");
+    LOGI("Using ExtendedExtractor");
     return ExtendedExtractor::CreateExtractor(source, mime);
 #else
     return ret;

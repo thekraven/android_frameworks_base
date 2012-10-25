@@ -32,7 +32,6 @@
 #include <utils/Log.h>
 //#define DUMP_TO_FILE
 
-
 #include <media/stagefright/ExtendedExtractorFuncs.h>
 #include <media/stagefright/MediaExtractor.h>
 #include <media/stagefright/DataSource.h>
@@ -45,6 +44,9 @@
 
 static const char* MM_PARSER_LIB = "libmmparser.so";
 static const char* MM_PARSER_LITE_LIB = "libmmparser_lite.so";
+#ifdef USES_NAM
+static const char* NAM_PARSER_LIB = "libnamparser.so";
+#endif
 
 namespace android {
 
@@ -57,6 +59,16 @@ void* MmParserLib() {
     }
 
     alreadyTriedToOpenMmParsers = true;
+
+#ifdef USES_NAM
+    mmParserLib = ::dlopen(NAM_PARSER_LIB, RTLD_LAZY);
+
+    if(mmParserLib != NULL) {
+        return mmParserLib;
+    }
+
+    LOGV("Failed to open NAM_PARSER_LIB, dlerror = %s \n", dlerror());
+#endif
 
     mmParserLib = ::dlopen(MM_PARSER_LIB, RTLD_LAZY);
 
@@ -120,7 +132,7 @@ void ExtendedExtractor::RegisterSniffers() {
 
     SnifferArrayFunc snifferArrayFunc = (SnifferArrayFunc) dlsym(mmParserLib, MEDIA_SNIFFER_ARRAY);
     if(snifferArrayFunc==NULL) {
-        LOGE(" Unable to init Extended Sniffers, dlerror = %s \n", dlerror());
+        LOGE("Unable to init Extended Sniffers, dlerror = %s \n", dlerror());
         return;
     }
 
@@ -138,7 +150,8 @@ void ExtendedExtractor::RegisterSniffers() {
     bool flag= true;
     //Register the remote sniffers with the DataSource.
     for(int i=0; i<snifferCount; i++) {
-#ifdef QCOM_HARDWARE
+//#ifdef QCOM_HARDWARE
+#if (defined QCOM_HARDWARE) || (defined USES_NAM)
         DataSource::RegisterSniffer(snifferArray[i],flag);
         flag = false;
 #else

@@ -29,6 +29,10 @@ ifeq ($(BOARD_USES_PROPRIETARY_OMX),SAMSUNG)
 LOCAL_CFLAGS     += -DSAMSUNG_OMX
 endif
 
+ifeq ($(TARGET_DEVICE),thunderc) 
+    LOCAL_CFLAGS += -DUSES_NAM 
+endif 
+
 LOCAL_MODULE:= libstagefright_omx
 
 include $(BUILD_SHARED_LIBRARY)

@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+//#define LOG_NDEBUG 0
+#define LOG_TAG "DataSource"
+#include <utils/Log.h>
+
 #include "include/AMRExtractor.h"
 #include "include/MP3Extractor.h"
 #include "include/MPEG4Extractor.h"
@@ -27,7 +31,7 @@
 #include "include/DRMExtractor.h"
 #include "include/FLACExtractor.h"
 #include "include/AACExtractor.h"
-#ifdef QCOM_HARDWARE
+#if (defined QCOM_HARDWARE) || (defined USES_NAM)
 #include "include/ExtendedExtractor.h"
 #else
 #include "include/AVIExtractor.h"
@@ -70,7 +74,7 @@ status_t DataSource::getSize(off64_t *size) {
 
 Mutex DataSource::gSnifferMutex;
 List<DataSource::SnifferFunc> DataSource::gSniffers;
-#ifdef QCOM_HARDWARE
+#if (defined QCOM_HARDWARE) || (defined USES_NAM)
 List<DataSource::SnifferFunc>::iterator DataSource::extendedSnifferPosition;
 #endif
 
@@ -84,11 +88,15 @@ bool DataSource::sniff(
     for (List<SnifferFunc>::iterator it = gSniffers.begin();
          it != gSniffers.end(); ++it) {
 
+#ifdef USES_NAM
+        // sniffer extended extarctor, as we have ffmpeg, vlc and mplayer extarctors
+#else
 #ifdef QCOM_HARDWARE
         //Dont call the first sniffer from extended extarctor
         if(it == extendedSnifferPosition)
             continue;
-#endif
+#endif // QCOM_HARDWARE
+#endif // USES_NAM
 
         String8 newMimeType;
         float newConfidence;
@@ -98,6 +106,9 @@ bool DataSource::sniff(
                 *mimeType = newMimeType;
                 *confidence = newConfidence;
                 *meta = newMeta;
+#ifdef USES_NAM
+                // Do not sniffer here
+#else
 #ifdef QCOM_HARDWARE
                 if(*confidence >= 0.6f) {
 
@@ -125,7 +136,8 @@ bool DataSource::sniff(
 
                     break;
                 }
-#endif
+#endif // QCOM_HARDWARE
+#endif // USES_NAM
             }
         }
     }
@@ -134,7 +146,7 @@ bool DataSource::sniff(
 }
 
 // static
-#ifdef QCOM_HARDWARE
+#if (defined QCOM_HARDWARE) || (defined USES_NAM)
 void DataSource::RegisterSniffer(SnifferFunc func, bool isExtendedExtractor) {
 #else
 void DataSource::RegisterSniffer(SnifferFunc func) {
@@ -150,7 +162,7 @@ void DataSource::RegisterSniffer(SnifferFunc func) {
 
     gSniffers.push_back(func);
 
-#ifdef QCOM_HARDWARE
+#if (defined QCOM_HARDWARE) || (defined USES_NAM)
     if(isExtendedExtractor)
     {
         extendedSnifferPosition = gSniffers.end();
@@ -173,7 +185,7 @@ void DataSource::RegisterDefaultSniffers() {
     RegisterSniffer(SniffMP3);
     RegisterSniffer(SniffAAC);
     RegisterSniffer(SniffMPEG2PS);
-#ifdef QCOM_HARDWARE
+#if (defined QCOM_HARDWARE) || (defined USES_NAM)
     ExtendedExtractor::RegisterSniffers();
 #endif
 
@@ -205,6 +217,10 @@ sp<DataSource> DataSource::CreateFromURI(
     if (source == NULL || source->initCheck() != OK) {
         return NULL;
     }
+
+#ifdef USES_NAM
+    source->setNamURI(uri);
+#endif
 
     return source;
 }
