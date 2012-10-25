@@ -2,9 +2,7 @@ LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
 
-ifeq ($(TARGET_DEVICE),thunderc) 
-    LOCAL_CFLAGS += -DUSES_NAM 
-endif 
+LOCAL_CFLAGS += -DUSES_NAM 
 
 
 LOCAL_SRC_FILES:=                 \
