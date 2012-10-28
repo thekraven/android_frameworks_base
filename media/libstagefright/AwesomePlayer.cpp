@@ -102,9 +102,11 @@ struct AwesomeLocalRenderer : public AwesomeRenderer {
     }
 
     virtual void render(MediaBuffer *buffer) {
+#ifdef USES_NAM
         int64_t timeUs;
         CHECK(buffer->meta_data()->findInt64(kKeyTime, &timeUs));
         LOGV("render %lld us (%.2f secs)", timeUs, timeUs / 1E6);
+#endif
         render((const uint8_t *)buffer->data() + buffer->range_offset(),
                buffer->range_length());
     }
@@ -148,8 +150,9 @@ struct AwesomeNativeWindowRenderer : public AwesomeRenderer {
 
         sp<MetaData> metaData = buffer->meta_data();
         metaData->setInt32(kKeyRendered, 1);
-
+#ifdef USES_NAM
         LOGV("render %lld us (%.2f secs)", timeUs, timeUs / 1E6);
+#endif
     }
 
 protected:
@@ -1168,7 +1171,10 @@ void AwesomePlayer::initRenderer_l() {
 
     if (USE_SURFACE_ALLOC
             && !strncmp(component, "OMX.", 4)
+            && strncmp(component, "OMX.google.", 11)
+#ifdef USES_NAM
             && strncmp(component, "OMX.ffmpeg.", 11)
+#endif
             && strcmp(component, "OMX.Nvidia.mpeg2v.decode")) {
         // Hardware decoders avoid the CPU color conversion by decoding
         // directly to ANativeBuffers, so we must use a renderer that

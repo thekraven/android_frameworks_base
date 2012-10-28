@@ -260,15 +260,19 @@ static const CodecInfo kDecoderInfo[] = {
     { MEDIA_MIMETYPE_VIDEO_MPEG4, "OMX.qcom.video.decoder.mpeg4" },
     { MEDIA_MIMETYPE_VIDEO_MPEG4, "OMX.TI.Video.Decoder" },
     { MEDIA_MIMETYPE_VIDEO_MPEG4, "OMX.SEC.MPEG4.Decoder" },
+#ifdef USES_NAM
     { MEDIA_MIMETYPE_VIDEO_MPEG4, "OMX.ffmpeg.mpeg4.decoder" },
-//    { MEDIA_MIMETYPE_VIDEO_MPEG4, "OMX.google.mpeg4.decoder" },
+#endif
+    { MEDIA_MIMETYPE_VIDEO_MPEG4, "OMX.google.mpeg4.decoder" },
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.TI.DUCATI1.VIDEO.DECODER" },
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.Nvidia.h263.decode" },
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.qcom.7x30.video.decoder.h263" },
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.qcom.video.decoder.h263" },
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.SEC.H263.Decoder" },
-//    { MEDIA_MIMETYPE_VIDEO_H263, "OMX.google.h263.decoder" },
+    { MEDIA_MIMETYPE_VIDEO_H263, "OMX.google.h263.decoder" },
+#ifdef USES_NAM
     { MEDIA_MIMETYPE_VIDEO_H263, "OMX.ffmpeg.h263.decoder" },
+#endif
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.TI.DUCATI1.VIDEO.DECODER" },
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.Nvidia.h264.decode" },
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.qcom.7x30.video.decoder.avc" },
@@ -276,18 +280,18 @@ static const CodecInfo kDecoderInfo[] = {
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.TI.Video.Decoder" },
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.SEC.AVC.Decoder" },
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.SEC.FP.AVC.Decoder" },
-//#ifdef USES_NAM
+#ifdef USES_NAM
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.ffmpeg.h264.decoder" },
-//#endif
-//    { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.google.h264.decoder" },
+#endif
+    { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.google.h264.decoder" },
     { MEDIA_MIMETYPE_VIDEO_AVC, "OMX.google.avc.decoder" },
     { MEDIA_MIMETYPE_AUDIO_VORBIS, "OMX.google.vorbis.decoder" },
     { MEDIA_MIMETYPE_VIDEO_VPX, "OMX.SEC.VP8.Decoder" },
     { MEDIA_MIMETYPE_VIDEO_VPX, "OMX.google.vpx.decoder" },
     { MEDIA_MIMETYPE_VIDEO_MPEG2, "OMX.Nvidia.mpeg2v.decode" },
-//#ifdef USES_NAM
+#ifdef USES_NAM
     { MEDIA_MIMETYPE_VIDEO_MPEG2, "OMX.ffmpeg.mpeg2v.decoder" },
-//#endif
+#endif
 #ifdef QCOM_HARDWARE
     { MEDIA_MIMETYPE_VIDEO_DIVX, "OMX.qcom.video.decoder.divx"},
     { MEDIA_MIMETYPE_VIDEO_DIVX311, "OMX.qcom.video.decoder.divx311"},
@@ -301,9 +305,9 @@ static const CodecInfo kDecoderInfo[] = {
     { MEDIA_MIMETYPE_AUDIO_WMA, "OMX.qcom.audio.decoder.wmaLossLess"},
     { MEDIA_MIMETYPE_AUDIO_WMA, "OMX.qcom.audio.decoder.wma10Pro"},
     { MEDIA_MIMETYPE_VIDEO_WMV, "OMX.qcom.video.decoder.vc1"},
-//#ifdef USES_NAM
+#ifdef USES_NAM
     { MEDIA_MIMETYPE_VIDEO_WMV, "OMX.ffmpeg.vc1.decoder" },
-//#endif
+#endif
 #endif
 };
 
@@ -411,10 +415,10 @@ static void InitOMXParams(T *params) {
 }
 
 static bool IsSoftwareCodec(const char *componentName) {
-    if (!strncmp("OMX.ffmpeg.", componentName, 11)
-//#ifdef USES_NAM
-//	    || !strncmp("OMX.ffmpeg.", componentName, 11)
-//#endif
+    if (!strncmp("OMX.google.", componentName, 11)
+#ifdef USES_NAM
+	    || !strncmp("OMX.ffmpeg.", componentName, 11)
+#endif
 	    || !strncmp("OMX.PV.", componentName, 7)) {
         return true;
     }
@@ -2072,10 +2076,10 @@ OMXCodec::OMXCodec(
       mUseArbitraryMode(true),
 #endif
       mNativeWindow(
-              (!strncmp(componentName, "OMX.ffmpeg.", 11)
-//#ifdef USES_NAM
-//              || !strncmp(componentName, "OMX.ffmpeg.", 11)
-//#endif
+              (!strncmp(componentName, "OMX.google.", 11)
+#ifdef USES_NAM
+              || !strncmp(componentName, "OMX.ffmpeg.", 11)
+#endif
               || !strcmp(componentName, "OMX.Nvidia.mpeg2v.decode"))
                         ? NULL : nativeWindow) {
     mPortStatus[kPortIndexInput] = ENABLED;
@@ -2383,7 +2387,7 @@ status_t OMXCodec::allocateBuffersOnPort(OMX_U32 portIndex) {
              portIndex == kPortIndexInput ? "input" : "output");
     }
 
-#ifdef QCOM_HARDWARE
+#ifdef USES_NAM
     if (def.eDomain == (int)OMX_PortDomainVideo)
         dumpPortStatus(portIndex);
 #else
@@ -2924,7 +2928,7 @@ int64_t OMXCodec::retrieveDecodingTimeUs(bool isCodecSpecific) {
 }
 
 void OMXCodec::on_message(const omx_message &msg) {
-#ifdef QCOM_HARDWARE
+#ifdef USES_NAM
     if (mState == ERROR && !strncmp(mComponentName, "OMX.google.", 11)
             && !strncmp(mComponentName, "OMX.ffmpeg.", 11)) {
 #else

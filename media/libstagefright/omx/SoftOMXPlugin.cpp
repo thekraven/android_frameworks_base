@@ -34,7 +34,7 @@ static const struct {
     const char *mRole;
 
 } kComponents[] = {
-#ifdef QCOM_HARDWARE 
+#ifdef USES_NAM 
     { "OMX.ffmpeg.h264.decoder", "ffmpegvdec", "video_decoder.avc" }, 
     { "OMX.ffmpeg.mpeg4.decoder", "ffmpegvdec", "video_decoder.mpeg4" }, 
     { "OMX.ffmpeg.mpeg2v.decoder", "ffmpegvdec", "video_decoder.mpeg2" }, 
@@ -44,11 +44,11 @@ static const struct {
     { "OMX.google.aac.decoder", "aacdec", "audio_decoder.aac" },
     { "OMX.google.amrnb.decoder", "amrdec", "audio_decoder.amrnb" },
     { "OMX.google.amrwb.decoder", "amrdec", "audio_decoder.amrwb" },
-//    { "OMX.google.h264.decoder", "h264dec", "video_decoder.avc" },
+    { "OMX.google.h264.decoder", "h264dec", "video_decoder.avc" },
     { "OMX.google.g711.alaw.decoder", "g711dec", "audio_decoder.g711alaw" },
     { "OMX.google.g711.mlaw.decoder", "g711dec", "audio_decoder.g711mlaw" },
-//    { "OMX.google.h263.decoder", "mpeg4dec", "video_decoder.h263" },
-//    { "OMX.google.mpeg4.decoder", "mpeg4dec", "video_decoder.mpeg4" },
+    { "OMX.google.h263.decoder", "mpeg4dec", "video_decoder.h263" },
+    { "OMX.google.mpeg4.decoder", "mpeg4dec", "video_decoder.mpeg4" },
     { "OMX.google.mp3.decoder", "mp3dec", "audio_decoder.mp3" },
     { "OMX.google.vorbis.decoder", "vorbisdec", "audio_decoder.vorbis" },
     { "OMX.google.vpx.decoder", "vpxdec", "video_decoder.vpx" },

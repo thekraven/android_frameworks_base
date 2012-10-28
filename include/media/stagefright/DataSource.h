@@ -96,7 +96,7 @@ public:
     //isExtendedExtractor if true, will store the location of the sniffer to register
     static void RegisterSniffer(SnifferFunc func, bool isExtendedExtractor = false);
 #else
-//    static void RegisterSniffer(SnifferFunc func);
+    static void RegisterSniffer(SnifferFunc func);
 #endif
     static void RegisterDefaultSniffers();
 
@@ -114,7 +114,7 @@ public:
 
 
 protected:
-#ifdef QCOM_HARDWARE 
+#ifdef USES_NAM 
     virtual ~DataSource() { 
         if (mNamURI) { 
             free(mNamURI); 
@@ -129,12 +129,12 @@ private:
     static Mutex gSnifferMutex;
     static List<SnifferFunc> gSniffers;
 
-#ifdef QCOM_HARDWARE
+#ifdef USES_NAM 
     char *mNamURI; 
 #endif 
  
-#ifdef QCOM_HARDWARE 
-//#if (defined QCOM_HARDWARE) || (defined USES_NAM) 
+//#ifdef QCOM_HARDWARE 
+#if (defined QCOM_HARDWARE) || (defined USES_NAM) 
     static List<SnifferFunc>::iterator extendedSnifferPosition;
 #endif
 

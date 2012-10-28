@@ -44,7 +44,7 @@
 
 static const char* MM_PARSER_LIB = "libmmparser.so";
 static const char* MM_PARSER_LITE_LIB = "libmmparser_lite.so";
-#ifdef QCOM_HARDWARE
+#ifdef USES_NAM
 static const char* NAM_PARSER_LIB = "libnamparser.so";
 #endif
 
@@ -60,7 +60,7 @@ void* MmParserLib() {
 
     alreadyTriedToOpenMmParsers = true;
 
-#ifdef QCOM_HARDWARE
+#ifdef USES_NAM
     mmParserLib = ::dlopen(NAM_PARSER_LIB, RTLD_LAZY);
 
     if(mmParserLib != NULL) {
@@ -150,8 +150,8 @@ void ExtendedExtractor::RegisterSniffers() {
     bool flag= true;
     //Register the remote sniffers with the DataSource.
     for(int i=0; i<snifferCount; i++) {
-#ifdef QCOM_HARDWARE
-//#if (defined QCOM_HARDWARE) || (defined USES_NAM)
+//#ifdef QCOM_HARDWARE
+#if (defined QCOM_HARDWARE) || (defined USES_NAM)
         DataSource::RegisterSniffer(snifferArray[i],flag);
         flag = false;
 #else
