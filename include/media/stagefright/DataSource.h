@@ -47,19 +47,7 @@ public:
             const char *uri,
             const KeyedVector<String8, String8> *headers = NULL);
 
-#ifdef USES_NAM 
-    DataSource() { mNamURI = NULL; } 
- 
-    virtual void setNamURI(const char *uri) { 
-        mNamURI = strdup(uri); 
-    } 
- 
-    virtual const char *getNamURI() { 
-        return mNamURI; 
-    } 
-#else 
     DataSource() {}
-#endif
 
     virtual status_t initCheck() const = 0;
 
@@ -90,9 +78,7 @@ public:
             const sp<DataSource> &source, String8 *mimeType,
             float *confidence, sp<AMessage> *meta);
 
-
-//#ifdef QCOM_HARDWARE 
-#if (defined QCOM_HARDWARE) || (defined USES_NAM) 
+#ifdef QCOM_HARDWARE
     //isExtendedExtractor if true, will store the location of the sniffer to register
     static void RegisterSniffer(SnifferFunc func, bool isExtendedExtractor = false);
 #else
@@ -114,27 +100,13 @@ public:
 
 
 protected:
-#ifdef USES_NAM 
-    virtual ~DataSource() { 
-        if (mNamURI) { 
-            free(mNamURI); 
-            mNamURI = NULL; 
-        } 
-    } 
-#else 
     virtual ~DataSource() {}
-#endif
 
 private:
     static Mutex gSnifferMutex;
     static List<SnifferFunc> gSniffers;
 
-#ifdef USES_NAM 
-    char *mNamURI; 
-#endif 
- 
-//#ifdef QCOM_HARDWARE 
-#if (defined QCOM_HARDWARE) || (defined USES_NAM) 
+#ifdef QCOM_HARDWARE
     static List<SnifferFunc>::iterator extendedSnifferPosition;
 #endif
 

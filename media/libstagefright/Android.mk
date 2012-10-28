@@ -1,10 +1,6 @@
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
-#ifeq ($(TARGET_DEVICE),thunderc) 
-#    LOCAL_CFLAGS += -DUSES_NAM 
-#endif 
-
 ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
 ifeq ($(TARGET_BOARD_PLATFORM),msm7x27a)
     LOCAL_CFLAGS += -DUSE_AAC_HW_DEC
@@ -82,10 +78,6 @@ LOCAL_SRC_FILES:=                         \
         WVMExtractor.cpp                  \
         XINGSeeker.cpp                    \
         avc_utils.cpp                     \
-		
-ifeq ($(USES_NAM),true) 
-        LOCAL_SRC_FILES += ExtendedExtractor.cpp 
-endif 
 
 ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
         LOCAL_SRC_FILES += ExtendedExtractor.cpp
