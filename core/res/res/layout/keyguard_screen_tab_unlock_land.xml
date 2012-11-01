@@ -230,8 +230,8 @@
     <Space android:layout_width="64dip" android:layout_rowSpan="7" />
 
     <!-- Column 2 -->
-    <com.android.internal.widget.multiwaveview.MultiWaveView
-        android:id="@+id/unlock_widget"
+    <com.android.internal.widget.multiwaveview.GlowPadView
+        android:id="@+id/glowpad_widget"
         android:layout_width="200dip"
         android:layout_height="match_parent"
         android:layout_rowSpan="7"
