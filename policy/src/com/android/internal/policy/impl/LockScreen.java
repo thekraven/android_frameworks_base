@@ -710,8 +710,9 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
         } else {
             inflater.inflate(R.layout.keyguard_screen_tab_unlock_land, this, true);
         }
-
+	if (!mUseBbLockscreen) {
         setBackground(mContext, (ViewGroup) findViewById(R.id.root));
+	}
 
         mStatusViewManager = new KeyguardStatusViewManager(this, mUpdateMonitor, mLockPatternUtils,
                 mCallback, false);

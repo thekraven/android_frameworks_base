@@ -61,9 +61,37 @@ public class KeyguardViewManager implements KeyguardWindowController {
 
     private boolean mScreenOn = false;
 
+    // Get the style from settings  
+
+    private static final int LOCK_STYLE_JB = 0;    
+    private static final int LOCK_STYLE_ICS = 1;
+    private static final int LOCK_STYLE_GB = 2;
+    private static final int LOCK_STYLE_ECLAIR = 3;
+    private static final int LOCK_STYLE_BB = 4;
+    
     public interface ShowListener {
         void onShown(IBinder windowToken);
     };
+
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_SEE_THROUGH), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_STYLE), false, this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            setKeyguardParams();
+            mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
+        }
+    }
 
     /**
      * @param context Used to create views.
@@ -186,6 +214,46 @@ public class KeyguardViewManager implements KeyguardWindowController {
         mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
         mKeyguardHost.setVisibility(View.VISIBLE);
         mKeyguardView.requestFocus();
+    }
+
+    public void setKeyguardParams() {
+        boolean allowSeeThrough = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_SEE_THROUGH, 0) != 0;
+
+    int mLockscreenStyle = Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.LOCKSCREEN_STYLE, LOCK_STYLE_JB);
+    boolean mUseBbLockscreen = (mLockscreenStyle == LOCK_STYLE_BB);
+
+        final int stretch = ViewGroup.LayoutParams.MATCH_PARENT;
+        int flags = WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN
+                | WindowManager.LayoutParams.FLAG_SLIPPERY;
+
+        if (!allowSeeThrough && !mUseBbLockscreen) {
+            flags |= WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER;
+        }
+
+        if (!mNeedsInput) {
+            flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+        }
+        if (ActivityManager.isHighEndGfx(((WindowManager)mContext.getSystemService(
+                Context.WINDOW_SERVICE)).getDefaultDisplay())) {
+            flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+        }
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                stretch, stretch, WindowManager.LayoutParams.TYPE_KEYGUARD,
+                flags, PixelFormat.TRANSLUCENT);
+        lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
+        lp.windowAnimations = com.android.internal.R.style.Animation_LockScreen;
+        if (ActivityManager.isHighEndGfx(((WindowManager)mContext.getSystemService(
+                Context.WINDOW_SERVICE)).getDefaultDisplay())) {
+            lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+            lp.privateFlags |=
+                    WindowManager.LayoutParams.PRIVATE_FLAG_FORCE_HARDWARE_ACCELERATED;
+        }
+        lp.privateFlags |= WindowManager.LayoutParams.PRIVATE_FLAG_SET_NEEDS_MENU_KEY;
+        lp.setTitle("Keyguard");
+        mWindowLayoutParams = lp;
     }
 
     public void setNeedsInput(boolean needsInput) {
