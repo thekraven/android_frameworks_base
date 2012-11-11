@@ -52,6 +52,7 @@ import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.util.Slog;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.IWindowManager;
@@ -60,15 +61,18 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManagerImpl;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.RemoteViews;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -504,10 +508,26 @@ public class PhoneStatusBar extends StatusBar {
             }
         }
 
-        // Provide RecentsPanelView with a temporary parent to allow layout params to work.
+        // Provide RecentsPanelView with a temporary parent to allow layout
+        // params to work.
         LinearLayout tmpRoot = new LinearLayout(mContext);
-        mRecentsPanel = (RecentsPanelView) LayoutInflater.from(mContext).inflate(
-                R.layout.status_bar_recent_panel, tmpRoot, false);
+
+        int recent_style = Settings.System.getInt(mContext.getContentResolver(),
+                      Settings.System.RECENT_APP_SWITCHER,0);
+
+        if (recent_style == 1) {
+            mRecentsPanel = (RecentsPanelView) LayoutInflater.from(mContext).inflate(
+                    R.layout.status_bar_recent_panel_webaokp, tmpRoot, false);
+        }
+        else if (recent_style == 2) {
+            mRecentsPanel = (RecentsPanelView) LayoutInflater.from(mContext).inflate(
+                    R.layout.status_bar_recent_panel_sense4, tmpRoot, false);
+        }
+        else {
+            mRecentsPanel = (RecentsPanelView) LayoutInflater.from(mContext).inflate(
+                    R.layout.status_bar_recent_panel, tmpRoot, false);
+        }
+		
         mRecentsPanel.setRecentTasksLoader(mRecentTasksLoader);
         mRecentTasksLoader.setRecentsPanel(mRecentsPanel);
         mRecentsPanel.setOnTouchListener(new TouchOutsideListener(MSG_CLOSE_RECENTS_PANEL,

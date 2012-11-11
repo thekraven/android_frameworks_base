@@ -341,6 +341,9 @@
     <!-- Content description of the button for showing a notifications panel in the notification panel for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_notifications_button">Notifications.</string>
 	
+    <!-- for Sense 4.0 style multitasking mod --> 
+    <string name="recent_apps_title">Recent apps</string> 
+	
 	<string name="toggle_fcharge">FastChrg</string>
 
     <!-- Content description of the button for removing a notification in the notification panel for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->

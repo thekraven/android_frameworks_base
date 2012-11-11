@@ -2586,6 +2586,16 @@ public final class Settings {
          */
 	    public static final String KONSTA_NAVBAR = "konsta_navbar";
 
+        /** 
+         * the type of recent switcher 
+         * 
+         * 0 = Stock 
+         * 1 = WebAOKP 
+         * 2 = Sense 4 
+         * 
+         * @hide 
+         */ 
+		 public static final String RECENT_APP_SWITCHER = "recent_app_switcher";
 		
         /**
          * Show the pending notification counts as overlays on the status bar
