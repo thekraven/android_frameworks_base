@@ -25,6 +25,7 @@
 
   <!-- AndroidManifest.xml attributes. -->
   <eat-comment />
+
 <!-- ===============================================================
      Resources for version 1 of the platform.
      =============================================================== -->
@@ -1973,25 +1974,4 @@
   <public type="color" name="holo_orange_dark" id="0x01060019" />
   <public type="color" name="holo_purple" id="0x0106001a" />
   <public type="color" name="holo_blue_bright" id="0x0106001b" />
-
-
-<!-- ===============================================================
-   Resources added in version 16 of the platform (Jelly Bean)
-   =============================================================== -->
-  <eat-comment />
-  <public type="attr" name="parentActivityName" id="0x010103a7" />
-  <public type="attr" name="permissionGroupFlags" id="0x010103a8" />
-  <public type="attr" name="isolatedProcess" id="0x010103a9" />
-  <public type="attr" name="importantForAccessibility" id="0x010103aa" />
-  <public type="attr" name="keyboardLayout" id="0x010103ab" />
-  <public type="attr" name="fontFamily" id="0x010103ac" />
-
-  <public type="attr" name="mediaRouteButtonStyle" id="0x010103ad" />
-  <public type="attr" name="mediaRouteTypes" id="0x010103ae" />
-  <public type="style" name="Widget.Holo.MediaRouteButton" id="0x010301d5" />
-  <public type="style" name="Widget.Holo.Light.MediaRouteButton" id="0x010301d6" />
-  <public type="style" name="Widget.DeviceDefault.MediaRouteButton" id="0x010301d7" />
-  <public type="style" name="Widget.DeviceDefault.Light.MediaRouteButton" id="0x010301d8" />
-
-
 </resources>
