@@ -146,7 +146,6 @@ class LockScreen extends LinearLayout implements KeyguardScreen {
             updateTargets();
         }
     };
->>>>>>> 6009f80... custom lockscreen selection from evervolv...settings part missing currently
 
     private interface UnlockWidgetCommonMethods {
         // Update resources based on phone state
