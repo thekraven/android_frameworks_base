@@ -2097,15 +2097,18 @@ public class WifiStateMachine extends StateMachine {
                             break;
                         case WIFI_AP_STATE_DISABLED:
                         case WIFI_AP_STATE_FAILED:
-                            if(WifiNative.unloadHotspotDriver()) {
+                            // C3C0: unloading of wifi driver causes some mysterious deadlock during
+                            // kernel module unload. This will prevent driver from being unloaded
+                            // when WiFi tethering is being stopped
+                            //if(WifiNative.unloadHotspotDriver()) {
                                 if (DBG) log("Hotspot driver unload successful");
                                 sendMessage(CMD_UNLOAD_DRIVER_SUCCESS);
                                 setWifiApState(message.arg1);
-                            } else {
-                                loge("Failed to unload hotspot driver!");
-                                sendMessage(CMD_UNLOAD_DRIVER_FAILURE);
-                                setWifiApState(WIFI_AP_STATE_FAILED);
-                            }
+                            //} else {
+                            //    loge("Failed to unload hotspot driver!");
+                            //    sendMessage(CMD_UNLOAD_DRIVER_FAILURE);
+                            //    setWifiApState(WIFI_AP_STATE_FAILED);
+                            //}
                             break;
                     }
 
@@ -3342,7 +3345,9 @@ public class WifiStateMachine extends StateMachine {
                 case WifiStateMachine.CMD_RESPONSE_AP_CONFIG:
                     WifiConfiguration config = (WifiConfiguration) message.obj;
                     if (config != null) {
-                        startSoftApWithConfig(config);
+                        // C3C0: Fix deadlock when AP config was changed during active wifi tether
+                        if(!syncGetWifiApStateByName().equals("enabled"))
+                            startSoftApWithConfig(config);
                     } else {
                         loge("Softap config is null!");
                         sendMessage(CMD_START_AP_FAILURE);
