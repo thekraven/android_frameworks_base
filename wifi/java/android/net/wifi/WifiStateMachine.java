@@ -182,8 +182,6 @@ public class WifiStateMachine extends StateMachine {
 
     private AlarmManager mAlarmManager;
     private PendingIntent mScanIntent;
-    private PendingIntent mDriverStopIntent;
-
     /* Tracks current frequency mode */
     private AtomicInteger mFrequencyBand = new AtomicInteger(WifiManager.WIFI_FREQUENCY_BAND_AUTO);
 
@@ -518,11 +516,6 @@ public class WifiStateMachine extends StateMachine {
     private static final String ACTION_START_SCAN =
         "com.android.server.WifiManager.action.START_SCAN";
 
-    private static final String DELAYED_STOP_COUNTER = "DelayedStopCounter";
-    private static final int DRIVER_STOP_REQUEST = 0;
-    private static final String ACTION_DELAYED_DRIVER_STOP =
-        "com.android.server.WifiManager.action.DELAYED_DRIVER_STOP";
-
     /**
      * Keep track of whether WIFI is running.
      */
@@ -612,17 +605,7 @@ public class WifiStateMachine extends StateMachine {
                     }
                 },
                 new IntentFilter(ACTION_START_SCAN));
-
-        mContext.registerReceiver(
-                new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                       int counter = intent.getIntExtra(DELAYED_STOP_COUNTER, 0);
-                       sendMessage(obtainMessage(CMD_DELAYED_STOP_DRIVER, counter, 0));
-                    }
-                },
-                new IntentFilter(ACTION_DELAYED_DRIVER_STOP));
-
+ 
         mScanResultCache = new LruCache<String, ScanResult>(SCAN_RESULT_CACHE_SIZE);
 
         PowerManager powerManager = (PowerManager)mContext.getSystemService(Context.POWER_SERVICE);
@@ -2114,15 +2097,18 @@ public class WifiStateMachine extends StateMachine {
                             break;
                         case WIFI_AP_STATE_DISABLED:
                         case WIFI_AP_STATE_FAILED:
-                            if(WifiNative.unloadHotspotDriver()) {
+                            // C3C0: unloading of wifi driver causes some mysterious deadlock during
+                            // kernel module unload. This will prevent driver from being unloaded
+                            // when WiFi tethering is being stopped
+                            //if(WifiNative.unloadHotspotDriver()) {
                                 if (DBG) log("Hotspot driver unload successful");
                                 sendMessage(CMD_UNLOAD_DRIVER_SUCCESS);
                                 setWifiApState(message.arg1);
-                            } else {
-                                loge("Failed to unload hotspot driver!");
-                                sendMessage(CMD_UNLOAD_DRIVER_FAILURE);
-                                setWifiApState(WIFI_AP_STATE_FAILED);
-                            }
+                            //} else {
+                            //    loge("Failed to unload hotspot driver!");
+                            //    sendMessage(CMD_UNLOAD_DRIVER_FAILURE);
+                            //    setWifiApState(WIFI_AP_STATE_FAILED);
+                            //}
                             break;
                     }
 
@@ -2615,26 +2601,18 @@ public class WifiStateMachine extends StateMachine {
                         sendMessage(obtainMessage(CMD_DELAYED_STOP_DRIVER, mDelayedStopCounter, 0));
                     } else {
                         /* send regular delayed shut down */
-                        Intent driverStopIntent = new Intent(ACTION_DELAYED_DRIVER_STOP, null);
-                        driverStopIntent.putExtra(DELAYED_STOP_COUNTER, mDelayedStopCounter);
-                        mDriverStopIntent = PendingIntent.getBroadcast(mContext,
-                                DRIVER_STOP_REQUEST, driverStopIntent,
-                                PendingIntent.FLAG_UPDATE_CURRENT);
-
-                        mAlarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                                + DELAYED_DRIVER_STOP_MS, mDriverStopIntent);
+                        sendMessageDelayed(obtainMessage(CMD_DELAYED_STOP_DRIVER,
+                                mDelayedStopCounter, 0), DELAYED_DRIVER_STOP_MS);
                     }
                     break;
                 case CMD_START_DRIVER:
                     if (mInDelayedStop) {
                         mInDelayedStop = false;
                         mDelayedStopCounter++;
-                        mAlarmManager.cancel(mDriverStopIntent);
                         if (DBG) log("Delayed stop ignored due to start");
                     }
                     break;
                 case CMD_DELAYED_STOP_DRIVER:
-                    if (DBG) log("delayed stop " + message.arg1 + " " + mDelayedStopCounter);
                     if (message.arg1 != mDelayedStopCounter) break;
                     if (getCurrentState() != mDisconnectedState) {
                         WifiNative.disconnectCommand();
@@ -3367,6 +3345,8 @@ public class WifiStateMachine extends StateMachine {
                 case WifiStateMachine.CMD_RESPONSE_AP_CONFIG:
                     WifiConfiguration config = (WifiConfiguration) message.obj;
                     if (config != null) {
+                        // C3C0: Fix deadlock when AP config was changed during active wifi tether
+                        if(!syncGetWifiApStateByName().equals("enabled"))
                         startSoftApWithConfig(config);
                     } else {
                         loge("Softap config is null!");
