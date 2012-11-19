@@ -436,7 +436,7 @@ VideoFrame *StagefrightMetadataRetriever::getFrameAtTime(
         }
 #endif
     }
-#endif
+//#endif
     return frame;
 }
 
