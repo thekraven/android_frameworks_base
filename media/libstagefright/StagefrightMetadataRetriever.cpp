@@ -30,20 +30,30 @@
 #include <media/stagefright/OMXCodec.h>
 #include <media/stagefright/MediaDefs.h>
 
+#ifdef QCOM_HARDWARE
+#include <cutils/properties.h>
+#endif
+
 namespace android {
 
 StagefrightMetadataRetriever::StagefrightMetadataRetriever()
     : mParsedMetaData(false),
       mAlbumArt(NULL) {
+#ifdef QCOM_HARDWARE
+    LOGV("StagefrightMetadataRetriever() constructor %p ", this);
+#else
     LOGV("StagefrightMetadataRetriever()");
-
+#endif
     DataSource::RegisterDefaultSniffers();
     CHECK_EQ(mClient.connect(), OK);
 }
 
 StagefrightMetadataRetriever::~StagefrightMetadataRetriever() {
+#ifdef QCOM_HARDWARE
+    LOGV("~StagefrightMetadataRetriever() %p", this);
+#else
     LOGV("~StagefrightMetadataRetriever()");
-
+#endif
     delete mAlbumArt;
     mAlbumArt = NULL;
 
@@ -52,8 +62,11 @@ StagefrightMetadataRetriever::~StagefrightMetadataRetriever() {
 
 status_t StagefrightMetadataRetriever::setDataSource(
         const char *uri, const KeyedVector<String8, String8> *headers) {
+#ifdef QCOM_HARDWARE
+    LOGW("setDataSource(%s) %p", uri, this);
+#else
     LOGV("setDataSource(%s)", uri);
-
+#endif
     mParsedMetaData = false;
     mMetaData.clear();
     delete mAlbumArt;
@@ -81,7 +94,11 @@ status_t StagefrightMetadataRetriever::setDataSource(
         int fd, int64_t offset, int64_t length) {
     fd = dup(fd);
 
+#ifdef QCOM_HARDWARE
+    LOGW("setDataSource(%d, %lld, %lld) %p", fd, offset, length, this);
+#else
     LOGV("setDataSource(%d, %lld, %lld)", fd, offset, length);
+#endif
 
     mParsedMetaData = false;
     mMetaData.clear();
@@ -302,7 +319,11 @@ static VideoFrame *extractVideoFrameWithCodecFlags(
 VideoFrame *StagefrightMetadataRetriever::getFrameAtTime(
         int64_t timeUs, int option) {
 
+#ifdef QCOM_HARDWARE
+    LOGW("getFrameAtTime: %lld us option: %d %p", timeUs, option, this);
+#else
     LOGV("getFrameAtTime: %lld us option: %d", timeUs, option);
+#endif
 
     if (mExtractor.get() == NULL) {
         LOGV("no extractor.");
@@ -393,10 +414,11 @@ VideoFrame *StagefrightMetadataRetriever::getFrameAtTime(
                 timeUs, option);
 #endif
 
-#if defined(TARGET8x60) || !defined(QCOM_HARDWARE)
+//#if defined(TARGET8x60) || !defined(QCOM_HARDWARE)
     if (frame == NULL) {
         LOGV("Software decoder failed to extract thumbnail, "
              "trying hardware decoder.");
+#ifndef QCOM_HARDWARE
             frame = extractVideoFrameWithCodecFlags(&mClient, trackMeta, source, 0,
                         timeUs, option);
 
