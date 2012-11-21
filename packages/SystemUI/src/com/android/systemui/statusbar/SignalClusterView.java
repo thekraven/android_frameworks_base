@@ -198,6 +198,8 @@ public class SignalClusterView
     }
 
     private void updateSignalClusterStyle() {
+        if(mMobileGroup == null)
+            mMobileGroup = (ViewGroup) findViewById(R.id.mobile_combo);
         mMobileGroup.setVisibility(mSignalClusterStyle != SIGNAL_CLUSTER_STYLE_NORMAL ? View.GONE : View.VISIBLE);
     }
 
