@@ -2677,6 +2677,18 @@ public final class Settings {
         public static final String UI_MENU_BUTTON_BEHAVIOUR = "ui_menu_button_behaviour";
 
         /**
+         * Enable/disable Profiles in power-off menu
+         * @hide
+         */
+        public static final String POM_PROFILES = "pom_profiles";
+
+        /**
+         * Enable/disable Expanded desktop in power-off menu
+         * @hide
+         */
+        public static final String POM_EXPANDED_DESKTOP = "pom_expanded_desktop";
+
+        /**
          * Enable/disable screenshot sound
          * @hide
          */
@@ -2769,6 +2781,10 @@ public final class Settings {
             QUIET_HOURS_DIM,
             KEYLAYOUT_OVERRIDES,
             LOCKSCREEN_ALWAYS_SHOW_BATTERY,
+            POM_PROFILES,
+            POM_EXPANDED_DESKTOP,
+            SCREENSHOT_SOUND,
+            SCREENSHOT_DELAY,
         };
 
         // Settings moved to Settings.Secure

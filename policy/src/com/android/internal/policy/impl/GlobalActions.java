@@ -124,13 +124,21 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     public void showDialog(boolean keyguardShowing, boolean isDeviceProvisioned) {
         mKeyguardShowing = keyguardShowing;
         mDeviceProvisioned = isDeviceProvisioned;
-        if (mDialog != null && mUiContext == null) {
+        if (mDialog != null) {
+            if (mUiContext != null) {
+                mUiContext = null;
+            }
             mDialog.dismiss();
             mDialog = null;
+            // Show delayed, so that the dismiss of the previous dialog completes
+            mHandler.sendEmptyMessage(MESSAGE_SHOW);
+        } else {
+            handleShow();
         }
-        if (mDialog == null) {
-            mDialog = createDialog();
-        }
+    }
+
+    private void handleShow() {
+        mDialog = createDialog();
         prepareDialog();
 
         mDialog.show();
@@ -230,20 +238,24 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             });
 
         // next: profile
-        mItems.add(
-            new ProfileChooseAction() {
-                public void onPress() {
-                    createProfileDialog();
-                }
+        // add only if enabled in settings
+        if((Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.POM_PROFILES, 1)) == 1) {
+            mItems.add(
+                new ProfileChooseAction() {
+                    public void onPress() {
+                        createProfileDialog();
+                    }
 
-                public boolean showDuringKeyguard() {
-                    return false;
-                }
+                    public boolean showDuringKeyguard() {
+                        return false;
+                    }
 
-                public boolean showBeforeProvisioning() {
-                    return false;
-                }
-            });
+                    public boolean showBeforeProvisioning() {
+                        return false;
+                    }
+                });
+        }
 
         // next: screenshot
         mItems.add(
@@ -262,20 +274,24 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             });
 
         // next: statusbar toggle
-        mItems.add(
-            new SinglePressAction(com.android.internal.R.drawable.ic_lock_statusbar, R.string.global_actions_statusbar_status) {
-                public void onPress() {
-                    Settings.System.putInt(mContext.getContentResolver(), Settings.System.STATUSBAR_STATE, Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_STATE, 1) == 1 ? 0 : 1);
-                }
+        // add only if enabled in settings
+        if((Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.POM_EXPANDED_DESKTOP, 0)) == 1) {
+            mItems.add(
+                new SinglePressAction(com.android.internal.R.drawable.ic_lock_statusbar, R.string.global_actions_statusbar_status) {
+                    public void onPress() {
+                        Settings.System.putInt(mContext.getContentResolver(), Settings.System.STATUSBAR_STATE, Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_STATE, 1) == 1 ? 0 : 1);
+                    }
 
-                public boolean showDuringKeyguard() {
-                    return true;
-                }
+                    public boolean showDuringKeyguard() {
+                        return true;
+                    }
 
-                public boolean showBeforeProvisioning() {
-                    return true;
-                }
-            });
+                    public boolean showBeforeProvisioning() {
+                        return true;
+                    }
+                });
+        }
 
         // next: airplane mode
         mItems.add(mAirplaneModeOn);
@@ -874,6 +890,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
     private static final int MESSAGE_DISMISS = 0;
     private static final int MESSAGE_REFRESH = 1;
+    private static final int MESSAGE_SHOW = 2;
     private static final int DIALOG_DISMISS_DELAY = 300; // ms
 
     private Handler mHandler = new Handler() {
@@ -884,6 +901,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 }
             } else if (msg.what == MESSAGE_REFRESH) {
                 mAdapter.notifyDataSetChanged();
+            } else if (msg.what == MESSAGE_SHOW) {
+                handleShow();
             }
         }
     };
