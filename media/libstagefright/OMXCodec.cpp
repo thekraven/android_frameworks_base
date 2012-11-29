@@ -2076,6 +2076,9 @@ OMXCodec::OMXCodec(
 #endif
       )
                         ? NULL : nativeWindow) {
+#ifdef QCOM_HARDWARE
+    parseFlags();
+#endif
     mPortStatus[kPortIndexInput] = ENABLED;
     mPortStatus[kPortIndexOutput] = ENABLED;
 

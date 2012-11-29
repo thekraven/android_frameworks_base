@@ -89,7 +89,7 @@ SoftwareRenderer::SoftwareRenderer(
             halFormat = HAL_PIXEL_FORMAT_YCrCb_420_SP;
             bufWidth = (mCropWidth + 1) & ~1;
             bufHeight = (mCropHeight + 1) & ~1;
-			mAlign = ((mWidth + 15) & -16) * ((mHeight + 15) & -16);
+			mAlign = ((mWidth + 15) & ~15) * ((mHeight + 15) & ~15);
             //mAlign = ALIGN(mWidth, 16) * ALIGN(mHeight, 16);
             break;
         }
