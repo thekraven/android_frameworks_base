@@ -1121,6 +1121,18 @@ public final class Settings {
         public static final Uri CONTENT_URI =
             Uri.parse("content://" + AUTHORITY + "/system");
 
+         /**
+         * Enable/disable screenshot sound
+         * @hide
+         */
+        public static final String SCREENSHOT_SOUND = "screenshot_sound";
+
+        /**
+         * Screenshot delay
+         * @hide
+         */
+        public static final String SCREENSHOT_DELAY = "screenshot_delay";
+
         /**
          * Whether we keep the device on while the device is plugged in.
          * Supported values are:
