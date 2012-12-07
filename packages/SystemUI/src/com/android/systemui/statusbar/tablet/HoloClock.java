@@ -70,6 +70,7 @@ public class HoloClock extends FrameLayout {
     private TextView mSolidText, mBgText, mFgText;
 
     private int mAmPmStyle;
+    private boolean mShowAlways;
 
     private int mClockStyle;
 
